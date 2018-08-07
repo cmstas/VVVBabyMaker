@@ -198,6 +198,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("HLT_SingleIsoEl23");
     tx->createBranch<int>("HLT_SingleIsoMu8");
     tx->createBranch<int>("HLT_SingleIsoMu17");
+    tx->createBranch<int>("HLT_PFMET140_PFMHT140_IDTight");
 
     tx->createBranch<int>("mc_HLT_DoubleMu");
     tx->createBranch<int>("mc_HLT_DoubleEl");
@@ -209,6 +210,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("mc_HLT_SingleIsoEl23");
     tx->createBranch<int>("mc_HLT_SingleIsoMu8");
     tx->createBranch<int>("mc_HLT_SingleIsoMu17");
+    tx->createBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight");
 
     tx->createBranch<int>("pass_duplicate_ee_em_mm");
     tx->createBranch<int>("pass_duplicate_mm_em_ee");
@@ -912,19 +914,34 @@ void babyMaker_v2::SetYear()
             || filename.Contains("RunIISummer16")
             || filename.Contains("run2_data2016")
             || filename.Contains("run2_moriond17")
-       ) gconf.year = 2016;
+            || filename.Contains("V00-00-02_2017Sep27")
+       )
+    {
+        gconf.year = 2016;
+        return;
+    }
     if (
             filename.Contains("Run2017")
             || filename.Contains("RunIIFall17")
             || filename.Contains("_mc2017_")
             || filename.Contains("run2_mc2017")
-       ) gconf.year = 2017;
+       )
+    {
+        gconf.year = 2017;
+        return;
+    }
     if (
             filename.Contains("Run2018")
             || filename.Contains("RunIISpring18")
             || filename.Contains("RunIISummer18")
             || filename.Contains("run2_mc2018")
-       ) gconf.year = 2018;
+       )
+    {
+        gconf.year = 2018;
+        return;
+    }
+    std::cout << "ERROR: did not recognize which year" << std::endl;
+    FATALERROR(__FUNCTION__);
 }
 
 //##############################################################################################################
@@ -1240,6 +1257,8 @@ void babyMaker_v2::FillBaby()
 //##############################################################################################################
 void babyMaker_v2::FillWWWBaby()
 {
+    if (coreElectron.index.size() + coreMuon.index.size() < 1)
+        return;
 
     // Fill baby ntuple branches with event information (evt, lumi etc.)
     // These are always created and filled
@@ -1690,6 +1709,9 @@ bool babyMaker_v2::PassFRPreselection()
     vector<int> el_idx = coreElectron.index;
     vector<int> mu_idx = coreMuon.index;
 
+    if (el_idx.size() + mu_idx.size() < 1)
+        return false;
+
 //    if (el_idx.size() + mu_idx.size() == 1)
 //    {
         // Check if data,
@@ -1708,17 +1730,11 @@ bool babyMaker_v2::PassFRPreselection()
             setHLTBranch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl23 );
             setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
             setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
-            if (el_idx.size() == 1)
-            {
-                if (HLT_SingleIsoEl17 > 0) return true;
-                if (HLT_SingleIsoEl23 > 0) return true;
-                if (HLT_SingleIsoEl8 > 0) return true;
-            }
-            else if (mu_idx.size() == 1)
-            {
-                if (HLT_SingleIsoMu17 > 0) return true;
-                if (HLT_SingleIsoMu8 > 0) return true;
-            }
+            if (HLT_SingleIsoEl17 > 0) return true;
+            if (HLT_SingleIsoEl23 > 0) return true;
+            if (HLT_SingleIsoEl8 > 0) return true;
+            if (HLT_SingleIsoMu17 > 0) return true;
+            if (HLT_SingleIsoMu8 > 0) return true;
             // If it reaches this point, then it means that none of the trigger passed
             return false;
         }
@@ -1751,18 +1767,23 @@ bool babyMaker_v2::PassOSPreselection()
 
     // The 2 veto leptons of 20 GeV each at the least must pass 3L tight options
     int ntight = 0;
+    int nloose = 0;
     for (auto& iel : coreElectron.index)
     {
         if (cms3.els_p4()[iel].pt() > 20. && passElectronSelection_VVV(iel, VVV_TIGHT_3L))
             ntight++;
+        if (cms3.els_p4()[iel].pt() > 20. && passElectronSelection_VVV(iel, VVV_FO_3L))
+            nloose++;
     }
     for (auto& imu : coreMuon.index)
     {
         if (cms3.mus_p4()[imu].pt() > 20. && passMuonSelection_VVV(imu, VVV_TIGHT_3L))
             ntight++;
+        if (cms3.mus_p4()[imu].pt() > 20. && passMuonSelection_VVV(imu, VVV_FO_3L))
+            nloose++;
     }
 
-    if (ntight >= 2)
+    if (ntight >= 1 && nloose >= 2)
         return true;
     else
         return false;
@@ -1863,7 +1884,7 @@ void babyMaker_v2::FillEventInfo()
         // But do this only for 2017 production.
         // This is because the 2016 production did not have this factor applied but rather applied at the looper level.
         // So for posterity (to produces same results with the tagged code) do not apply this for 2016
-        if (SampleNiceName().BeginsWith("www_2l_") && coreSample.is2017(looper.getCurrentFileName()))
+        if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))
             scale1fb *= 1.035475;
 
         tx->setBranch<float>("evt_scale1fb", scale1fb);
@@ -1928,7 +1949,7 @@ void babyMaker_v2::FillElectrons()
         tx->pushbackToBranch<float>         ("lep_trk_pt"                       , cms3.els_trk_p4()[idx].pt());
         tx->pushbackToBranch<int>           ("lep_charge"                       , cms3.els_charge()[idx]);
         tx->pushbackToBranch<float>         ("lep_etaSC"                        , cms3.els_etaSC()[idx]);
-        tx->pushbackToBranch<float>         ("lep_MVA"                          , getMVAoutput(idx));
+        tx->pushbackToBranch<float>         ("lep_MVA"                          , getMVAoutput(idx, true));
         tx->pushbackToBranch<int>           ("lep_isMediumPOG"                  , 1);
         tx->pushbackToBranch<int>           ("lep_isTightPOG"                   , 1);
         tx->pushbackToBranch<float>         ("lep_r9"                           , cms3.els_r9()[idx]);
@@ -2304,6 +2325,7 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("HLT_SingleIsoEl23", coreTrigger.HLT_SingleIsoEl23);
         tx->setBranch<int>("HLT_SingleIsoMu8", coreTrigger.HLT_SingleIsoMu8);
         tx->setBranch<int>("HLT_SingleIsoMu17", coreTrigger.HLT_SingleIsoMu17);
+        tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight", coreTrigger.HLT_PFMET140_PFMHT140_IDTight);
     }
     else
     {
@@ -2318,6 +2340,7 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("HLT_SingleIsoEl23", 1);
         tx->setBranch<int>("HLT_SingleIsoMu8", 1);
         tx->setBranch<int>("HLT_SingleIsoMu17", 1);
+        tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight", 1);
     }
     if (isWHSUSY())
     {
@@ -2332,6 +2355,7 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("mc_HLT_SingleIsoEl23", 1);
         tx->setBranch<int>("mc_HLT_SingleIsoMu8", 1);
         tx->setBranch<int>("mc_HLT_SingleIsoMu17", 1);
+        tx->setBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight", 1);
     }
     else
     {
@@ -2347,6 +2371,7 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("mc_HLT_SingleIsoEl23", coreTrigger.HLT_SingleIsoEl23);
         tx->setBranch<int>("mc_HLT_SingleIsoMu8", coreTrigger.HLT_SingleIsoMu8);
         tx->setBranch<int>("mc_HLT_SingleIsoMu17", coreTrigger.HLT_SingleIsoMu17);
+        tx->setBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight", coreTrigger.HLT_PFMET140_PFMHT140_IDTight);
     }
     if (cms3.evt_isRealData())
     {
@@ -4145,6 +4170,7 @@ TString babyMaker_v2::process()
     if (cms3.evt_isRealData())                    return "Data";
     if (splitVH())                                return "WHtoWWW";
     if (SampleNiceName().BeginsWith("www_2l_"))         return "WWW";
+    if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))         return "WWW";
     if (SampleNiceName().BeginsWith("www_incl_amcnlo")) return "WWWv2";
     if (SampleNiceName().BeginsWith("data_"))           return "Data";
     if (tx->getBranch<int>("nVlep") == 2 && tx->getBranch<int>("nLlep") == 2)

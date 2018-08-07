@@ -189,18 +189,20 @@ else
                 if [ $INDEX -lt 1 ]; then
                     echo gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}.root --checksum ADLER32
                     gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}.root --checksum ADLER32
+                    GFALCOPYSTATUS=$?
                 else
                     echo gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}_${INDEX}.root --checksum ADLER32
                     gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}_${INDEX}.root --checksum ADLER32
+                    GFALCOPYSTATUS=$?
                 fi
                 INDEX=$((INDEX+1))
             done
         fi
     fi
-    if [ $? -eq 0 ]; then
+    if [ ${GFALCOPYSTATUS} -eq 0 ]; then
         echo "Hadoop Copy Job Success"
     else
-        echo "HAdoop Copy Job Failed"
+        echo "Hadoop Copy Job Failed"
     fi
     date
 fi

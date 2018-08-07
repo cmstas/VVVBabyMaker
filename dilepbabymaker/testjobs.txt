@@ -28,6 +28,7 @@
 
 # Signal samples
 /hadoop/cms/store/group/snt/run2_mc2017//WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_CMS4_V09-04-13/merged_ntuple_1.root                                                          0            2017_CMS4_WWWBaby_WWW 
+/hadoop/cms/store/group/snt/run2_mc2017//VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2_MINIAODSIM_CMS4_V09-04-17/merged_ntuple_1.root                                              0            2017_CMS4_WWWBaby_VHToNonbb
 
 # Data 2016
 /hadoop/cms/store/group/snt/run2_data2017//DoubleEG_Run2017B-31Mar2018-v1_MINIAOD_CMS4_V09-04-12/merged_ntuple_1.root                                                                                                                                    0            2017_CMS4_WWWBaby_DoubleEG_Run2016B_ver1

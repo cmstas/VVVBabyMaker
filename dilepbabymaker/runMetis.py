@@ -57,11 +57,15 @@ job_tag = "POG{}_v3.0.7".format(data_year) # POG ID with after debugging
 job_tag = "OS{}_v3.0.7".format(data_year) # 2016 optimized lepton ID with WWW ntuple including WWW
 job_tag = "TnP{}_v3.0.7".format(data_year) # Getting a TnP sample for measurement
 
-job_tag = "OS{}_v3.0.8".format(data_year) # 2017 MVA IDs are set to the POG provided ones
 job_tag = "FR{}_v3.0.8".format(data_year) # 2017 MVA IDs are set to the POG provided ones
 
 job_tag = "FR{}_v3.0.9".format(data_year) # 2017 MVA IDs are set to the POG provided ones
 job_tag = "TnP{}_v3.0.8".format(data_year) # 2017 MVA IDs are set to the POG provided ones
+job_tag = "OS{}_v3.0.8".format(data_year) # 2017 MVA IDs are set to the POG provided ones
+job_tag = "FR{}_v3.0.10".format(data_year) # 2017 MVA IDs are set to the POG provided ones (deleted)
+
+job_tag = "OS{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was accidentally set to tight :(
+job_tag = "FR{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was accidentally set to tight :(
 
 ###################################################################################################################
 ###################################################################################################################
@@ -101,6 +105,8 @@ def main():
             samples_to_run = dataset.tnp_samples_to_run_2017
         elif job_tag.find("FR") != -1:
             samples_to_run = dataset.fr_samples_to_run_2017
+        elif job_tag.find("All") != -1:
+            samples_to_run = dataset.all_samples_to_run_2017
         else:
             samples_to_run = dataset.samples_to_run_2017
 
@@ -205,7 +211,7 @@ def main():
         StatsParser(data=total_summary, webdir=metis_dashboard_path).do()
 
         # Print msummary table so I don't have to load up website
-        os.system("msummary -p MAKER | tee summary.txt")
+        os.system("msummary -r | tee summary.txt")
         os.system("chmod -R 755 {}".format(metis_dashboard_path))
 
         # If all done exit the loop
