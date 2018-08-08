@@ -1381,7 +1381,6 @@ void babyMaker_v2::ProcessMuons()
         case kPOGBaby: ProcessPOGMuons();     return; break;
         default: return;
     }
-    coreMuon.process(isVetoMuon);
 }
 
 //##############################################################################################################
