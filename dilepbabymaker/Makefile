@@ -20,7 +20,7 @@ endif
 #	ROOFITINCLUDE = $(shell scramv1 tool info roofitcore | grep INCLUDE | sed 's/^INCLUDE=/-I/')
 #endif
 
-PACKAGES = rooutil coreutil
+PACKAGES = coreutil
 
 CC = g++
 CMSROOT = ./

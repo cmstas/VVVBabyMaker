@@ -67,6 +67,8 @@ job_tag = "FR{}_v3.0.10".format(data_year) # 2017 MVA IDs are set to the POG pro
 job_tag = "OS{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was accidentally set to tight :(
 job_tag = "FR{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was accidentally set to tight :(
 
+job_tag = "WWW{}_v4.0.0".format(data_year) # Re-visiting 2017 analysis
+
 ###################################################################################################################
 ###################################################################################################################
 # Below are the Metis submission code that users do not have to care about.
@@ -99,14 +101,22 @@ def main():
         samples_short_name = dataset.samples_short_name_2017
         dslocs = dataset.dslocscms4_2016
     elif data_year == "2017":
-        samples_short_name = dataset.samples_short_name_2017
-        dslocs = dataset.dslocscms4_2017
+        if "WWW" in job_tag:
+            samples_short_name = dataset.samples_short_name_2017_94x
+        else:
+            samples_short_name = dataset.samples_short_name_2017
+        if "WWW" in job_tag:
+            dslocs = dataset.dslocscms4_2017_94x
+        else:
+            dslocs = dataset.dslocscms4_2017
         if job_tag.find("TnP") != -1:
             samples_to_run = dataset.tnp_samples_to_run_2017
         elif job_tag.find("FR") != -1:
             samples_to_run = dataset.fr_samples_to_run_2017
         elif job_tag.find("All") != -1:
             samples_to_run = dataset.all_samples_to_run_2017
+        elif "WWW" in job_tag:
+            samples_to_run = dataset.samples_to_run_2017_94x
         else:
             samples_to_run = dataset.samples_to_run_2017
 
@@ -134,7 +144,7 @@ def main():
 
     # Create tarball
     os.chdir(main_dir)
-    os.system("tar -chzf {} localsetup.sh processBaby *.so *.pcm rooutil/lib*.so coreutil/data coreutil/lib*.so *.txt btagsf MVAinput jetCorrections leptonSFs puWeight2016.root pileup_jul21_nominalUpDown.root ../CORE/Tools/ mergeHadoopFiles.C xsec_susy_13tev.root roccor.2017.v0/*.txt".format(tar_gz_path))
+    os.system("tar -chzf {} localsetup.sh processBaby *.so *.pcm coreutil/data coreutil/lib*.so *.txt btagsf MVAinput jetCorrections leptonSFs puWeight2016.root pileup_jul21_nominalUpDown.root ../CORE/Tools/ mergeHadoopFiles.C xsec_susy_13tev.root roccor.2017.v0/*.txt".format(tar_gz_path))
 
     # Change directory to metis
     os.chdir(metis_path)
