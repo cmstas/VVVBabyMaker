@@ -6,7 +6,7 @@
 using namespace std;
 
 //##############################################################################################################
-babyMaker_v2::babyMaker_v2() : coreBtagSFFastSim(true), babymode(kWWWBaby), rc("roccor.2017.v0/RoccoR2017v0.txt")
+babyMaker_v2::babyMaker_v2() : coreBtagSFFastSim(true), babymode(kWWWBaby), eventlist("eventlist.txt")
 {
 }
 
@@ -214,6 +214,9 @@ void babyMaker_v2::AddWWWBabyOutput()
 
     tx->createBranch<int>("pass_duplicate_ee_em_mm");
     tx->createBranch<int>("pass_duplicate_mm_em_ee");
+
+    tx->createBranch<int>("is2016");
+    tx->createBranch<int>("is2017");
 
     // Until something weird about 2016 is resolved
     tx->createBranch<int>("HLT_MuEG_2016");
@@ -979,14 +982,14 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.mu_reliso_veto      = 0.4;
         gconf.mu_reliso_fo        = 0.4;
         gconf.mu_reliso_tight     = 0.03;
-        gconf.mu_addlep_veto      = false;
+        gconf.mu_addlep_veto      = true; // false is what i think it should be at least when we get to do reanalysis
         gconf.mu_addlep_fo        = true;
         gconf.mu_addlep_tight     = true;
         // Same-sign electrons
         gconf.el_reliso_veto      = 0.4;
         gconf.el_reliso_fo        = 0.4;
         gconf.el_reliso_tight     = 0.03;
-        gconf.el_addlep_veto      = false;
+        gconf.el_addlep_veto      = true; // false is what i think it should be at least when we get to do reanalysis
         gconf.el_addlep_fo        = true;
         gconf.el_addlep_tight     = true;
         // Three-lepton muons (Shares same veto as same-sign)
@@ -1315,6 +1318,9 @@ void babyMaker_v2::FillWWWBaby()
     // Fill baby ntuple branches for lbnt lepton for easy fake rate application
     FillLbntLeptons();
 
+    // Fill year dependent info
+    FillYearInfo();
+
     // Fill TTree (NOTE: also clears internal variables)
     FillTTree();
 }
@@ -1611,6 +1617,35 @@ bool babyMaker_v2::PassPresel_v2()
 //##############################################################################################################
 bool babyMaker_v2::PassPresel_v3()
 {
+
+    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    {
+        std::cout << std::endl;
+        std::cout << "This event is in the txt" << std::endl;
+        std::cout <<  " coreElectron.index.size(): " << coreElectron.index.size() <<  " coreMuon.index.size(): " << coreMuon.index.size() <<  std::endl;
+        std::cout <<  " coreElectron.index.size()+coreMuon.index.size(): " << coreElectron.index.size()+coreMuon.index.size() <<  std::endl;
+        std::cout <<  " cms3.evt_run(): " << cms3.evt_run() <<  " cms3.evt_lumiBlock(): " << cms3.evt_lumiBlock() <<  " cms3.evt_event(): " << cms3.evt_event() <<  std::endl;
+        for (auto& iel : coreElectron.index)
+        {
+            std::cout <<  " passElectronSelection_VVV(iel,VVV_FO_3L): " << passElectronSelection_VVV(iel,VVV_FO_3L) <<  " passElectronSelection_VVV(iel,VVV_TIGHT_3L): " << passElectronSelection_VVV(iel,VVV_TIGHT_3L) <<  std::endl;
+            std::cout <<  " passElectronSelection_VVV(iel,VVV_cutbased_3l_fo_v4): " << passElectronSelection_VVV(iel,VVV_cutbased_3l_fo_v4) <<  " passElectronSelection_VVV(iel,VVV_cutbased_3l_tight_v4): " << passElectronSelection_VVV(iel,VVV_cutbased_3l_tight_v4) <<  std::endl;
+            std::cout <<  " fabs(cms3.els_etaSC().at(iel)): " << fabs(cms3.els_etaSC().at(iel)) <<  std::endl;
+            std::cout <<  " fabs(cms3.els_dxyPV().at(iel)): " << fabs(cms3.els_dxyPV().at(iel)) <<  std::endl;
+            std::cout <<  " fabs(cms3.els_dzPV().at(iel)): " << fabs(cms3.els_dzPV().at(iel)) <<  std::endl;
+            std::cout <<  " getMVAoutput(iel): " << getMVAoutput(iel) <<  std::endl;
+            std::cout <<  " eleRelIso03EA(iel,2,false): " << eleRelIso03EA(iel,2,false) <<  std::endl;
+            std::cout <<  " eleRelIso03EA(iel,2,true): " << eleRelIso03EA(iel,2,true) <<  std::endl;
+            std::cout <<  " fabs(cms3.els_ip3d()[iel]): " << fabs(cms3.els_ip3d()[iel]) <<  std::endl;
+            std::cout <<  " threeChargeAgree(iel): " << threeChargeAgree(iel) <<  std::endl;
+            std::cout <<  " isTriggerSafenoIso_v1(iel): " << isTriggerSafenoIso_v1(iel) <<  std::endl;
+            std::cout <<  " isTriggerSafe_v1(iel): " << isTriggerSafe_v1(iel) <<  std::endl;
+        }
+        for (auto& imu : coreMuon.index)
+        {
+            std::cout <<  " passMuonSelection_VVV(imu,VVV_FO_3L): " << passMuonSelection_VVV(imu,VVV_FO_3L) <<  " passMuonSelection_VVV(imu,VVV_TIGHT_3L): " << passMuonSelection_VVV(imu,VVV_TIGHT_3L) <<  std::endl;
+        }
+    }
+
     // Select 2 SS lepton events or 3 or more lepton events
     vector<int> el_idx = coreElectron.index;
     vector<int> mu_idx = coreMuon.index;
@@ -1867,6 +1902,7 @@ void babyMaker_v2::FillEventInfo()
         else
             xsec = coreDatasetInfo.getXsec();
 
+        //==================OUTDATED OUTDATED OUTDATED OUTDATED======================================================================================
         // CMS3 www_2l_mia has scale1fb = 1/91900 * 1000. or 1/164800 * 1000.
         // CMS4 WWW samples are set to "SampleNiceName() == "www_2l_", so below snippet will be skipped
         /* deprecated */ //if (SampleNiceName().BeginsWith("www_2l_mia_cms3")     ) scale1fb *= 0.053842752 * 1.14082 *  91900. / (91900. + 164800.);
@@ -1878,13 +1914,24 @@ void babyMaker_v2::FillEventInfo()
         // BR (WWW->2l, l=e,mu,tau)) = 3 * (0.3258^2 * (1-0.3258)) + 0.3258^3 = 0.249272
         // sigma (pp -> WWW) * BR(WWW->2l) = 53.842752
         //
-
+        //
         // 216/208.6 fb as the scale1fb data store is 208.6 in CORE.
         // But do this only for 2017 production.
         // This is because the 2016 production did not have this factor applied but rather applied at the looper level.
         // So for posterity (to produces same results with the tagged code) do not apply this for 2016
-        if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))
-            scale1fb *= 1.035475;
+        //if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))
+        //    scale1fb *= 1.035475;
+        //==================OUTDATED OUTDATED OUTDATED OUTDATED======================================================================================
+
+        // Sigma of WWW process for non-WH WWW process = 0.216 pb
+        // BR (WWW->2l, l=e,mu,tau)) = 3 * (0.3258^2 * (1-0.3258)) + 0.3258^3 = 0.249272
+        // Sigma * BR = 0.053842752
+        // /PrivateWWW/www-cms4-Private80X-v1/MINIAODSIM        CMS4_V00-00-02_2017Sep27    92200      80870   0.053842752  0.0002439922782
+        // /PrivateWWW/wwwext-cms4-Private80X-v1/MINIAODSIM     CMS4_V00-00-02_2017Sep27    159500     139804  0.053842752  0.0002439922782
+        // Total events 80870 + 139804 = 220674
+        // Per event weight = 0.053842752 * 1000 / 220674 = 0.0002439922782
+
+
 
         tx->setBranch<float>("evt_scale1fb", scale1fb);
         tx->setBranch<float>("xsec_br", xsec);
@@ -2814,6 +2861,13 @@ void babyMaker_v2::FillLbntLeptons()
     }
 
     return;
+}
+
+//##############################################################################################################
+void babyMaker_v2::FillYearInfo()
+{
+    tx->setBranch<int>("is2016", (coreSample.is2016(looper.getCurrentFileName())));
+    tx->setBranch<int>("is2017", (coreSample.is2017(looper.getCurrentFileName())));
 }
 
 //##############################################################################################################

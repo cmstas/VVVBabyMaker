@@ -86,7 +86,6 @@
 
 // Rochester correction
 #include "TRandom2.h"
-#include "roccor.2017.v0/RoccoR.h"
 
 //// Version 4 (2016 final version analysis circa 2018 July)
 //#define VVV_TIGHT_SS VVV_cutbased_tight_v4
@@ -184,9 +183,8 @@ private:
     // Job
     int job_index;
 
-    // Rochester correction
-    RoccoR rc;
-    TRandom2 rnd;
+    //
+    RooUtil::EventList eventlist;
 
 public:
 
@@ -278,6 +276,7 @@ public:
     void FillSummaryVariables();
     void FillMuonSmearWeight();
     void FillTTree();
+    void FillYearInfo();
 
     void FillTnPMuons();
     void FillTnPElectrons();

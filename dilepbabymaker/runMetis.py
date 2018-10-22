@@ -67,7 +67,8 @@ job_tag = "FR{}_v3.0.10".format(data_year) # 2017 MVA IDs are set to the POG pro
 job_tag = "OS{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was accidentally set to tight :(
 job_tag = "FR{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was accidentally set to tight :(
 
-job_tag = "WWW{}_v4.0.0".format(data_year) # Re-visiting 2017 analysis
+job_tag = "WWW{}_v4.0.0".format(data_year) # Re-visiting 2017 analysis (Failed campaign)
+job_tag = "WWW{}_v4.0.1".format(data_year) # Re-visiting 2017 analysis
 
 ###################################################################################################################
 ###################################################################################################################
@@ -221,7 +222,7 @@ def main():
         StatsParser(data=total_summary, webdir=metis_dashboard_path).do()
 
         # Print msummary table so I don't have to load up website
-        os.system("msummary -r | tee summary.txt")
+        os.system("msummary -r -p MAKER | tee summary.txt")
         os.system("chmod -R 755 {}".format(metis_dashboard_path))
 
         # If all done exit the loop
