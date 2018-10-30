@@ -69,6 +69,20 @@ job_tag = "FR{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was acc
 
 job_tag = "WWW{}_v4.0.0".format(data_year) # Re-visiting 2017 analysis (Failed campaign)
 job_tag = "WWW{}_v4.0.1".format(data_year) # Re-visiting 2017 analysis
+job_tag = "WWW{}_v4.0.2".format(data_year) # Re-visiting 2017 analysis
+job_tag = "WWW{}_v4.0.3".format(data_year) # Re-visiting 2017 analysis (bad event categorization) delete later
+job_tag = "WWW{}_v4.0.4".format(data_year) # Re-visiting 2017 analysis (bad event categorization) delete later
+job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+
+data_year = "2016"
+job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+
+data_year = "2017"
+job_tag = "FR{}_v3.0.11".format(data_year) # HLT prescale stored
+job_tag = "FR{}_v3.0.12".format(data_year) # HLT trigger fixed for 2017
+job_tag = "FR{}_v3.0.13".format(data_year) # Added non-iso triggers
+job_tag = "FR{}_v3.0.14".format(data_year) # Testing whether the fake rate error is coming from the MVA ID (i.e. changed electorn ids to cut-based)
+job_tag = "FR{}_v3.0.15".format(data_year) # Just DoubleEG without any selection
 
 ###################################################################################################################
 ###################################################################################################################
@@ -99,27 +113,19 @@ def main():
 
     if data_year == "2016":
         samples_to_run = dataset.samples_to_run_2016
-        samples_short_name = dataset.samples_short_name_2017
+        samples_short_name = dataset.samples_short_name_2016
         dslocs = dataset.dslocscms4_2016
     elif data_year == "2017":
-        if "WWW" in job_tag:
-            samples_short_name = dataset.samples_short_name_2017_94x
-        else:
-            samples_short_name = dataset.samples_short_name_2017
-        if "WWW" in job_tag:
-            dslocs = dataset.dslocscms4_2017_94x
-        else:
-            dslocs = dataset.dslocscms4_2017
+        samples_short_name = dataset.samples_short_name_2017_94x
+        dslocs = dataset.dslocscms4_2017_94x
+        samples_to_run = dataset.samples_to_run_2017_94x
+
         if job_tag.find("TnP") != -1:
             samples_to_run = dataset.tnp_samples_to_run_2017
         elif job_tag.find("FR") != -1:
-            samples_to_run = dataset.fr_samples_to_run_2017
+            samples_to_run = dataset.fr_samples_to_run_2017_94x
         elif job_tag.find("All") != -1:
             samples_to_run = dataset.all_samples_to_run_2017
-        elif "WWW" in job_tag:
-            samples_to_run = dataset.samples_to_run_2017_94x
-        else:
-            samples_to_run = dataset.samples_to_run_2017
 
     # file/dir paths
     main_dir             = os.path.dirname(os.path.abspath(__file__))
@@ -185,37 +191,44 @@ def main():
                     )
 
             merge_sample_name = "/MERGE_"+sample[1:]
-            merge_task = CondorTask(
-                    sample                 = DirectorySample(dataset=merge_sample_name, location=maker_task.get_outputdir()),
-                    # open_dataset         = True, flush = True,
-                    executable             = merge_exec_path,
-                    tarfile                = tar_gz_path,
-                    files_per_output       = 100000,
-                    output_dir             = maker_task.get_outputdir() + "/merged",
-                    output_name            = samples_short_name[sample] + ".root",
-                    condor_submit_params   = {"sites":"T2_US_UCSD"},
-                    output_is_tree         = True,
-                    # check_expectedevents = True,
-                    tag                    = job_tag,
-                    cmssw_version          = "CMSSW_9_2_0",
-                    scram_arch             = "slc6_amd64_gcc530",
-                    #no_load_from_backup    = True,
-                    )
 
             # process the job (either submits, checks for resubmit, or finishes etc.)
             maker_task.process()
 
             if maker_task.complete():
-                merge_task.reset_io_mapping()
-                merge_task.update_mapping()
-                merge_task.process()
+                if "WWW" in job_tag:
+                    merge_task = CondorTask(
+                            sample                 = DirectorySample(dataset=merge_sample_name, location=maker_task.get_outputdir()),
+                            # open_dataset         = True, flush = True,
+                            executable             = merge_exec_path,
+                            tarfile                = tar_gz_path,
+                            files_per_output       = 100000,
+                            output_dir             = maker_task.get_outputdir() + "/merged",
+                            output_name            = samples_short_name[sample] + ".root",
+                            condor_submit_params   = {"sites":"T2_US_UCSD"},
+                            output_is_tree         = True,
+                            # check_expectedevents = True,
+                            tag                    = job_tag,
+                            cmssw_version          = "CMSSW_9_2_0",
+                            scram_arch             = "slc6_amd64_gcc530",
+                            #no_load_from_backup    = True,
+                            )
+                    merge_task.reset_io_mapping()
+                    merge_task.update_mapping()
+                    merge_task.process()
+                else:
+                    pass
 
             # save some information for the dashboard
             total_summary[maker_task.get_sample().get_datasetname()] = maker_task.get_task_summary()
-            total_summary[merge_task.get_sample().get_datasetname()] = merge_task.get_task_summary()
+            if "WWW" in job_tag:
+                total_summary[merge_task.get_sample().get_datasetname()] = merge_task.get_task_summary()
 
             # Aggregate whether all tasks are complete
-            all_tasks_complete = all_tasks_complete and maker_task.complete() and merge_task.complete()
+            if "WWW" in job_tag:
+                all_tasks_complete = all_tasks_complete and maker_task.complete() and merge_task.complete()
+            else:
+                all_tasks_complete = all_tasks_complete and maker_task.complete()
 
 
         # parse the total summary and write out the dashboard

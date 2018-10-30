@@ -38,6 +38,7 @@ int main(int argc, char **argv)
     if (argc >= 6)
         verbose = true;
 
+    std::cout << "running babymaker babymode: " << babymode << std::endl;
     std::cout << "set max number of events to: " << max_events << std::endl;
     std::cout << "running on files: " << infile.Data() << std::endl;
 

@@ -193,6 +193,8 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("HLT_DoubleEl_DZ");
     tx->createBranch<int>("HLT_DoubleEl_DZ_2");
     tx->createBranch<int>("HLT_MuEG");
+    tx->createBranch<int>("HLT_SingleEl8");
+    tx->createBranch<int>("HLT_SingleEl17");
     tx->createBranch<int>("HLT_SingleIsoEl8");
     tx->createBranch<int>("HLT_SingleIsoEl17");
     tx->createBranch<int>("HLT_SingleIsoEl23");
@@ -205,6 +207,8 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("mc_HLT_DoubleEl_DZ");
     tx->createBranch<int>("mc_HLT_DoubleEl_DZ_2");
     tx->createBranch<int>("mc_HLT_MuEG");
+    tx->createBranch<int>("mc_HLT_SingleEl8");
+    tx->createBranch<int>("mc_HLT_SingleEl17");
     tx->createBranch<int>("mc_HLT_SingleIsoEl8");
     tx->createBranch<int>("mc_HLT_SingleIsoEl17");
     tx->createBranch<int>("mc_HLT_SingleIsoEl23");
@@ -1655,6 +1659,8 @@ bool babyMaker_v2::PassPresel_v3()
     // Also, require that it is total charge == 1
     if (el_idx.size() + mu_idx.size() > 2)
     {
+        if (el_idx.size() + mu_idx.size() != 3)
+            return false;
         int nloose = 0;
         int ntight = 0;
         int chargesum = 0;
@@ -1751,26 +1757,55 @@ bool babyMaker_v2::PassFRPreselection()
         // Check if data,
         if (SampleNiceName().BeginsWith("data"))
         {
-            // If data then check the triggers
-            // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
-            // I don't wish to run coreTrigger.process() for all events
-            int HLT_SingleIsoEl8;
-            int HLT_SingleIsoEl17;
-            int HLT_SingleIsoEl23;
-            int HLT_SingleIsoMu8;
-            int HLT_SingleIsoMu17;
-            setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
-            setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl17 );
-            setHLTBranch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl23 );
-            setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
-            setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
-            if (HLT_SingleIsoEl17 > 0) return true;
-            if (HLT_SingleIsoEl23 > 0) return true;
-            if (HLT_SingleIsoEl8 > 0) return true;
-            if (HLT_SingleIsoMu17 > 0) return true;
-            if (HLT_SingleIsoMu8 > 0) return true;
-            // If it reaches this point, then it means that none of the trigger passed
-            return false;
+            if (coreSample.is2016(looper.getCurrentFileName()))
+            {
+                // If data then check the triggers
+                // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
+                // I don't wish to run coreTrigger.process() for all events
+                int HLT_SingleIsoEl8;
+                int HLT_SingleIsoEl17;
+                int HLT_SingleIsoEl23;
+                int HLT_SingleIsoMu8;
+                int HLT_SingleIsoMu17;
+                setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
+                setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl17 );
+                setHLTBranch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl23 );
+                setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
+                setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
+                if (HLT_SingleIsoEl17 > 0) return true;
+                if (HLT_SingleIsoEl23 > 0) return true;
+                if (HLT_SingleIsoEl8 > 0) return true;
+                if (HLT_SingleIsoMu17 > 0) return true;
+                if (HLT_SingleIsoMu8 > 0) return true;
+                // If it reaches this point, then it means that none of the trigger passed
+                return false;
+            }
+            else if (coreSample.is2017(looper.getCurrentFileName()))
+            {
+                // If data then check the triggers
+                // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
+                // I don't wish to run coreTrigger.process() for all events
+                int HLT_SingleEl8;
+                int HLT_SingleEl17;
+                int HLT_SingleIsoEl8;
+                int HLT_SingleIsoEl23;
+                int HLT_SingleIsoMu8;
+                int HLT_SingleIsoMu17;
+                setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v"       ,  true, HLT_SingleEl8 );
+                setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v"      ,  true, HLT_SingleEl17 );
+                setHLTBranch("HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
+                setHLTBranch("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v",  true, HLT_SingleIsoEl23 );
+                setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
+                setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
+                if (HLT_SingleEl8 > 0) return true;
+                if (HLT_SingleEl17 > 0) return true;
+                if (HLT_SingleIsoEl23 > 0) return true;
+                if (HLT_SingleIsoEl8 > 0) return true;
+                if (HLT_SingleIsoMu17 > 0) return true;
+                if (HLT_SingleIsoMu8 > 0) return true;
+                // If it reaches this point, then it means that none of the trigger passed
+                return false;
+            }
         }
         bool isqcd   = SampleNiceName().BeginsWith("qcd_");
         bool isttbar = SampleNiceName().BeginsWith("ttbar_");
@@ -2366,11 +2401,13 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("HLT_DoubleEl_DZ_2", coreTrigger.HLT_DoubleEl_DZ_2);
         tx->setBranch<int>("HLT_MuEG", coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_MuEG_2017 : coreTrigger.HLT_MuEG);
         tx->setBranch<int>("HLT_MuEG_2016", coreTrigger.HLT_MuEG);
-        tx->setBranch<int>("HLT_SingleIsoEl8", coreTrigger.HLT_SingleIsoEl8);
-        tx->setBranch<int>("HLT_SingleIsoEl17", coreTrigger.HLT_SingleIsoEl17);
-        tx->setBranch<int>("HLT_SingleIsoEl23", coreTrigger.HLT_SingleIsoEl23);
-        tx->setBranch<int>("HLT_SingleIsoMu8", coreTrigger.HLT_SingleIsoMu8);
-        tx->setBranch<int>("HLT_SingleIsoMu17", coreTrigger.HLT_SingleIsoMu17);
+        tx->setBranch<int>("HLT_SingleEl8"  , coreTrigger.HLT_SingleEl8_2017 ); 
+        tx->setBranch<int>("HLT_SingleEl17" , coreTrigger.HLT_SingleEl17_2017 ); 
+        tx->setBranch<int>("HLT_SingleIsoEl8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl8_2017  : coreTrigger.HLT_SingleIsoEl8  ); 
+        tx->setBranch<int>("HLT_SingleIsoEl17" , coreTrigger.HLT_SingleIsoEl17 ); 
+        tx->setBranch<int>("HLT_SingleIsoEl23" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl23_2017 : coreTrigger.HLT_SingleIsoEl23 ); 
+        tx->setBranch<int>("HLT_SingleIsoMu8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu8_2017  : coreTrigger.HLT_SingleIsoMu8  ); 
+        tx->setBranch<int>("HLT_SingleIsoMu17" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu17_2017 : coreTrigger.HLT_SingleIsoMu17 ); 
         tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight", coreTrigger.HLT_PFMET140_PFMHT140_IDTight);
     }
     else
@@ -2412,11 +2449,13 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("mc_HLT_DoubleEl_DZ_2", coreTrigger.HLT_DoubleEl_DZ_2);
         tx->setBranch<int>("mc_HLT_MuEG", coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_MuEG_2017 : coreTrigger.HLT_MuEG);
         tx->setBranch<int>("mc_HLT_MuEG_2016", coreTrigger.HLT_MuEG);
-        tx->setBranch<int>("mc_HLT_SingleIsoEl8", coreTrigger.HLT_SingleIsoEl8);
-        tx->setBranch<int>("mc_HLT_SingleIsoEl17", coreTrigger.HLT_SingleIsoEl17);
-        tx->setBranch<int>("mc_HLT_SingleIsoEl23", coreTrigger.HLT_SingleIsoEl23);
-        tx->setBranch<int>("mc_HLT_SingleIsoMu8", coreTrigger.HLT_SingleIsoMu8);
-        tx->setBranch<int>("mc_HLT_SingleIsoMu17", coreTrigger.HLT_SingleIsoMu17);
+        tx->setBranch<int>("mc_HLT_SingleEl8"  , coreTrigger.HLT_SingleEl8_2017 ); 
+        tx->setBranch<int>("mc_HLT_SingleEl17" , coreTrigger.HLT_SingleEl17_2017 ); 
+        tx->setBranch<int>("mc_HLT_SingleIsoEl8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl8_2017  : coreTrigger.HLT_SingleIsoEl8  ); 
+        tx->setBranch<int>("mc_HLT_SingleIsoEl17" , coreTrigger.HLT_SingleIsoEl17 ); 
+        tx->setBranch<int>("mc_HLT_SingleIsoEl23" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl23_2017 : coreTrigger.HLT_SingleIsoEl23 ); 
+        tx->setBranch<int>("mc_HLT_SingleIsoMu8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu8_2017  : coreTrigger.HLT_SingleIsoMu8  ); 
+        tx->setBranch<int>("mc_HLT_SingleIsoMu17" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu17_2017 : coreTrigger.HLT_SingleIsoMu17 ); 
         tx->setBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight", coreTrigger.HLT_PFMET140_PFMHT140_IDTight);
     }
     if (cms3.evt_isRealData())
@@ -3408,9 +3447,13 @@ int babyMaker_v2::nSFOS()
 {
     int nSFOS = 0;
     for (auto& pdgid0 : tx->getBranch<vector<int>>("lep_pdgId"))
+    {
         for (auto& pdgid1 : tx->getBranch<vector<int>>("lep_pdgId"))
+        {
             if (pdgid0 == -pdgid1)
                 nSFOS++;
+        }
+    }
     return nSFOS/2; // Because the nested for loop double counts
 }
 
@@ -4069,7 +4112,7 @@ float babyMaker_v2::get0SFOSMll()
     else if (pdgid1 == pdgid2)
         return (lep_p4[1] + lep_p4[2]).mass();
 
-    cout << "Warning: Shouldn't be here if function call are at the right places." << endl;
+    cout << "Warning: get0SFOSMll: Shouldn't be here if function call are at the right places." << endl;
 
     return -999;
 }
@@ -4110,7 +4153,26 @@ float babyMaker_v2::get1SFOSMll()
     else if (pdgid1 == -pdgid2)
         return (lep_p4[1] + lep_p4[2]).mass();
 
-    cout << "Warning: Shouldn't be here if function call are at the right places." << endl;
+    cout << "Warning: get1SFOSMll() Shouldn't be here if function call are at the right places." << endl;
+    std::cout <<  " pdgid0: " << pdgid0 <<  " pdgid1: " << pdgid1 <<  " pdgid2: " << pdgid2 <<  std::endl;
+    std::cout <<  " nSFOS(): " << nSFOS() <<  std::endl;
+
+    for (auto& pdgid0 : tx->getBranch<vector<int>>("lep_pdgId"))
+    {
+        std::cout <<  " pdgid0: " << pdgid0 <<  std::endl;
+    }
+
+    int nSFOS = 0;
+    for (auto& pdgid0 : tx->getBranch<vector<int>>("lep_pdgId"))
+    {
+        for (auto& pdgid1 : tx->getBranch<vector<int>>("lep_pdgId"))
+        {
+            std::cout <<  " pdgid0: " << pdgid0 <<  " pdgid1: " << pdgid1 <<  std::endl;
+            if (pdgid0 == -pdgid1)
+                nSFOS++;
+        }
+    }
+    std::cout <<  " nSFOS: " << nSFOS <<  " nSFOS/2: " << nSFOS/2 <<  std::endl;
 
     return -999;
 }
@@ -4132,7 +4194,7 @@ float babyMaker_v2::get2SFOSMll0()
     else if (pdgid1 == -pdgid2)
         return (lep_p4[1] + lep_p4[2]).mass();
 
-    cout << "Warning: Shouldn't be here if function call are at the right places." << endl;
+    cout << "Warning: get2SFOSMll0() Shouldn't be here if function call are at the right places." << endl;
 
     return -999;
 }
@@ -4154,7 +4216,7 @@ float babyMaker_v2::get2SFOSMll1()
     else if (pdgid1 == -pdgid0)
         return (lep_p4[0] + lep_p4[1]).mass();
 
-    cout << "Warning: Shouldn't be here if function call are at the right places." << endl;
+    cout << "Warning: get2SFOSMll1() Shouldn't be here if function call are at the right places." << endl;
 
     return -999;
 }
@@ -4220,33 +4282,55 @@ tuple<bool, int, int> babyMaker_v2::isSSCR()
 //##############################################################################################################
 TString babyMaker_v2::process()
 {
-    if (cms3.evt_isRealData())                    return "Data";
-    if (splitVH())                                return "WHtoWWW";
-    if (SampleNiceName().BeginsWith("www_2l_"))         return "WWW";
-    if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))         return "WWW";
-    if (SampleNiceName().BeginsWith("www_incl_amcnlo")) return "WWWv2";
-    if (SampleNiceName().BeginsWith("data_"))           return "Data";
-    if (tx->getBranch<int>("nVlep") == 2 && tx->getBranch<int>("nLlep") == 2)
+    if (coreSample.is2016(looper.getCurrentFileName()))
     {
-        if (tx->getBranch<int>("nLlep") < 2) return "not2l";
+        if (cms3.evt_isRealData())                    return "Data";
+        if (splitVH())                                return "WHtoWWW";
+        if (SampleNiceName().BeginsWith("www_2l_"))         return "WWW";
+        if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))         return "WWW";
+        if (SampleNiceName().BeginsWith("www_incl_amcnlo")) return "WWWv2";
+        if (SampleNiceName().BeginsWith("data_"))           return "Data";
+        if (tx->getBranch<int>("nVlep") == 2 && tx->getBranch<int>("nLlep") == 2)
+        {
+            if (tx->getBranch<int>("nLlep") < 2) return "not2l";
+            int gentype = gentype_v2();
+            if      (gentype == 0) return "trueSS";
+            else if (gentype == 2) return "chargeflips";
+            else if (gentype == 3) return "SSLL";
+            else if (gentype == 4) return "fakes";
+            else if (gentype == 5) return "photonfakes";
+            else                   return "others";
+        }
+        //this is 3l
+        if (tx->getBranch<int>("nLlep") < 3) return "not3l";
         int gentype = gentype_v2();
-        if      (gentype == 0) return "trueSS";
+        if      (gentype == 0) return "trueWWW";
+        else if (gentype == 1) return "true3L";
         else if (gentype == 2) return "chargeflips";
-        else if (gentype == 3) return "SSLL";
+        else if (gentype == 3) return "3lLL";
         else if (gentype == 4) return "fakes";
         else if (gentype == 5) return "photonfakes";
         else                   return "others";
     }
-    //this is 3l
-    if (tx->getBranch<int>("nLlep") < 3) return "not3l";
-    int gentype = gentype_v2();
-    if      (gentype == 0) return "trueWWW";
-    else if (gentype == 1) return "true3L";
-    else if (gentype == 2) return "chargeflips";
-    else if (gentype == 3) return "3lLL";
-    else if (gentype == 4) return "fakes";
-    else if (gentype == 5) return "photonfakes";
-    else                   return "others";
+    else if (coreSample.is2017(looper.getCurrentFileName()))
+    {
+        if (cms3.evt_isRealData())
+            return "Data";
+
+        if (splitVH())
+            return "WHtoWWW";
+
+        if (SampleNiceName().BeginsWith("www_2l_"))
+            return "WWW";
+
+        if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))
+            return "WWW";
+
+        if (SampleNiceName().BeginsWith("data_"))
+            return "Data";
+
+        return gentype_v3();
+    }
 }
 
 //##############################################################################################################
@@ -5382,6 +5466,8 @@ bool babyMaker_v2::filterWHMass(float chimass, float lspmass)
 //##############################################################################################################
 int babyMaker_v2::gentype_v2()
 {
+//    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+//        coreGenPart.printParticleOfInterest();
     bool gammafake = false;
     bool jetfake   = false;
     unsigned int ngenlep = tx->getBranch<int>("ngenLepFromTau") + tx->getBranch<int>("ngenLep");
@@ -5453,6 +5539,130 @@ int babyMaker_v2::gentype_v2()
         cout << "This event was not classified - 3 lepton event - v2" << endl;
         return 0;
     }
+}
+
+//##############################################################################################################
+TString babyMaker_v2::gentype_v3()
+{
+
+    // Mainly used for 2017 analysis (maybe apply for 2016 for clealiness?)
+    // Goal: classify events by the following categories
+
+    // lep_motherIdSS convention (defined in CORE/SSSelections.cc)
+    //  2 = charge flip    good lepton
+    //  1 = charge correct good lepton (perfect)
+    //  0 = unmatched
+    // -1 = fake from bottom
+    // -2 = fake from charm
+    // -3 = fake from photon (I think?)
+    // -4 = fkae from light
+
+//    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+//    {
+//        coreGenPart.printParticleOfInterest();
+//        std::cout <<  " tx->getBranch<vector<LV>>('lep_p4')[0].pt(): " << tx->getBranch<vector<LV>>("lep_p4")[0].pt() <<  " tx->getBranch<vector<LV>>('lep_p4')[1].pt(): " << tx->getBranch<vector<LV>>("lep_p4")[1].pt() <<  std::endl;
+//        std::cout <<  " tx->getBranch<vector<LV>>('lep_p4')[0].phi(): " << tx->getBranch<vector<LV>>("lep_p4")[0].phi() <<  " tx->getBranch<vector<LV>>('lep_p4')[1].phi(): " << tx->getBranch<vector<LV>>("lep_p4")[1].phi() <<  std::endl;
+//        std::cout <<  " tx->getBranch<vector<int>>('lep_motherIdSS')[0]: " << tx->getBranch<vector<int>>("lep_motherIdSS")[0] <<  " tx->getBranch<vector<int>>('lep_motherIdSS')[1]: " << tx->getBranch<vector<int>>("lep_motherIdSS")[1] <<  std::endl;
+//        std::cout <<  " tx->getBranch<vector<int>>('lep_isFromW')[0]: " << tx->getBranch<vector<int>>("lep_isFromW")[0] <<  " tx->getBranch<vector<int>>('lep_isFromW')[1]: " << tx->getBranch<vector<int>>("lep_isFromW")[1] <<  std::endl;
+//        std::cout <<  " tx->getBranch<vector<int>>('lep_isFromZ')[0]: " << tx->getBranch<vector<int>>("lep_isFromZ")[0] <<  " tx->getBranch<vector<int>>('lep_isFromZ')[1]: " << tx->getBranch<vector<int>>("lep_isFromZ")[1] <<  std::endl;
+//        if (tx->getBranch<int>("nLlep") >= 3)
+//        {
+//            std::cout <<  " tx->getBranch<vector<LV>>('lep_p4')[2].pt(): " << tx->getBranch<vector<LV>>("lep_p4")[2].pt() <<  std::endl;
+//            std::cout <<  " tx->getBranch<vector<LV>>('lep_p4')[2].phi(): " << tx->getBranch<vector<LV>>("lep_p4")[2].phi() <<  std::endl;
+//            std::cout <<  " tx->getBranch<vector<int>>('lep_motherIdSS')[2]: " << tx->getBranch<vector<int>>("lep_motherIdSS")[2] <<  std::endl;
+//            std::cout <<  " tx->getBranch<vector<int>>('lep_isFromW')[2]: " << tx->getBranch<vector<int>>("lep_isFromW")[2] <<  std::endl;
+//            std::cout <<  " tx->getBranch<vector<int>>('lep_isFromZ')[2]: " << tx->getBranch<vector<int>>("lep_isFromZ")[2] <<  std::endl;
+//            std::cout <<  " (tx->getBranch<vector<LV>>('lep_p4')[0]+tx->getBranch<vector<LV>>('lep_p4')[1]).mass(): " << (tx->getBranch<vector<LV>>("lep_p4")[0]+tx->getBranch<vector<LV>>("lep_p4")[1]).mass() <<  std::endl;
+//        }
+//    }
+
+    int lep1_mid = tx->getBranch<vector<int>>("lep_motherIdSS")[0];
+    int lep2_mid = tx->getBranch<vector<int>>("lep_motherIdSS")[1];
+
+    // For SS channel (i.e. nLlep == 2 nVlep == 2)
+    if (tx->getBranch<int>("nLlep") == 2 && tx->getBranch<int>("nVlep") == 2)
+    {
+        // trueSS       = i.e. Irreducible
+        // chargeflips  = i.e. charge mis-id
+        // SSLL         = i.e. lost-lepton
+        // fakes        = i.e. non-prompt
+        // photonfakes  = i.e. gamma->ell
+        // others       = i.e. unmatched
+        if (lep1_mid == 1 && lep2_mid == 1)
+        {
+            if (sampleIsZX())
+                return "SSLL";
+            else
+                return "trueSS";
+        }
+        else if (lep1_mid == 2 || lep2_mid == 2)
+        {
+            return "chargeflips";
+        }
+        else if (lep1_mid ==-3 || lep2_mid ==-3)
+        {
+            return "photonfakes";
+        }
+        else if (lep1_mid <= 0 || lep2_mid <= 0)
+        {
+            return "fakes";
+        }
+        else
+        {
+            return "others";
+        }
+    }
+    // For 3L channel (i.e. nLlep == 3 nVlep == 3)
+    else if (tx->getBranch<int>("nLlep") == 3 && tx->getBranch<int>("nVlep") == 3)
+    {
+        // trueWWW      = i.e. Irreducible
+        // 3lLL         = e.g. ZZ-> lost lepton + 3 leptons (has at least one Z)
+        // chargeflips  = i.e. charge mis-id
+        // fakes        = i.e. non-prompt
+        // photonfakes  = i.e. gamma->ell
+        // others       = i.e. unmatched
+        int lep3_mid = tx->getBranch<int>("nLlep") >= 3 ? tx->getBranch<vector<int>>("lep_motherIdSS")[2] : -999;
+        if (lep1_mid == 1 && lep2_mid == 1 && lep3_mid == 1)
+        {
+            if (sampleIsZX())
+                return "3lLL";
+            else
+                return "trueWWW";
+        }
+        else if (lep1_mid == 2 || lep2_mid == 2 || lep3_mid == 2)
+        {
+            return "chargeflips";
+        }
+        else if (lep1_mid ==-3 || lep2_mid ==-3 || lep3_mid ==-3)
+        {
+            return "photonfakes";
+        }
+        else if (lep1_mid <= 0 || lep2_mid <= 0 || lep3_mid <= 0)
+        {
+            return "fakes";
+        }
+        else
+        {
+            return "others";
+        }
+    }
+    else
+    {
+        return "others";
+    }
+}
+
+
+//##############################################################################################################
+bool babyMaker_v2::sampleIsZX()
+{
+    TString fname = looper.getCurrentFileName();
+    //if (fname.Contains("VHToNonbb")) return true;
+    if (fname.Contains("WZ")) return true;
+    if (fname.Contains("ZZ")) return true;
+    if (fname.Contains("TZ")) return true;
+    if (fname.Contains("tZq")) return true;
+    return false;
 }
 
 //##############################################################################################################

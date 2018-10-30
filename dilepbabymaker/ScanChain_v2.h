@@ -339,8 +339,10 @@ public:
     TString process();
     bool splitVH();
     int gentype_v2();
+    TString gentype_v3();
     bool vetophotonprocess();
     tuple<bool, int, int> isSSCR();
+    bool sampleIsZX();
 
     // special weights
     std::tuple<float, float, int> getlepFakeRateandErrorandLooseLepIdx(bool data, int version=2);
