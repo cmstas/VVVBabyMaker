@@ -130,12 +130,13 @@ public:
 
     enum BabyMode
     {
-         kWWWBaby = 0
-        ,kFRBaby  = 1
-        ,kOSBaby  = 2
-        ,kTnPBaby = 3
-        ,kAllBaby = 4
-        ,kPOGBaby = 5
+         kWWWBaby   = 0
+        ,kFRBaby    = 1
+        ,kOSBaby    = 2
+        ,kTnPBaby   = 3
+        ,kAllBaby   = 4
+        ,kPOGBaby   = 5
+        ,kLooseBaby = 6
     };
 
 private:
@@ -243,6 +244,7 @@ public:
     bool PassOSPreselection();
     bool PassTnPPreselection();
     bool PassPOGPreselection();
+    bool PassLoosePreselection();
 
     bool PassPresel();
     bool PassPresel_v1();

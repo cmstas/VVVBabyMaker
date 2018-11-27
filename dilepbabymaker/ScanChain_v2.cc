@@ -150,12 +150,13 @@ void babyMaker_v2::AddBabyOutput()
     // Based on the baby mode now preselect and if it doesn't pass return
     switch (babymode)
     {
-        case kWWWBaby: AddWWWBabyOutput(); return; break;
-        case kFRBaby:  AddWWWBabyOutput(); return; break;
-        case kOSBaby:  AddWWWBabyOutput(); return; break;
-        case kTnPBaby: AddTnPBabyOutput(); return; break;
-        case kAllBaby: AddWWWBabyOutput(); return; break;
-        case kPOGBaby: AddWWWBabyOutput(); return; break;
+        case kWWWBaby:   AddWWWBabyOutput(); return; break;
+        case kFRBaby:    AddWWWBabyOutput(); return; break;
+        case kOSBaby:    AddWWWBabyOutput(); return; break;
+        case kTnPBaby:   AddTnPBabyOutput(); return; break;
+        case kAllBaby:   AddWWWBabyOutput(); return; break;
+        case kPOGBaby:   AddWWWBabyOutput(); return; break;
+        case kLooseBaby: AddWWWBabyOutput(); return; break;
         default: return;
     }
 }
@@ -388,6 +389,8 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("nTlep");
     tx->createBranch<int>("nTlepSS");
     tx->createBranch<int>("nLlep");
+    tx->createBranch<int>("nLlep3L");
+    tx->createBranch<int>("nTlep3L");
 
     tx->createBranch<int>("nSFOS");
     tx->createBranch<int>("nSFOSinZ");
@@ -957,12 +960,13 @@ void babyMaker_v2::SetLeptonID()
     // Set lepton ID based on baby mode
     switch (babymode)
     {
-        case kWWWBaby: SetWWWAnalysisLeptonID(); break;
-        case kFRBaby:  SetWWWAnalysisLeptonID(); break;
-        case kOSBaby:  SetWWWAnalysisLeptonID(); break;
-        case kTnPBaby: SetWWWAnalysisLeptonID(); break;
-        case kAllBaby: SetWWWAnalysisLeptonID(); break;
-        case kPOGBaby: SetPOGAnalysisLeptonID(); break;
+        case kWWWBaby:   SetWWWAnalysisLeptonID(); break;
+        case kFRBaby:    SetWWWAnalysisLeptonID(); break;
+        case kOSBaby:    SetWWWAnalysisLeptonID(); break;
+        case kTnPBaby:   SetWWWAnalysisLeptonID(); break;
+        case kAllBaby:   SetWWWAnalysisLeptonID(); break;
+        case kPOGBaby:   SetPOGAnalysisLeptonID(); break;
+        case kLooseBaby: SetWWWAnalysisLeptonID(); break;
         default: return;
     }
 }
@@ -1099,12 +1103,13 @@ void babyMaker_v2::SaveOutput()
     // Based on the baby mode now preselect and if it doesn't pass return
     switch (babymode)
     {
-        case kWWWBaby: SaveWWWBaby(); break;
-        case kFRBaby:  SaveWWWBaby(); break;
-        case kOSBaby:  SaveWWWBaby(); break;
-        case kTnPBaby: SaveTnPBaby(); break;
-        case kAllBaby: SaveWWWBaby(); break;
-        case kPOGBaby: SavePOGBaby(); break;
+        case kWWWBaby:   SaveWWWBaby(); break;
+        case kFRBaby:    SaveWWWBaby(); break;
+        case kOSBaby:    SaveWWWBaby(); break;
+        case kTnPBaby:   SaveTnPBaby(); break;
+        case kAllBaby:   SaveWWWBaby(); break;
+        case kPOGBaby:   SavePOGBaby(); break;
+        case kLooseBaby: SaveWWWBaby(); break;
         default: return;
     }
 }
@@ -1211,12 +1216,13 @@ bool babyMaker_v2::isPass()
     // Based on the baby mode now preselect and if it doesn't pass return
     switch (babymode)
     {
-        case kWWWBaby: if (!PassWWWPreselection()) return false; break;
-        case kFRBaby:  if (!PassFRPreselection ()) return false; break;
-        case kOSBaby:  if (!PassOSPreselection ()) return false; break;
-        case kTnPBaby: if (!PassTnPPreselection()) return false; break;
-        case kAllBaby: /* no cut is applied accept all */  break;
-        case kPOGBaby: if (!PassPOGPreselection()) return false; break;
+        case kWWWBaby:   if (!PassWWWPreselection  ()) return false; break;
+        case kFRBaby:    if (!PassFRPreselection   ()) return false; break;
+        case kOSBaby:    if (!PassOSPreselection   ()) return false; break;
+        case kTnPBaby:   if (!PassTnPPreselection  ()) return false; break;
+        case kAllBaby:   /* no cut is applied accept all */  break;
+        case kPOGBaby:   if (!PassPOGPreselection  ()) return false; break;
+        case kLooseBaby: if (!PassLoosePreselection()) return false; break;
         default: return false;
     }
 
@@ -1252,12 +1258,13 @@ void babyMaker_v2::FillBaby()
     // Now process the rest of the stuff
     switch (babymode)
     {
-        case kWWWBaby: FillWWWBaby(); break;
-        case kFRBaby:  FillWWWBaby(); break;
-        case kOSBaby:  FillWWWBaby(); break;
-        case kTnPBaby: FillTnPBaby(); break;
-        case kAllBaby: FillWWWBaby(); break;
-        case kPOGBaby: FillPOGBaby(); break;
+        case kWWWBaby:   FillWWWBaby(); break;
+        case kFRBaby:    FillWWWBaby(); break;
+        case kOSBaby:    FillWWWBaby(); break;
+        case kTnPBaby:   FillTnPBaby(); break;
+        case kAllBaby:   FillWWWBaby(); break;
+        case kPOGBaby:   FillPOGBaby(); break;
+        case kLooseBaby: FillWWWBaby(); break;
     }
 }
 
@@ -1358,12 +1365,13 @@ void babyMaker_v2::ProcessElectrons()
     // Based on the baby mode Process different set of electrons
     switch (babymode)
     {
-        case kWWWBaby: ProcessNominalElectrons(); return; break;
-        case kFRBaby:  ProcessNominalElectrons(); return; break;
-        case kOSBaby:  ProcessNominalElectrons(); return; break;
-        case kTnPBaby: ProcessTnPElectrons();     return; break;
-        case kAllBaby: ProcessNominalElectrons(); return; break;
-        case kPOGBaby: ProcessPOGElectrons();     return; break;
+        case kWWWBaby:   ProcessNominalElectrons(); return; break;
+        case kFRBaby:    ProcessNominalElectrons(); return; break;
+        case kOSBaby:    ProcessNominalElectrons(); return; break;
+        case kTnPBaby:   ProcessTnPElectrons();     return; break;
+        case kAllBaby:   ProcessNominalElectrons(); return; break;
+        case kPOGBaby:   ProcessPOGElectrons();     return; break;
+        case kLooseBaby: ProcessNominalElectrons(); return; break;
         default: return;
     }
 }
@@ -1383,12 +1391,13 @@ void babyMaker_v2::ProcessMuons()
     // Based on the baby mode now preselect and if it doesn't pass return
     switch (babymode)
     {
-        case kWWWBaby: ProcessNominalMuons(); return; break;
-        case kFRBaby:  ProcessNominalMuons(); return; break;
-        case kOSBaby:  ProcessNominalMuons(); return; break;
-        case kTnPBaby: ProcessTnPMuons();     return; break;
-        case kAllBaby: ProcessNominalMuons(); return; break;
-        case kPOGBaby: ProcessPOGMuons();     return; break;
+        case kWWWBaby:   ProcessNominalMuons(); return; break;
+        case kFRBaby:    ProcessNominalMuons(); return; break;
+        case kOSBaby:    ProcessNominalMuons(); return; break;
+        case kTnPBaby:   ProcessTnPMuons();     return; break;
+        case kAllBaby:   ProcessNominalMuons(); return; break;
+        case kPOGBaby:   ProcessPOGMuons();     return; break;
+        case kLooseBaby: ProcessNominalMuons(); return; break;
         default: return;
     }
 }
@@ -1885,6 +1894,104 @@ bool babyMaker_v2::PassPOGPreselection()
     }
     else
     {
+        return false;
+    }
+}
+
+//##############################################################################################################
+bool babyMaker_v2::PassLoosePreselection()
+{
+
+    // Select 2 SS lepton events or 3 or more lepton events
+    vector<int> el_idx = coreElectron.index;
+    vector<int> mu_idx = coreMuon.index;
+
+    // If 3 or more leptons
+    if (el_idx.size() + mu_idx.size() > 2)
+    {
+        // Cut out 4 or more leptons
+        if (el_idx.size() + mu_idx.size() != 3)
+            return false;
+        int nloose = 0;
+        int ntight = 0;
+        int chargesum = 0;
+        for (auto& iel : coreElectron.index)
+        {
+            if (cms3.els_p4()[iel].pt() > 20. && passElectronSelection_VVV(iel, VVV_FO_3L))
+            {
+                nloose++;
+                chargesum += cms3.els_charge()[iel];
+            }
+            if (cms3.els_p4()[iel].pt() > 20. && passElectronSelection_VVV(iel, VVV_TIGHT_3L))
+            {
+                ntight++;
+            }
+        }
+        for (auto& imu : coreMuon.index)
+        {
+            if (cms3.mus_p4()[imu].pt() > 20. && passMuonSelection_VVV(imu, VVV_FO_3L))
+            {
+                nloose++;
+                chargesum += cms3.mus_charge()[imu];
+            }
+            if (cms3.mus_p4()[imu].pt() > 20. && passMuonSelection_VVV(imu, VVV_TIGHT_3L))
+            {
+                ntight++;
+            }
+        }
+        // require 3 loose leptons
+        if (nloose == 3)
+            return abs(chargesum) == 1;
+        else
+            return false;
+    }
+    // If less than 2 leptons skip
+    if (el_idx.size() + mu_idx.size() < 2) return false;
+    // If equal to 2 leptons then must be a same-sign and at must have two loose lepton and one or more tight lepton
+    int nloose = 0;
+    int ntight = 0;
+    for (auto& iel : coreElectron.index)
+    {
+        if (cms3.els_p4()[iel].pt() > 25. && passElectronSelection_VVV(iel, VVV_FO_SS))
+            nloose++;
+        if (cms3.els_p4()[iel].pt() > 25. && passElectronSelection_VVV(iel, VVV_TIGHT_SS))
+            ntight++;
+    }
+    for (auto& imu : coreMuon.index)
+    {
+        if (cms3.mus_p4()[imu].pt() > 25. && passMuonSelection_VVV(imu, VVV_FO_SS))
+            nloose++;
+        if (cms3.mus_p4()[imu].pt() > 25. && passMuonSelection_VVV(imu, VVV_TIGHT_SS))
+            ntight++;
+    }
+    // require two loose
+    if (nloose != 2)
+        return false;
+    // require same charge
+    if (mu_idx.size() == 2)
+    {
+        if (cms3.mus_charge()[mu_idx[0]] * cms3.mus_charge()[mu_idx[1]] > 0)
+            return true;
+        else
+            return false;
+    }
+    else if (el_idx.size() == 2)
+    {
+        if (cms3.els_charge()[el_idx[0]] * cms3.els_charge()[el_idx[1]] > 0)
+            return true;
+        else
+            return false;
+    }
+    else if (mu_idx.size() == 1 && el_idx.size() == 1)
+    {
+        if (cms3.mus_charge()[mu_idx[0]] * cms3.els_charge()[el_idx[0]] > 0)
+            return true;
+        else
+            return false;
+    }
+    else
+    {
+        FATALERROR(__FUNCTION__);
         return false;
     }
 }
@@ -3602,12 +3709,16 @@ void babyMaker_v2::FillLeptonVariables()
     int nTlep = nVlep == 2 ? passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["tightid"])) : passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3ltightid"]));
     int nLlep = nVlep == 2 ? passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["looseid"])) : passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3llooseid"]));
     int nTlepSS = passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["tightid"]));
+    int nLlep3L = passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3llooseid"]));
+    int nTlep3L = passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3ltightid"]));
 
     // Set the number of lepton counter
     tx->setBranch<int>("nVlep", nVlep);
     tx->setBranch<int>("nTlep", nTlep);
     tx->setBranch<int>("nTlepSS", nTlepSS);
     tx->setBranch<int>("nLlep", nLlep);
+    tx->setBranch<int>("nLlep3L", nLlep3L);
+    tx->setBranch<int>("nTlep3L", nTlep3L);
 
     // nVlep == 2
     //  nLlep == 2 isSS

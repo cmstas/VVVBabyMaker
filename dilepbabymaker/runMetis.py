@@ -74,15 +74,21 @@ job_tag = "WWW{}_v4.0.3".format(data_year) # Re-visiting 2017 analysis (bad even
 job_tag = "WWW{}_v4.0.4".format(data_year) # Re-visiting 2017 analysis (bad event categorization) delete later
 job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
 
-data_year = "2016"
-job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+job_tag = "POG{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+job_tag = "OS{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+job_tag = "Loose{}_v4.0.5".format(data_year) # Loose lepton baby
 
-data_year = "2017"
-job_tag = "FR{}_v3.0.11".format(data_year) # HLT prescale stored
-job_tag = "FR{}_v3.0.12".format(data_year) # HLT trigger fixed for 2017
-job_tag = "FR{}_v3.0.13".format(data_year) # Added non-iso triggers
-job_tag = "FR{}_v3.0.14".format(data_year) # Testing whether the fake rate error is coming from the MVA ID (i.e. changed electorn ids to cut-based)
-job_tag = "FR{}_v3.0.15".format(data_year) # Just DoubleEG without any selection
+#data_year = "2016"
+#job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+#
+#data_year = "2017"
+#job_tag = "FR{}_v3.0.11".format(data_year) # HLT prescale stored
+#job_tag = "FR{}_v3.0.12".format(data_year) # HLT trigger fixed for 2017
+#job_tag = "FR{}_v3.0.13".format(data_year) # Added non-iso triggers
+#job_tag = "FR{}_v3.0.14".format(data_year) # Testing whether the fake rate error is coming from the MVA ID (i.e. changed electorn ids to cut-based)
+#job_tag = "FR{}_v3.0.15".format(data_year) # Just DoubleEG without any selection
+#job_tag = "FR{}_v3.0.16".format(data_year) # SingleElectron ... since 2017 has prescaled single electron triggers in SingleElectron dataset (Also, QCD runs on this since v17 needed a hack to ignore evt_old_pfmet_raw())
+#job_tag = "FR{}_v3.0.17".format(data_year) # SingleElectron ... since 2017 has prescaled single electron triggers in SingleElectron dataset (Also, QCD runs on this since v17 needed a hack to ignore evt_old_pfmet_raw())
 
 ###################################################################################################################
 ###################################################################################################################
@@ -148,10 +154,12 @@ def main():
         args = "4" # AllBaby
     elif job_tag.find("POG") != -1:
         args = "5" # POGBaby
+    elif job_tag.find("Loose") != -1:
+        args = "6" # LooseBaby
 
     # Create tarball
     os.chdir(main_dir)
-    os.system("tar -chzf {} localsetup.sh processBaby *.so *.pcm coreutil/data coreutil/lib*.so *.txt btagsf MVAinput jetCorrections leptonSFs puWeight2016.root pileup_jul21_nominalUpDown.root ../CORE/Tools/ mergeHadoopFiles.C xsec_susy_13tev.root roccor.2017.v0/*.txt".format(tar_gz_path))
+    os.system("tar -chzf {} localsetup.sh processBaby *.so *.pcm coreutil/data coreutil/lib*.so *.txt btagsf MVAinput jetCorrections leptonSFs puWeight2016.root pileup_jul21_nominalUpDown.root ../CORE/Tools/ mergeHadoopFiles.C xsec_susy_13tev.root roccor.2017.v0/*.txt rooutil/hadd.py".format(tar_gz_path))
 
     # Change directory to metis
     os.chdir(metis_path)
@@ -196,7 +204,7 @@ def main():
             maker_task.process()
 
             if maker_task.complete():
-                if "WWW" in job_tag:
+                if "WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag:
                     merge_task = CondorTask(
                             sample                 = DirectorySample(dataset=merge_sample_name, location=maker_task.get_outputdir()),
                             # open_dataset         = True, flush = True,
@@ -221,11 +229,11 @@ def main():
 
             # save some information for the dashboard
             total_summary[maker_task.get_sample().get_datasetname()] = maker_task.get_task_summary()
-            if "WWW" in job_tag:
+            if "WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag:
                 total_summary[merge_task.get_sample().get_datasetname()] = merge_task.get_task_summary()
 
             # Aggregate whether all tasks are complete
-            if "WWW" in job_tag:
+            if "WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag:
                 all_tasks_complete = all_tasks_complete and maker_task.complete() and merge_task.complete()
             else:
                 all_tasks_complete = all_tasks_complete and maker_task.complete()
