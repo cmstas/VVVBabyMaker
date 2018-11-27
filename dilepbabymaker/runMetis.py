@@ -72,11 +72,6 @@ job_tag = "WWW{}_v4.0.1".format(data_year) # Re-visiting 2017 analysis
 job_tag = "WWW{}_v4.0.2".format(data_year) # Re-visiting 2017 analysis
 job_tag = "WWW{}_v4.0.3".format(data_year) # Re-visiting 2017 analysis (bad event categorization) delete later
 job_tag = "WWW{}_v4.0.4".format(data_year) # Re-visiting 2017 analysis (bad event categorization) delete later
-job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
-
-job_tag = "POG{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
-job_tag = "OS{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
-job_tag = "Loose{}_v4.0.5".format(data_year) # Loose lepton baby
 
 #data_year = "2016"
 #job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
@@ -89,6 +84,14 @@ job_tag = "Loose{}_v4.0.5".format(data_year) # Loose lepton baby
 #job_tag = "FR{}_v3.0.15".format(data_year) # Just DoubleEG without any selection
 #job_tag = "FR{}_v3.0.16".format(data_year) # SingleElectron ... since 2017 has prescaled single electron triggers in SingleElectron dataset (Also, QCD runs on this since v17 needed a hack to ignore evt_old_pfmet_raw())
 #job_tag = "FR{}_v3.0.17".format(data_year) # SingleElectron ... since 2017 has prescaled single electron triggers in SingleElectron dataset (Also, QCD runs on this since v17 needed a hack to ignore evt_old_pfmet_raw())
+
+#------------
+
+data_year = "2017"
+job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+job_tag = "POG{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+job_tag = "OS{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
+job_tag = "Loose{}_v4.0.5".format(data_year) # Loose lepton baby
 
 ###################################################################################################################
 ###################################################################################################################

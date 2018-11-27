@@ -2,6 +2,7 @@
 #include "LeptonScaleFactors.h"
 #include "fakerate_v3.h"
 #include "puWeight.h"
+#include "rooutil/rooutil.cc"
 
 using namespace std;
 
