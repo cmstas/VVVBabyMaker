@@ -1098,6 +1098,10 @@ void babyMaker_v2::SetPOGAnalysisLeptonID()
 //##############################################################################################################
 void babyMaker_v2::SaveOutput()
 {
+
+    // change directory to output file
+    ofile->cd();
+
     // This is always saved
     h_neventsinfile->Write();
 
@@ -1113,6 +1117,7 @@ void babyMaker_v2::SaveOutput()
         case kLooseBaby: SaveWWWBaby(); break;
         default: return;
     }
+
 }
 
 //##############################################################################################################
@@ -1669,8 +1674,8 @@ bool babyMaker_v2::PassPresel_v3()
     // Also, require that it is total charge == 1
     if (el_idx.size() + mu_idx.size() > 2)
     {
-        if (el_idx.size() + mu_idx.size() != 3)
-            return false;
+//        if (el_idx.size() + mu_idx.size() != 3)
+//            return false;
         int nloose = 0;
         int ntight = 0;
         int chargesum = 0;
@@ -2092,16 +2097,16 @@ void babyMaker_v2::FillElectrons()
         float conecorrptfactorraw = coreElectron.index.size() + coreMuon.index.size() > 2 ? eleRelIso03EA(idx, 2, true) - 0.03: eleRelIso03EA(idx, 2, true) - 0.05;
         float conecorrptfactor = max(0., (double) conecorrptfactorraw) + 1.; // To clip correcting once it passes tight isolation criteria
 
-//        if (coreElectron.index.size() + coreMuon.index.size() == 2)
-//        {
-//            if (!( passElectronSelection_VVV(idx, VVV_FO_SS) ))
-//                continue;
-//        }
-//        else if (coreElectron.index.size() + coreMuon.index.size() > 2)
-//        {
-//            if (!( passElectronSelection_VVV(idx, VVV_FO_3L) ))
-//                continue;
-//        }
+        if (coreElectron.index.size() + coreMuon.index.size() == 2)
+        {
+            if (!( passElectronSelection_VVV(idx, VVV_FO_SS) ))
+                continue;
+        }
+        else if (coreElectron.index.size() + coreMuon.index.size() > 2)
+        {
+            if (!( passElectronSelection_VVV(idx, VVV_FO_3L) ))
+                continue;
+        }
 
         tx->pushbackToBranch<LorentzVector> ("lep_p4"                           , cms3.els_p4()[idx]);
         tx->pushbackToBranch<float>         ("lep_pt"                           , cms3.els_p4()[idx].pt());
@@ -2185,16 +2190,16 @@ void babyMaker_v2::FillMuons()
         float conecorrptfactorraw = coreElectron.index.size() + coreMuon.index.size() > 2 ? muRelIso03EA(idx, 2, true) - 0.03: muRelIso03EA(idx, 2, true) - 0.07;
         float conecorrptfactor = max(0., (double) conecorrptfactorraw) + 1.; // To clip correcting once it passes tight isolation criteria
 
-//        if (coreMuon.index.size() + coreMuon.index.size() == 2)
-//        {
-//            if (!( passMuonSelection_VVV(idx, VVV_FO_SS) ))
-//                continue;
-//        }
-//        else if (coreMuon.index.size() + coreMuon.index.size() > 2)
-//        {
-//            if (!( passMuonSelection_VVV(idx, VVV_FO_3L) ))
-//                continue;
-//        }
+        if (coreMuon.index.size() + coreMuon.index.size() == 2)
+        {
+            if (!( passMuonSelection_VVV(idx, VVV_FO_SS) ))
+                continue;
+        }
+        else if (coreMuon.index.size() + coreMuon.index.size() > 2)
+        {
+            if (!( passMuonSelection_VVV(idx, VVV_FO_3L) ))
+                continue;
+        }
 
         tx->pushbackToBranch<LorentzVector> ("lep_p4"                           , cms3.mus_p4()[idx]);
         tx->pushbackToBranch<float>         ("lep_pt"                           , cms3.mus_p4()[idx].pt());
@@ -2509,13 +2514,13 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("HLT_DoubleEl_DZ_2", coreTrigger.HLT_DoubleEl_DZ_2);
         tx->setBranch<int>("HLT_MuEG", coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_MuEG_2017 : coreTrigger.HLT_MuEG);
         tx->setBranch<int>("HLT_MuEG_2016", coreTrigger.HLT_MuEG);
-        tx->setBranch<int>("HLT_SingleEl8"  , coreTrigger.HLT_SingleEl8_2017 ); 
-        tx->setBranch<int>("HLT_SingleEl17" , coreTrigger.HLT_SingleEl17_2017 ); 
-        tx->setBranch<int>("HLT_SingleIsoEl8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl8_2017  : coreTrigger.HLT_SingleIsoEl8  ); 
-        tx->setBranch<int>("HLT_SingleIsoEl17" , coreTrigger.HLT_SingleIsoEl17 ); 
-        tx->setBranch<int>("HLT_SingleIsoEl23" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl23_2017 : coreTrigger.HLT_SingleIsoEl23 ); 
-        tx->setBranch<int>("HLT_SingleIsoMu8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu8_2017  : coreTrigger.HLT_SingleIsoMu8  ); 
-        tx->setBranch<int>("HLT_SingleIsoMu17" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu17_2017 : coreTrigger.HLT_SingleIsoMu17 ); 
+        tx->setBranch<int>("HLT_SingleEl8"  , coreTrigger.HLT_SingleEl8_2017 );
+        tx->setBranch<int>("HLT_SingleEl17" , coreTrigger.HLT_SingleEl17_2017 );
+        tx->setBranch<int>("HLT_SingleIsoEl8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl8_2017  : coreTrigger.HLT_SingleIsoEl8  );
+        tx->setBranch<int>("HLT_SingleIsoEl17" , coreTrigger.HLT_SingleIsoEl17 );
+        tx->setBranch<int>("HLT_SingleIsoEl23" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl23_2017 : coreTrigger.HLT_SingleIsoEl23 );
+        tx->setBranch<int>("HLT_SingleIsoMu8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu8_2017  : coreTrigger.HLT_SingleIsoMu8  );
+        tx->setBranch<int>("HLT_SingleIsoMu17" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu17_2017 : coreTrigger.HLT_SingleIsoMu17 );
         tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight", coreTrigger.HLT_PFMET140_PFMHT140_IDTight);
     }
     else
@@ -2557,13 +2562,13 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("mc_HLT_DoubleEl_DZ_2", coreTrigger.HLT_DoubleEl_DZ_2);
         tx->setBranch<int>("mc_HLT_MuEG", coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_MuEG_2017 : coreTrigger.HLT_MuEG);
         tx->setBranch<int>("mc_HLT_MuEG_2016", coreTrigger.HLT_MuEG);
-        tx->setBranch<int>("mc_HLT_SingleEl8"  , coreTrigger.HLT_SingleEl8_2017 ); 
-        tx->setBranch<int>("mc_HLT_SingleEl17" , coreTrigger.HLT_SingleEl17_2017 ); 
-        tx->setBranch<int>("mc_HLT_SingleIsoEl8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl8_2017  : coreTrigger.HLT_SingleIsoEl8  ); 
-        tx->setBranch<int>("mc_HLT_SingleIsoEl17" , coreTrigger.HLT_SingleIsoEl17 ); 
-        tx->setBranch<int>("mc_HLT_SingleIsoEl23" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl23_2017 : coreTrigger.HLT_SingleIsoEl23 ); 
-        tx->setBranch<int>("mc_HLT_SingleIsoMu8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu8_2017  : coreTrigger.HLT_SingleIsoMu8  ); 
-        tx->setBranch<int>("mc_HLT_SingleIsoMu17" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu17_2017 : coreTrigger.HLT_SingleIsoMu17 ); 
+        tx->setBranch<int>("mc_HLT_SingleEl8"  , coreTrigger.HLT_SingleEl8_2017 );
+        tx->setBranch<int>("mc_HLT_SingleEl17" , coreTrigger.HLT_SingleEl17_2017 );
+        tx->setBranch<int>("mc_HLT_SingleIsoEl8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl8_2017  : coreTrigger.HLT_SingleIsoEl8  );
+        tx->setBranch<int>("mc_HLT_SingleIsoEl17" , coreTrigger.HLT_SingleIsoEl17 );
+        tx->setBranch<int>("mc_HLT_SingleIsoEl23" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoEl23_2017 : coreTrigger.HLT_SingleIsoEl23 );
+        tx->setBranch<int>("mc_HLT_SingleIsoMu8"  , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu8_2017  : coreTrigger.HLT_SingleIsoMu8  );
+        tx->setBranch<int>("mc_HLT_SingleIsoMu17" , coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_SingleIsoMu17_2017 : coreTrigger.HLT_SingleIsoMu17 );
         tx->setBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight", coreTrigger.HLT_PFMET140_PFMHT140_IDTight);
     }
     if (cms3.evt_isRealData())
@@ -2735,7 +2740,7 @@ void babyMaker_v2::FillMETFilter()
     // Is it CMS4?
     bool is_cms4 = cms3_version.Contains("CMS4");
 
-    // If 2017 
+    // If 2017
     if (coreSample.is2017(looper.getCurrentFileName()))
     {
 
@@ -3082,9 +3087,9 @@ void babyMaker_v2::FillMuonIDVariables(int idx, int tag_idx)
 
     tx->setBranch<int>("id", -13.0 * cms3.mus_charge()[idx]);
 
-    tx->setBranch<float>("RelIso03EA", muRelIso03EA(idx)); 
-    tx->setBranch<float>("RelIso03EAv2", muRelIso03EA(idx, 2)); 
-    tx->setBranch<float>("RelIso03EAv2wlep", muRelIso03EA(idx, 2, true)); 
+    tx->setBranch<float>("RelIso03EA", muRelIso03EA(idx));
+    tx->setBranch<float>("RelIso03EAv2", muRelIso03EA(idx, 2));
+    tx->setBranch<float>("RelIso03EAv2wlep", muRelIso03EA(idx, 2, true));
 
     tx->setBranch<float>("dxyPV", cms3.mus_dxyPV()[idx]);
     tx->setBranch<float>("dZ", cms3.mus_dzPV()[idx]);
@@ -3101,8 +3106,8 @@ void babyMaker_v2::FillMuonIDVariables(int idx, int tag_idx)
     tx->setBranch<bool>("passes_VVV_3l_fo_noiso", muonID(idx, VVV_3l_fo_noiso_v5));
     tx->setBranch<bool>("passes_VVV_veto", muonID(idx, VVV_veto_v5));
     tx->setBranch<bool>("passes_VVV_veto_noiso", muonID(idx, VVV_veto_noiso_v5));
-    tx->setBranch<bool>("passes_POG_mediumID", isMediumMuonPOG(idx)); 
-    tx->setBranch<bool>("passes_POG_looseID", isLooseMuonPOG(idx)); 
+    tx->setBranch<bool>("passes_POG_mediumID", isMediumMuonPOG(idx));
+    tx->setBranch<bool>("passes_POG_looseID", isLooseMuonPOG(idx));
 
     if (!cms3.evt_isRealData())
     {
@@ -3112,8 +3117,8 @@ void babyMaker_v2::FillMuonIDVariables(int idx, int tag_idx)
         tx->setBranch<int>("motherID", lepMotherID_v2(Lep(-13 * cms3.mus_charge()[idx], idx)).first);
     }
 
-    tx->setBranch<float>("ptErr", cms3.mus_ptErr()[idx]); 
-    tx->setBranch<float>("trk_pt", cms3.mus_trk_p4()[idx].pt()); 
+    tx->setBranch<float>("ptErr", cms3.mus_ptErr()[idx]);
+    tx->setBranch<float>("trk_pt", cms3.mus_trk_p4()[idx].pt());
 
     tx->setBranch<int>("evt_event", tx->getBranch<unsigned long long>("evt"));
     tx->setBranch<int>("evt_lumiBlock", tx->getBranch<int>("lumi"));
@@ -3184,9 +3189,9 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
 
     tx->setBranch<int>("id", -11.0 * cms3.els_charge()[idx]);
 
-    tx->setBranch<float>("RelIso03EA", eleRelIso03EA(idx)); 
-    tx->setBranch<float>("RelIso03EAv2", eleRelIso03EA(idx, 2)); 
-    tx->setBranch<float>("RelIso03EAv2wlep", eleRelIso03EA(idx, 2, true)); 
+    tx->setBranch<float>("RelIso03EA", eleRelIso03EA(idx));
+    tx->setBranch<float>("RelIso03EAv2", eleRelIso03EA(idx, 2));
+    tx->setBranch<float>("RelIso03EAv2wlep", eleRelIso03EA(idx, 2, true));
 
     tx->setBranch<float>("dxyPV", cms3.els_dxyPV()[idx]);
     tx->setBranch<float>("dZ", cms3.els_dzPV()[idx]);
@@ -3203,8 +3208,8 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
     tx->setBranch<bool>("passes_VVV_3l_fo_noiso", electronID(idx, VVV_3l_fo_noiso_v5));
     tx->setBranch<bool>("passes_VVV_veto", electronID(idx, VVV_veto_v5));
     tx->setBranch<bool>("passes_VVV_veto_noiso", electronID(idx, VVV_veto_noiso_v5));
-    tx->setBranch<bool>("passes_POG_mediumID", isMediumElectronPOG(idx)); 
-    tx->setBranch<bool>("passes_POG_looseID", isLooseElectronPOG(idx)); 
+    tx->setBranch<bool>("passes_POG_mediumID", isMediumElectronPOG(idx));
+    tx->setBranch<bool>("passes_POG_looseID", isLooseElectronPOG(idx));
     tx->setBranch<bool>("passes_POG_MVA_HZZ", isMVAHZZNoIsofall17(idx));
     tx->setBranch<bool>("passes_POG_MVA_wp80", isMVAwp80NoIsofall17(idx));
     tx->setBranch<bool>("passes_POG_MVA_wp90", isMVAwp90NoIsofall17(idx));
@@ -3561,6 +3566,10 @@ int babyMaker_v2::nSFOS()
             if (pdgid0 == -pdgid1)
                 nSFOS++;
         }
+    }
+    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    {
+        std::cout <<  " nSFOS/2: " << nSFOS/2 <<  std::endl;
     }
     return nSFOS/2; // Because the nested for loop double counts
 }
@@ -4406,6 +4415,10 @@ TString babyMaker_v2::process()
         {
             if (tx->getBranch<int>("nLlep") < 2) return "not2l";
             int gentype = gentype_v2();
+            if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+            {
+                std::cout <<  " gentype: " << gentype <<  std::endl;
+            }
             if      (gentype == 0) return "trueSS";
             else if (gentype == 2) return "chargeflips";
             else if (gentype == 3) return "SSLL";
@@ -4416,6 +4429,10 @@ TString babyMaker_v2::process()
         //this is 3l
         if (tx->getBranch<int>("nLlep") < 3) return "not3l";
         int gentype = gentype_v2();
+        if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+        {
+            std::cout <<  " gentype: " << gentype <<  std::endl;
+        }
         if      (gentype == 0) return "trueWWW";
         else if (gentype == 1) return "true3L";
         else if (gentype == 2) return "chargeflips";
@@ -5578,8 +5595,50 @@ bool babyMaker_v2::filterWHMass(float chimass, float lspmass)
 //##############################################################################################################
 int babyMaker_v2::gentype_v2()
 {
-//    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
-//        coreGenPart.printParticleOfInterest();
+    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    {
+        int ngenLepFromTau = tx->getBranch<int>("ngenLepFromTau");
+        int ngenLep = tx->getBranch<int>("ngenLep");
+        int nVlep = tx->getBranch<int>("nVlep");
+        int nLlep = tx->getBranch<int>("nLlep");
+        vector<LV> lep_p4 = tx->getBranch<vector<LV>>("lep_p4");
+        vector<int> lep_motherIdSS = tx->getBranch<vector<int>>("lep_motherIdSS");
+        vector<int> lep_isFromW = tx->getBranch<vector<int>>("lep_isFromW");
+        vector<int> lep_isFromZ = tx->getBranch<vector<int>>("lep_isFromZ");
+        vector<int> genPart_charge = tx->getBranch<vector<int>>("genPart_charge");
+        vector<int> lep_charge = tx->getBranch<vector<int>>("lep_charge");
+        vector<int> lep_genPart_index = tx->getBranch<vector<int>>("lep_genPart_index");
+        std::cout <<  " ngenLepFromTau: " << ngenLepFromTau <<  std::endl;
+        std::cout <<  " ngenLep: " << ngenLep <<  std::endl;
+        std::cout <<  " nVlep: " << nVlep <<  std::endl;
+        std::cout <<  " nLlep: " << nLlep <<  std::endl;
+        std::cout <<  " lep_p4[0].pt(): " << lep_p4[0].pt() <<  " lep_p4[1].pt(): " << lep_p4[1].pt() <<  " lep_p4[2].pt(): " << lep_p4[2].pt() <<  std::endl;
+        std::cout <<  " lep_motherIdSS[0]: " << lep_motherIdSS[0] <<  " lep_motherIdSS[1]: " << lep_motherIdSS[1] <<  " lep_motherIdSS[2]: " << lep_motherIdSS[2] <<  std::endl;
+        std::cout <<  " lep_isFromW[0]: " << lep_isFromW[0] <<  " lep_isFromW[1]: " << lep_isFromW[1] <<  " lep_isFromW[2]: " << lep_isFromW[2] <<  std::endl;
+        std::cout <<  " lep_isFromZ[0]: " << lep_isFromZ[0] <<  " lep_isFromZ[1]: " << lep_isFromZ[1] <<  " lep_isFromZ[2]: " << lep_isFromZ[2] <<  std::endl;
+//        std::cout <<  " genPart_charge[lep_genPart_index[0]]: " << genPart_charge[lep_genPart_index[0]] <<  " genPart_charge[lep_genPart_index[1]]: " << genPart_charge[lep_genPart_index[1]] <<  " genPart_charge[lep_genPart_index[2]]: " << genPart_charge[lep_genPart_index[2]] <<  std::endl;
+        std::cout <<  " lep_charge[0]: " << lep_charge[0] <<  " lep_charge[1]: " << lep_charge[1] <<  " lep_charge[2]: " << lep_charge[2] <<  std::endl;
+        std::cout <<  " lep_genPart_index[0]: " << lep_genPart_index[0] <<  " lep_genPart_index[1]: " << lep_genPart_index[1] <<  " lep_genPart_index[2]: " << lep_genPart_index[2] <<  std::endl;
+        std::cout <<  " (lep_p4[0]+lep_p4[1]).mass(): " << (lep_p4[0]+lep_p4[1]).mass() <<  std::endl;
+
+        for (unsigned int iGen = 0; iGen < cms3.genps_p4().size(); iGen++)
+        {
+            std::cout <<  " iGen: " << iGen <<  std::endl;
+            std::cout <<  " cms3.genps_p4()[iGen]: " << cms3.genps_p4()[iGen] <<  std::endl;
+            std::cout <<  " cms3.genps_p4()[iGen].pt(): " << cms3.genps_p4()[iGen].pt() <<  std::endl;
+            std::cout <<  " cms3.genps_p4()[iGen].eta(): " << cms3.genps_p4()[iGen].eta() <<  std::endl;
+            std::cout <<  " cms3.genps_p4()[iGen].phi(): " << cms3.genps_p4()[iGen].phi() <<  std::endl;
+            std::cout <<  " cms3.genps_p4()[iGen].mass(): " << cms3.genps_p4()[iGen].mass() <<  std::endl;
+            std::cout <<  " cms3.genps_id()[iGen]: " << cms3.genps_id()[iGen] <<  std::endl;
+            std::cout <<  " cms3.genps_status()[iGen]: " << cms3.genps_status()[iGen] <<  std::endl;
+            std::cout <<  " int(cms3.genps_charge()[iGen]): " << int(cms3.genps_charge()[iGen]) <<  std::endl;
+            std::cout <<  " cms3.genps_id_simplemother()[iGen]: " << cms3.genps_id_simplemother()[iGen] <<  std::endl;
+            std::cout <<  " cms3.genps_id_simplegrandma()[iGen]: " << cms3.genps_id_simplegrandma()[iGen] <<  std::endl;
+            std::cout <<  " cms3.genps_idx_simplemother()[iGen]: " << cms3.genps_idx_simplemother()[iGen] <<  std::endl;
+            std::cout <<  " cms3.genps_isMostlyLikePythia6Status3()[iGen]: " << cms3.genps_isMostlyLikePythia6Status3()[iGen] <<  std::endl;
+        }
+    }
+
     bool gammafake = false;
     bool jetfake   = false;
     unsigned int ngenlep = tx->getBranch<int>("ngenLepFromTau") + tx->getBranch<int>("ngenLep");
@@ -5599,6 +5658,16 @@ int babyMaker_v2::gentype_v2()
             jetfake = true;
         if (tx->getBranch<vector<int>>("lep_isFromW")[lepindex]) nW++;
         if (tx->getBranch<vector<int>>("lep_isFromZ")[lepindex]) nZ++;
+    }
+    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    {
+        std::cout <<  " gammafake: " << gammafake <<  std::endl;
+        std::cout <<  " jetfake: " << jetfake <<  std::endl;
+        std::cout <<  " ngenlep: " << ngenlep <<  std::endl;
+        std::cout <<  " nW: " << nW <<  " nZ: " << nZ <<  std::endl;
+        std::cout <<  " lep1_real: " << lep1_real <<  std::endl;
+        std::cout <<  " lep2_real: " << lep2_real <<  std::endl;
+        std::cout <<  " lep3_real: " << lep3_real <<  std::endl;
     }
     //found two real leptons
     if (tx->getBranch<int>("nLlep") == 2)

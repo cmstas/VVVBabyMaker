@@ -93,6 +93,12 @@ job_tag = "POG{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
 job_tag = "OS{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
 job_tag = "Loose{}_v4.0.5".format(data_year) # Loose lepton baby
 
+#------------
+# After validating against 2016 VVVBabyMakerProduction/ version
+
+data_year = "2016"
+job_tag = "WWW{}_v4.0.6".format(data_year) #
+
 ###################################################################################################################
 ###################################################################################################################
 # Below are the Metis submission code that users do not have to care about.
@@ -232,11 +238,11 @@ def main():
 
             # save some information for the dashboard
             total_summary[maker_task.get_sample().get_datasetname()] = maker_task.get_task_summary()
-            if "WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag:
+            if ("WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag) and maker_task.complete():
                 total_summary[merge_task.get_sample().get_datasetname()] = merge_task.get_task_summary()
 
             # Aggregate whether all tasks are complete
-            if "WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag:
+            if ("WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag) and maker_task.complete():
                 all_tasks_complete = all_tasks_complete and maker_task.complete() and merge_task.complete()
             else:
                 all_tasks_complete = all_tasks_complete and maker_task.complete()
