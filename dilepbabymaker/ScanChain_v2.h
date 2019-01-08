@@ -318,6 +318,7 @@ public:
     // Fill variables
     void FillJetVariables(int variation);
     void FillLeptonVariables();
+    void FillLepJetVariables(int variation);
     void FillSSLeptonVariables(int, int);
     void Fill3LLeptonVariables();
     void FillEventTags();
@@ -359,7 +360,7 @@ public:
     // Truth level studies
     // WWW signal sample
     bool isSMWWW() { return SampleNiceName().BeginsWith("www_2l"); }
-    bool isVH()    { return SampleNiceName().BeginsWith("vh_nonbb"); }
+    bool isVH()    { return SampleNiceName().BeginsWith("vh_"); }
     bool isWHWWW() { return splitVH(); }
     bool isWWW() { return isSMWWW() || isWHWWW(); }
     void AddWWWSignalOutput();

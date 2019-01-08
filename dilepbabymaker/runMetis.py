@@ -100,6 +100,9 @@ data_year = "2016"
 job_tag = "WWW{}_v4.0.6".format(data_year) #
 data_year = "2017"
 job_tag = "WWW{}_v4.0.6".format(data_year) #
+job_tag = "WWW{}_v4.0.6.1".format(data_year) #
+job_tag = "WWW{}_v4.0.6.2".format(data_year) # Reprocessing of everything with lep-jet variables included
+job_tag = "Loose{}_v4.0.6.2".format(data_year) #
 
 ###################################################################################################################
 ###################################################################################################################

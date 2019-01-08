@@ -314,6 +314,10 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<float>>("jets_up_csv");
     tx->createBranch<vector<float>>("jets_dn_csv");
 
+    tx->createBranch<vector<LorentzVector>>("jets30_p4");
+    tx->createBranch<vector<LorentzVector>>("jets30_up_p4");
+    tx->createBranch<vector<LorentzVector>>("jets30_dn_p4");
+
     tx->createBranch<vector<LorentzVector>>("ak8jets_p4");
     tx->createBranch<vector<float>>("ak8jets_softdropMass");
     tx->createBranch<vector<float>>("ak8jets_prunedMass");
@@ -407,6 +411,58 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("nb");
     tx->createBranch<int>("nb_up");
     tx->createBranch<int>("nb_dn");
+
+    tx->createBranch<float>("Ml0j0");
+    tx->createBranch<float>("Ml0j0_up");
+    tx->createBranch<float>("Ml0j0_dn");
+
+    tx->createBranch<float>("Ml0j1");
+    tx->createBranch<float>("Ml0j1_up");
+    tx->createBranch<float>("Ml0j1_dn");
+
+    tx->createBranch<float>("Ml1j0");
+    tx->createBranch<float>("Ml1j0_up");
+    tx->createBranch<float>("Ml1j0_dn");
+
+    tx->createBranch<float>("Ml1j1");
+    tx->createBranch<float>("Ml1j1_up");
+    tx->createBranch<float>("Ml1j1_dn");
+
+    tx->createBranch<float>("MinMlj");
+    tx->createBranch<float>("MinMlj_up");
+    tx->createBranch<float>("MinMlj_dn");
+
+    tx->createBranch<float>("SumMinMlj01");
+    tx->createBranch<float>("SumMinMlj01_up");
+    tx->createBranch<float>("SumMinMlj01_dn");
+
+    tx->createBranch<float>("MaxMlj");
+    tx->createBranch<float>("MaxMlj_up");
+    tx->createBranch<float>("MaxMlj_dn");
+
+    tx->createBranch<float>("SumMlj");
+    tx->createBranch<float>("SumMlj_up");
+    tx->createBranch<float>("SumMlj_dn");
+
+    tx->createBranch<float>("Ml0jj");
+    tx->createBranch<float>("Ml0jj_up");
+    tx->createBranch<float>("Ml0jj_dn");
+
+    tx->createBranch<float>("Ml1jj");
+    tx->createBranch<float>("Ml1jj_up");
+    tx->createBranch<float>("Ml1jj_dn");
+
+    tx->createBranch<float>("MinMljj");
+    tx->createBranch<float>("MinMljj_up");
+    tx->createBranch<float>("MinMljj_dn");
+
+    tx->createBranch<float>("MaxMljj");
+    tx->createBranch<float>("MaxMljj_up");
+    tx->createBranch<float>("MaxMljj_dn");
+
+    tx->createBranch<float>("SumMljj");
+    tx->createBranch<float>("SumMljj_up");
+    tx->createBranch<float>("SumMljj_dn");
 
     tx->createBranch<float>("Mjj");
     tx->createBranch<float>("Mjj_up");
@@ -2374,6 +2430,8 @@ void babyMaker_v2::FillJets()
                 coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
             else
                 coreBtagSFFastSim.accumulateSF(idx, jet.pt(), jet.eta());
+            if (jet.pt() > 30. and abs(jet.eta()) < 2.5)
+                tx->pushbackToBranch<LorentzVector>("jets30_p4", jet);
         }
 
         LorentzVector jet_up = jet * (1. + shift);
@@ -2381,6 +2439,8 @@ void babyMaker_v2::FillJets()
         {
             tx->pushbackToBranch<LorentzVector>("jets_up_p4", jet_up);
             tx->pushbackToBranch<float>("jets_up_csv", current_csv_val);
+            if (jet_up.pt() > 30. and abs(jet_up.eta()) < 2.5)
+                tx->pushbackToBranch<LorentzVector>("jets30_up_p4", jet_up);
         }
 
         LorentzVector jet_dn = jet * (1. - shift);
@@ -2388,6 +2448,8 @@ void babyMaker_v2::FillJets()
         {
             tx->pushbackToBranch<LorentzVector>("jets_dn_p4", jet_dn);
             tx->pushbackToBranch<float>("jets_dn_csv", current_csv_val);
+            if (jet_dn.pt() > 30. and abs(jet_dn.eta()) < 2.5)
+                tx->pushbackToBranch<LorentzVector>("jets30_dn_p4", jet_dn);
         }
     }
 
@@ -2501,6 +2563,9 @@ void babyMaker_v2::SortJetBranches()
     tx->sortVecBranchesByPt("jets_p4", {"jets_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_up_p4", {"jets_up_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_dn_p4", {"jets_dn_csv"}, {}, {});
+    tx->sortVecBranchesByPt("jets30_p4", {}, {}, {});
+    tx->sortVecBranchesByPt("jets30_up_p4", {}, {}, {});
+    tx->sortVecBranchesByPt("jets30_dn_p4", {}, {}, {});
 }
 
 //##############################################################################################################
@@ -3029,6 +3094,9 @@ void babyMaker_v2::FillSummaryVariables()
     FillJetVariables(1);
     FillJetVariables(-1);
     FillLeptonVariables();
+    FillLepJetVariables(0);
+    FillLepJetVariables(1);
+    FillLepJetVariables(-1);
     FillEventTags();
 }
 
@@ -3764,6 +3832,69 @@ void babyMaker_v2::FillLeptonVariables()
 }
 
 //##############################################################################################################
+void babyMaker_v2::FillLepJetVariables(int variation)
+{
+
+    // check if two leptons and two jets
+    TString nj30  = variation == 0 ? "nj30"  : variation == 1 ? "nj30_up"  : "nj30_dn";
+    if (tx->getBranch<int>("nVlep") == 2 and tx->getBranch<int>(nj30) >= 2)
+    {
+
+        // Get leptons
+        const LV& lep_p4_0 = tx->getBranch<vector<LV>>("lep_p4")[0];
+        const LV& lep_p4_1 = tx->getBranch<vector<LV>>("lep_p4")[1];
+
+        //
+        // Assumes FillJets and SortJetBranches are already called as well as leptons
+        //
+
+        TString Ml0j0_bn   = variation == 0 ? "Ml0j0"      : variation == 1 ? "Ml0j0_up"      : "Ml0j0_dn";
+        TString Ml0j1_bn   = variation == 0 ? "Ml0j1"      : variation == 1 ? "Ml0j1_up"      : "Ml0j1_dn";
+        TString Ml1j0_bn   = variation == 0 ? "Ml1j0"      : variation == 1 ? "Ml1j0_up"      : "Ml1j0_dn";
+        TString Ml1j1_bn   = variation == 0 ? "Ml1j1"      : variation == 1 ? "Ml1j1_up"      : "Ml1j1_dn";
+        TString MinMlj_bn  = variation == 0 ? "MinMlj"     : variation == 1 ? "MinMlj_up"     : "MinMlj_dn";
+        TString MaxMlj_bn  = variation == 0 ? "MaxMlj"     : variation == 1 ? "MaxMlj_up"     : "MaxMlj_dn";
+        TString SumMlj_bn  = variation == 0 ? "SumMlj"     : variation == 1 ? "SumMlj_up"     : "SumMlj_dn";
+        TString Ml0jj_bn   = variation == 0 ? "Ml0jj"      : variation == 1 ? "Ml0jj_up"      : "Ml0jj_dn";
+        TString Ml1jj_bn   = variation == 0 ? "Ml1jj"      : variation == 1 ? "Ml1jj_up"      : "Ml1jj_dn";
+        TString MinMljj_bn = variation == 0 ? "MinMljj"    : variation == 1 ? "MinMljj_up"    : "MinMljj_dn";
+        TString MaxMljj_bn = variation == 0 ? "MaxMljj"    : variation == 1 ? "MaxMljj_up"    : "MaxMljj_dn";
+        TString SumMljj_bn = variation == 0 ? "SumMljj"    : variation == 1 ? "SumMljj_up"    : "SumMljj_dn";
+        TString SumMinMlj01= variation == 0 ? "SumMinMlj01": variation == 1 ? "SumMinMlj01_up": "SumMinMlj01_dn";
+        TString jets30_p4  = variation == 0 ? "jets30_p4"  : variation == 1 ? "jets30_up_p4"  : "jets30_dn_p4";
+
+        const LV& jet_p4_0 = tx->getBranch<vector<LV>>(jets30_p4)[0];
+        const LV& jet_p4_1 = tx->getBranch<vector<LV>>(jets30_p4)[1];
+
+        float Ml0j0 = (lep_p4_0 + jet_p4_0).mass();
+        float Ml0j1 = (lep_p4_0 + jet_p4_1).mass();
+        float Ml1j0 = (lep_p4_1 + jet_p4_0).mass();
+        float Ml1j1 = (lep_p4_1 + jet_p4_1).mass();
+
+        tx->setBranch<float>(Ml0j0_bn, Ml0j0);
+        tx->setBranch<float>(Ml0j1_bn, Ml0j1);
+        tx->setBranch<float>(Ml1j0_bn, Ml1j0);
+        tx->setBranch<float>(Ml1j1_bn, Ml1j1);
+
+        tx->setBranch<float>(MinMlj_bn, std::min( std::min( std::min(Ml0j0, Ml0j1), Ml1j0), Ml1j1));
+        tx->setBranch<float>(MaxMlj_bn, std::max( std::max( std::max(Ml0j0, Ml0j1), Ml1j0), Ml1j1));
+        tx->setBranch<float>(SumMlj_bn, Ml0j0 + Ml0j1 + Ml1j0 + Ml1j1);
+
+        float Ml0jj = (lep_p4_0 + jet_p4_0 + jet_p4_1).mass();
+        float Ml1jj = (lep_p4_1 + jet_p4_0 + jet_p4_1).mass();
+
+        tx->setBranch<float>(Ml0jj_bn, Ml0jj);
+        tx->setBranch<float>(Ml1jj_bn, Ml1jj);
+
+        tx->setBranch<float>(MinMljj_bn, std::min(Ml0jj, Ml1jj));
+        tx->setBranch<float>(MaxMljj_bn, std::min(Ml0jj, Ml1jj));
+        tx->setBranch<float>(SumMljj_bn, Ml0jj + Ml1jj);
+
+    }
+
+}
+
+//##############################################################################################################
 void babyMaker_v2::FillSSLeptonVariables(int idx0, int idx1)
 {
     const vector<LV>& lep_p4 = tx->getBranch<vector<LV>>("lep_p4", true);
@@ -4465,7 +4596,7 @@ TString babyMaker_v2::process()
 //##############################################################################################################
 bool babyMaker_v2::splitVH()
 {
-    if (!SampleNiceName().BeginsWith("vh_nonbb_amcnlo")) return false; //file is certainly no WHtoWWW
+    if (!SampleNiceName().BeginsWith("vh_")) return false; //file is certainly no WHtoWWW
     bool isHtoWW = false;
     bool isWnotFromH = false;
     bool isZthere = false;
