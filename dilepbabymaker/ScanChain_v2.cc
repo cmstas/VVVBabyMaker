@@ -54,6 +54,9 @@ void babyMaker_v2::ScanChain_v2(bool verbose)
             // Now process the baby ntuples
             Process();
 
+            // For Gen-level weights the total weights need to be saved so must be called without skipping events (i.e. before isPass() or making sure i fill everything)
+            FillGenWeights();
+
         }
         catch (const std::ios_base::failure& e)
         {
@@ -1243,9 +1246,6 @@ void babyMaker_v2::SaveTnPBaby()
 //##############################################################################################################
 void babyMaker_v2::Process()
 {
-
-    // For Gen-level weights the total weights need to be saved so must be called before skipping events (i.e. before isPass() exists Process())
-    FillGenWeights();
 
     // Process leptons via CoreUtil
     ProcessLeptons();
@@ -4344,6 +4344,8 @@ void babyMaker_v2::FillGenWeightsNominal()
         h_neventsinfile->Fill(11, tx->getBranch<float>("weight_pdf_down"));
         h_neventsinfile->Fill(12, tx->getBranch<float>("weight_alphas_down"));
         h_neventsinfile->Fill(13, tx->getBranch<float>("weight_alphas_up"));
+        h_neventsinfile->Fill(14, 1);
+        h_neventsinfile->Fill(15, (cms3.genps_weight() > 0) - (cms3.genps_weight() < 0));
     }
 }
 

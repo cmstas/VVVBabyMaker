@@ -103,6 +103,13 @@ job_tag = "WWW{}_v4.0.6".format(data_year) #
 job_tag = "WWW{}_v4.0.6.1".format(data_year) #
 job_tag = "WWW{}_v4.0.6.2".format(data_year) # Reprocessing of everything with lep-jet variables included
 job_tag = "Loose{}_v4.0.6.2".format(data_year) #
+job_tag = "WWW{}_v4.0.6.3".format(data_year) # Reprocessing after Jan 8 T2 shutdown. h_neventsinfile should contain the processed events such that skipped events should be alright.
+
+#-----------
+# Moving to V10-02-05 produced via "bigly"
+data_year = "2017"
+job_tag = "WWW{}_v5.0.0".format(data_year)
+job_tag = "FR{}_v5.0.0".format(data_year)
 
 ###################################################################################################################
 ###################################################################################################################
@@ -257,7 +264,8 @@ def main():
         StatsParser(data=total_summary, webdir=metis_dashboard_path).do()
 
         # Print msummary table so I don't have to load up website
-        os.system("msummary -r -p MAKER | tee summary.txt")
+        #os.system("msummary -r -p MAKER | tee summary.txt")
+        os.system("msummary -r | tee summary.txt")
         os.system("chmod -R 755 {}".format(metis_dashboard_path))
 
         # If all done exit the loop

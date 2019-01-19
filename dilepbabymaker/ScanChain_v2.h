@@ -359,8 +359,8 @@ public:
 
     // Truth level studies
     // WWW signal sample
-    bool isSMWWW() { return SampleNiceName().BeginsWith("www_2l"); }
-    bool isVH()    { return SampleNiceName().BeginsWith("vh_"); }
+    bool isSMWWW() { return SampleNiceName().BeginsWith("www"); }
+    bool isVH()    { return SampleNiceName().BeginsWith("vh"); }
     bool isWHWWW() { return splitVH(); }
     bool isWWW() { return isSMWWW() || isWHWWW(); }
     void AddWWWSignalOutput();
