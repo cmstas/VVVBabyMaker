@@ -1,290 +1,208 @@
 ##!/bin/env python
 
-################################
-# Job tag and output hadoop path
-################################
-
-data_year = "2016"
-data_year = "2017"
-
-# NOTE: If you want to resubmit the skimming job, you need to delete $ANALYSIS_BASE/tasks and hadoop_path output path
-
-job_tag = "WWW_v1.0.8" # Added lepton scale factors
-job_tag = "WWW_v1.0.9" # Added lepton scale factors
-job_tag = "WWW_v1.0.10" # Added trigger efficiencies
-job_tag = "WWW_v1.0.11" # Clean up some varialbes and turn on the met filters
-job_tag = "WWW_v1.0.12" # Zpeak window fixed to 20, pt requirements on leptons
-job_tag = "WWW_v1.0.13" # Switch to reliso03 0.4
-job_tag = "WWW_v1.0.14" # Added matched jet pt different corrections only for ttbar and www
-job_tag = "WWW_v1.0.15" # Redefined a mixed ptratio/reliso isolation for better modeling
-job_tag = "WWW_v1.0.16" # Added ptratioEA Incorrectly ran over with v3 id which are not what i want
-job_tag = "WWW_v1.0.17" # Failed Campaign
-job_tag = "WWW_v1.0.18" # Failed Campaign
-job_tag = "WWW_v1.0.19" # v3 id with two ptratio cut values for electron and muons
-job_tag = "WWW_v1.0.20" # v3 id with two ptratio cut values for electron and muons and OS events saved as well
-job_tag = "WWW_v1.0.21" # v4 id place holder with fake and veto set to relisolep 1.4 cut value but the tight is somewhat aribtrary.
-job_tag = "WWW_v1.0.22" # v4 id with new sf new trigeff new fakerate (seemed bugged)
-job_tag = "WWW_v1.0.23" # v4 id with new sf new trigeff new fakerate (conecorrpt bugged)
-job_tag = "WWW_v1.0.23.patch1" # v4 id with new sf new trigeff new fakerate (conecorrpt fixed, submitted W/ttbar only) 
-job_tag = "WWW_v1.0.24" # isTightPOG variable added to check for modeling issue
-job_tag = "WWW_v1.0.25" # Added smearing and fakerate, took out a few unnecessary variables, had buggy fakerate
-job_tag = "WWW_v1.0.26" # Resubmitting 25 with ffwgt variable fixed Also the tight and loose pt cuts are adjusted in preselection and counting
-job_tag = "WWW_v1.0.27" # Failed campaign
-job_tag = "WWW_v1.0.28" # B-tagging loose v. medium scale factor fix. ffwgt error fixed. closure error added. tight ss pt changed to 25.
-job_tag = "WWW_v1.0.29" # There was a bug that got created due to veto leptons being included in the lepton container.
-
-#job_tag = "WWW_v1.1.0" # Including single leptons with QCD samples (W, ttbar, QCD only) version for closure
-#job_tag = "WWW_v1.1.1" # Included MediumPOG ID (W, ttbar, QCD only) for closure
-#job_tag = "WWW_v1.1.2" # W, ttbar, QCD, data, WW, WZ for full fake rate study (auxiliary trigger added)
-#job_tag = "WWW_v1.1.4" # W, ttbar, WW, WZ for reprocessing single lepton events
-
-job_tag = "WWW_v1.2.1" # CMS4 2016 data for comparison
-job_tag = "WWW_v1.2.2" # Fat jet included!
-job_tag = "WWW_v1.2.3" # Truth level information of the WWW samples
-job_tag = "WWW_v3.0.0" # First test of few samples of 2016 MC in order to validate the changes to accomodate 2017 are ok.
-job_tag = "WWW{}_v3.0.1".format(data_year) # First test of few samples of 2016 MC in order to validate the changes to accomodate 2017 are ok.
-
-job_tag = "TnP{}_v3.0.1".format(data_year) # Testing TnP
-
-job_tag = "WWW{}_v3.0.2".format(data_year) # Changed double muon trigger to Mass8 version (I assume it's a cut at mll > 8)
-job_tag = "POG{}_v3.0.2".format(data_year) # POG ID
-job_tag = "POG{}_v3.0.3".format(data_year) # POG ID
-job_tag = "POG{}_v3.0.4".format(data_year) # POG ID
-job_tag = "POG{}_v3.0.5".format(data_year) # POG ID with after debugging (Failed campaign)
-job_tag = "POG{}_v3.0.6".format(data_year) # POG ID with after debugging (Failed campaign)
-
-job_tag = "POG{}_v3.0.7".format(data_year) # POG ID with after debugging
-job_tag = "OS{}_v3.0.7".format(data_year) # 2016 optimized lepton ID with WWW ntuple including WWW
-job_tag = "TnP{}_v3.0.7".format(data_year) # Getting a TnP sample for measurement
-
-job_tag = "FR{}_v3.0.8".format(data_year) # 2017 MVA IDs are set to the POG provided ones
-
-job_tag = "FR{}_v3.0.9".format(data_year) # 2017 MVA IDs are set to the POG provided ones
-job_tag = "TnP{}_v3.0.8".format(data_year) # 2017 MVA IDs are set to the POG provided ones
-job_tag = "OS{}_v3.0.8".format(data_year) # 2017 MVA IDs are set to the POG provided ones
-job_tag = "FR{}_v3.0.10".format(data_year) # 2017 MVA IDs are set to the POG provided ones (deleted)
-
-job_tag = "OS{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was accidentally set to tight :(
-job_tag = "FR{}_v3.0.10".format(data_year) # Fixed 2017 MVA ID veto that was accidentally set to tight :(
-
-job_tag = "WWW{}_v4.0.0".format(data_year) # Re-visiting 2017 analysis (Failed campaign)
-job_tag = "WWW{}_v4.0.1".format(data_year) # Re-visiting 2017 analysis
-job_tag = "WWW{}_v4.0.2".format(data_year) # Re-visiting 2017 analysis
-job_tag = "WWW{}_v4.0.3".format(data_year) # Re-visiting 2017 analysis (bad event categorization) delete later
-job_tag = "WWW{}_v4.0.4".format(data_year) # Re-visiting 2017 analysis (bad event categorization) delete later
-
-#data_year = "2016"
-#job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
-#
-#data_year = "2017"
-#job_tag = "FR{}_v3.0.11".format(data_year) # HLT prescale stored
-#job_tag = "FR{}_v3.0.12".format(data_year) # HLT trigger fixed for 2017
-#job_tag = "FR{}_v3.0.13".format(data_year) # Added non-iso triggers
-#job_tag = "FR{}_v3.0.14".format(data_year) # Testing whether the fake rate error is coming from the MVA ID (i.e. changed electorn ids to cut-based)
-#job_tag = "FR{}_v3.0.15".format(data_year) # Just DoubleEG without any selection
-#job_tag = "FR{}_v3.0.16".format(data_year) # SingleElectron ... since 2017 has prescaled single electron triggers in SingleElectron dataset (Also, QCD runs on this since v17 needed a hack to ignore evt_old_pfmet_raw())
-#job_tag = "FR{}_v3.0.17".format(data_year) # SingleElectron ... since 2017 has prescaled single electron triggers in SingleElectron dataset (Also, QCD runs on this since v17 needed a hack to ignore evt_old_pfmet_raw())
-
-#------------
-
-data_year = "2017"
-job_tag = "WWW{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
-job_tag = "POG{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
-job_tag = "OS{}_v4.0.5".format(data_year) # Re-visiting 2017 analysis
-job_tag = "Loose{}_v4.0.5".format(data_year) # Loose lepton baby
-
-#------------
-# After validating against 2016 VVVBabyMakerProduction/ version
-
-data_year = "2016"
-job_tag = "WWW{}_v4.0.6".format(data_year) #
-data_year = "2017"
-job_tag = "WWW{}_v4.0.6".format(data_year) #
-job_tag = "WWW{}_v4.0.6.1".format(data_year) #
-job_tag = "WWW{}_v4.0.6.2".format(data_year) # Reprocessing of everything with lep-jet variables included
-job_tag = "Loose{}_v4.0.6.2".format(data_year) #
-job_tag = "WWW{}_v4.0.6.3".format(data_year) # Reprocessing after Jan 8 T2 shutdown. h_neventsinfile should contain the processed events such that skipped events should be alright.
-
-#-----------
-# Moving to V10-02-05 produced via "bigly"
-data_year = "2017"
-job_tag = "WWW{}_v5.0.0".format(data_year)
-job_tag = "FR{}_v5.0.0".format(data_year)
-
-###################################################################################################################
-###################################################################################################################
-# Below are the Metis submission code that users do not have to care about.
-###################################################################################################################
-###################################################################################################################
-
-import time
-import json
-import metis
-
-from time import sleep
-
-from metis.Sample import DirectorySample
-from metis.CondorTask import CondorTask
-
-from metis.StatsParser import StatsParser
-
-import sys
-import os
-import glob
-import subprocess
-
-import dataset
+from submit_condor_jobs import submit_condor_jobs
 
 
-def main():
 
-    if data_year == "2016":
-        samples_to_run = dataset.samples_to_run_2016
-        samples_short_name = dataset.samples_short_name_2016
-        dslocs = dataset.dslocscms4_2016
-    elif data_year == "2017":
-        samples_short_name = dataset.samples_short_name_2017_94x
-        dslocs = dataset.dslocscms4_2017_94x
-        samples_to_run = dataset.samples_to_run_2017_94x
+def get_master_list():
 
-        if job_tag.find("TnP") != -1:
-            samples_to_run = dataset.tnp_samples_to_run_2017
-        elif job_tag.find("FR") != -1:
-            samples_to_run = dataset.fr_samples_to_run_2017_94x
-        elif job_tag.find("All") != -1:
-            samples_to_run = dataset.all_samples_to_run_2017
-
-    # file/dir paths
-    main_dir             = os.path.dirname(os.path.abspath(__file__))
-    metis_path           = os.path.dirname(os.path.dirname(metis.__file__))
-    tar_path             = os.path.join(metis_path, "package.tar")
-    tar_gz_path          = tar_path + ".gz"
-    metis_dashboard_path = os.path.join(metis_path, "dashboard")
-    exec_path            = os.path.join(main_dir, "metis.sh")
-    merge_exec_path      = os.path.join(main_dir, "merge.sh")
-    hadoop_path          = "metis/wwwbaby/{}".format(job_tag) # The output goes to /hadoop/cms/store/user/$USER/"hadoop_path"
-    if job_tag.find("WWW") != -1:
-        args = "0" # WWWBaby
-    elif job_tag.find("FR") != -1:
-        args = "1" # FRBaby
-    elif job_tag.find("OS") != -1:
-        args = "2" # OSBaby
-    elif job_tag.find("TnP") != -1:
-        args = "3" # TnPBaby
-    elif job_tag.find("All") != -1:
-        args = "4" # AllBaby
-    elif job_tag.find("POG") != -1:
-        args = "5" # POGBaby
-    elif job_tag.find("Loose") != -1:
-        args = "6" # LooseBaby
-
-    # Create tarball
-    os.chdir(main_dir)
-    os.system("tar -chzf {} localsetup.sh processBaby *.so *.pcm coreutil/data coreutil/lib*.so *.txt btagsf MVAinput jetCorrections leptonSFs puWeight2016.root pileup_jul21_nominalUpDown.root ../CORE/Tools/ mergeHadoopFiles.C xsec_susy_13tev.root roccor.2017.v0/*.txt rooutil/hadd.py".format(tar_gz_path))
-
-    # Change directory to metis
-    os.chdir(metis_path)
-
-    total_summary = {}
-
-    # Loop over datasets to submit
-    while True:
-
-        all_tasks_complete = True
-
-        #for sample in sorted(samples):
-        for sample in samples_to_run:
-
-            loc = dslocs[sample]
-
-            ## If the location is empty after querying via dis, alert the user and skip
-            #if loc == "":
-            #    print ">>> [WARNING] DIS did not find hadoop path corresponding to the sample = {}".format(sample)
-            #    continue
-
-            # define the task
-            maker_sample_name = "/MAKER_"+sample[1:]
-            maker_task = CondorTask(
-                    sample               = DirectorySample(dataset=maker_sample_name, location=loc),
-                    tag                  = job_tag,
-                    arguments            = args,
-                    executable           = exec_path,
-                    tarfile              = tar_gz_path,
-                    special_dir          = hadoop_path,
-                    output_name          = "output.root",
-                    files_per_output     = 4,
-                    condor_submit_params = {"sites" : "T2_US_UCSD"},
-                    open_dataset         = False,
-                    flush                = True,
-                    #no_load_from_backup  = True,
-                    )
-
-            merge_sample_name = "/MERGE_"+sample[1:]
-
-            # process the job (either submits, checks for resubmit, or finishes etc.)
-            maker_task.process()
-
-            if maker_task.complete():
-                if "WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag:
-                    merge_task = CondorTask(
-                            sample                 = DirectorySample(dataset=merge_sample_name, location=maker_task.get_outputdir()),
-                            # open_dataset         = True, flush = True,
-                            executable             = merge_exec_path,
-                            tarfile                = tar_gz_path,
-                            files_per_output       = 100000,
-                            output_dir             = maker_task.get_outputdir() + "/merged",
-                            output_name            = samples_short_name[sample] + ".root",
-                            condor_submit_params   = {"sites":"T2_US_UCSD"},
-                            output_is_tree         = True,
-                            # check_expectedevents = True,
-                            tag                    = job_tag,
-                            cmssw_version          = "CMSSW_9_2_0",
-                            scram_arch             = "slc6_amd64_gcc530",
-                            #no_load_from_backup    = True,
-                            )
-                    merge_task.reset_io_mapping()
-                    merge_task.update_mapping()
-                    merge_task.process()
-                else:
-                    pass
-
-            # save some information for the dashboard
-            total_summary[maker_task.get_sample().get_datasetname()] = maker_task.get_task_summary()
-            if ("WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag) and maker_task.complete():
-                total_summary[merge_task.get_sample().get_datasetname()] = merge_task.get_task_summary()
-
-            # Aggregate whether all tasks are complete
-            if ("WWW" in job_tag or "OS" in job_tag or "Loose" in job_tag) and maker_task.complete():
-                all_tasks_complete = all_tasks_complete and maker_task.complete() and merge_task.complete()
-            else:
-                all_tasks_complete = all_tasks_complete and maker_task.complete()
+    dinfos = {}
 
 
-        # parse the total summary and write out the dashboard
-        StatsParser(data=total_summary, webdir=metis_dashboard_path).do()
+    ##########################################
+    ######## WWW BABY MC 2017 94x v2 #########
+    ##########################################
 
-        # Print msummary table so I don't have to load up website
-        #os.system("msummary -r -p MAKER | tee summary.txt")
-        os.system("msummary -r | tee summary.txt")
-        os.system("chmod -R 755 {}".format(metis_dashboard_path))
 
-        # If all done exit the loop
-        if all_tasks_complete:
-            print ""
-            print "Job={} finished".format(job_tag)
-            print ""
-            break
+    sample_info = {
 
-        # Neat trick to not exit the script for force updating
-        print 'Press Ctrl-C to force update, otherwise will sleep for 300 seconds'
-        try:
-            for i in range(0,300):
-                sleep(1) # could use a backward counter to be preeety :)
-        except KeyboardInterrupt:
-            raw_input("Press Enter to force update, or Ctrl-C to quit.")
-            print "Force updating..."
+            "/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                                          : "www_amcatnlo",
+            "/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                              : "vh_nonbb_amcatnlo",
+            "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                          : "dy_m1050_mgmlm",
+            "/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v1/MINIAODSIM"                        : "dy_m50_amcatnlo",
+            "/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v2/MINIAODSIM"                              : "wjets_incl_mgmlm",
+            "/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                       : "wjets_ht100_madgraph",
+            "/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                       : "wjets_ht200_madgraph",
+            "/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                       : "wjets_ht400_madgraph",
+            "/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                       : "wjets_ht600_madgraph",
+            "/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                      : "wjets_ht800_madgraph",
+            "/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                     : "wjets_ht1200_madgraph",
+            "/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3/MINIAODSIM"                      : "wjets_ht2500_madgraph",
+            "/ST_s-channel_4f_leptonDecays_TuneCP5_PSweights_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM"  : "singletop_schanlep_amcatnlo",
+            #"/ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM" : "singletop_tbrtchanincl_powheg", # Not sure of the status. Too tiny to care.
+            #"/ST_t-channel_top_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "singletop_toptchanincl_powheg", # Not sure of the status. Too tiny to care.
+            "/ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM"    : "tw_antitopnofullhad_powheg",
+            "/ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM"        : "tw_topnofullhad_powheg",
+            "/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v1/MINIAODSIM"                    : "ggh_hzz4l_powheg",
+            "/WpWpJJ_EWK-QCD_TuneCP5_13TeV-madgraph-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                  : "vbsww_madgraph",
+            "/WW_DoubleScattering_13TeV-pythia8_TuneCP5/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                      : "ww_dblsct_pythia",
+            "/WW_TuneCP5_13TeV-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                                       : "ww_incl_pythia",
+            "/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM"                            : "wz_3lv_amcatnlo",
+            "/WZ_TuneCP5_13TeV-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                                       : "wz_incl_pythia",
+            "/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                                 : "wz_lnqq_amcatnlo",
+            "/WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8_v2/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                : "wz_1l3n_amcatnlo",
+            "/WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                    : "wz_2l2q_amcatnlo",
+            "/WZTo3LNu_0Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                     : "wz_3lv_0jmll4_madgraph",
+            "/WZTo3LNu_0Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3/MINIAODSIM"                        : "wz_3lv_0jmll50_madgraph",
+            "/WZTo3LNu_1Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                     : "wz_3lv_1jmll4_madgraph",
+            "/WZTo3LNu_1Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                        : "wz_3lv_1jmll50_madgraph",
+            "/WZTo3LNu_2Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                     : "wz_3lv_2jmll4_madgraph",
+            "/WZTo3LNu_2Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                        : "wz_3lv_2jmll50_madgraph",
+            "/WZTo3LNu_3Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                     : "wz_3lv_3jmll4_madgraph",
+            "/WZTo3LNu_3Jets_MLL-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                        : "wz_3lv_3jmll50_madgraph",
+            "/WZTo3LNu_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                                                  : "wz_3lv_powheg",
+            "/ZZTo4L_13TeV_powheg_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                                    : "zz_4l_powheg",
+            "/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                          : "wwz_amcatnlo",
+            "/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                             : "wzz_amcatnlo",
+            "/WZG_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                             : "wzg_amcatnlo",
+            "/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                             : "zzz_amcatnlo",
+            "/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                       : "ttbar_1ltop_mgmlm",
+            "/TTJets_SingleLeptFromTbar_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                    : "ttbar_1ltbr_mgmlm",
+            "/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                : "ttbar_dilep_mgmlm",
+            "/TTGamma_SingleLeptFromT_TuneCP5_PSweights_13TeV_madgraph_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "ttg_1ltop_madgraph",
+            "/TTGamma_SingleLeptFromTbar_TuneCP5_PSweights_13TeV_madgraph_pythia8/RunIIFall17MiniAOD-PU2017_94X_mc2017_realistic_v11-v1/MINIAODSIM"                        : "ttg_1ltbr_madgraph",
+            "/TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                        : "ttw_lv_amcatnlo",
+            "/TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                         : "ttw_qq_amcatnlo",
+            "/TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                 : "ttz_m1to10ll_amcatnlo",
+            "/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                : "ttz_llvvm10_amcatnlo",
+            "/TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                         : "ttz_qq_amcatnlo",
+            "/tZq_ll_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                     : "tzq_ll_amcatnlo",
+            "/DoubleEG/Run2017B-31Mar2018-v1/MINIAOD"                                                                                                                      : "data_Run2017B_ee",
+            "/DoubleEG/Run2017C-31Mar2018-v1/MINIAOD"                                                                                                                      : "data_Run2017C_ee",
+            "/DoubleEG/Run2017D-31Mar2018-v1/MINIAOD"                                                                                                                      : "data_Run2017D_ee",
+            "/DoubleEG/Run2017E-31Mar2018-v1/MINIAOD"                                                                                                                      : "data_Run2017E_ee",
+            "/DoubleEG/Run2017F-31Mar2018-v1/MINIAOD"                                                                                                                      : "data_Run2017F_ee",
+            "/DoubleMuon/Run2017B-31Mar2018-v1/MINIAOD"                                                                                                                    : "data_Run2017B_mm",
+            "/DoubleMuon/Run2017C-31Mar2018-v1/MINIAOD"                                                                                                                    : "data_Run2017C_mm",
+            "/DoubleMuon/Run2017D-31Mar2018-v1/MINIAOD"                                                                                                                    : "data_Run2017D_mm",
+            "/DoubleMuon/Run2017E-31Mar2018-v1/MINIAOD"                                                                                                                    : "data_Run2017E_mm",
+            "/DoubleMuon/Run2017F-31Mar2018-v1/MINIAOD"                                                                                                                    : "data_Run2017F_mm",
+            "/MuonEG/Run2017B-31Mar2018-v1/MINIAOD"                                                                                                                        : "data_Run2017B_em",
+            "/MuonEG/Run2017C-31Mar2018-v1/MINIAOD"                                                                                                                        : "data_Run2017C_em",
+            "/MuonEG/Run2017D-31Mar2018-v1/MINIAOD"                                                                                                                        : "data_Run2017D_em",
+            "/MuonEG/Run2017E-31Mar2018-v1/MINIAOD"                                                                                                                        : "data_Run2017E_em",
+            "/MuonEG/Run2017F-31Mar2018-v1/MINIAOD"                                                                                                                        : "data_Run2017F_em",
+            "/VHToWW_M125_13TeV_amcatnloFXFX_madspin_pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-ext1-v2/MINIAODSIM"                    : "vh_ww_amcatnlo_private", # Private sample generated by Phil. Restricted to VH->WW but no dilep filter
+            "/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                  : "www_amcatnlo_private",   # Private sample generated by Phil. W width not fixed and no dilep filter
+
+            }
+
+    dinfos["www_2017_94x_v2"] = {
+            "samples" : sample_info,
+            "year" : 2017,
+            "baby_type" : "WWW"
+            }
+
+
+    #########################################
+    ######## FR BABY MC 2017 94x v2 #########
+    #########################################
+
+    sample_info = {
+
+            "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM" : "dy_m50_madgraph",
+            "/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                    : "ttbar_incl_amcatnlo",
+            "/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v2/MINIAODSIM"            : "wjets_incl_madgraph",
+            "/WW_TuneCP5_13TeV-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                     : "ww_incl_pythia",
+            "/WZ_TuneCP5_13TeV-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                     : "wz_incl_pythia",
+            "/QCD_Pt-15to20_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt15_muenriched",
+            "/QCD_Pt-20to30_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt20_muenriched",
+            "/QCD_Pt-30to50_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt30_muenriched",
+            "/QCD_Pt-50to80_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt50_muenriched",
+            "/QCD_Pt-80to120_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"           : "qcd_pt80_muenriched",
+            "/QCD_Pt-120to170_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"          : "qcd_pt120_muenriched",
+            "/QCD_Pt-170to300_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"          : "qcd_pt170_muenriched",
+            "/QCD_Pt-300to470_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"          : "qcd_pt300_muenriched",
+            "/QCD_Pt-470to600_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"          : "qcd_pt470_muenriched",
+            "/QCD_Pt-600to800_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM"                             : "qcd_pt600_muenriched",
+            #"/QCD_Pt-800to1000_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM"                            : "qcd_pt800_muenriched",
+            #"/QCD_Pt-1000toInf_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"         : "qcd_pt1000_muenriched",
+            "/QCD_Pt-15to20_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "qcd_pt15_emenriched",
+            "/QCD_Pt-20to30_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "qcd_pt20_emenriched",
+            "/QCD_Pt-30to50_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "qcd_pt30_emenriched",
+            "/QCD_Pt-50to80_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "qcd_pt50_emenriched",
+            "/QCD_Pt-80to120_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"              : "qcd_pt80_emenriched",
+            "/QCD_Pt-120to170_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"             : "qcd_pt120_emenriched",
+            "/QCD_Pt-170to300_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM"                                : "qcd_pt170_emenriched",
+            "/QCD_Pt-300toInf_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"             : "qcd_pt300_emenriched",
+            "/QCD_Pt_15to20_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v11-v1/MINIAODSIM"                                       : "qcd_pt15_bctoe",
+            "/QCD_Pt_20to30_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                    : "qcd_pt20_bctoe",
+            "/QCD_Pt_30to80_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                    : "qcd_pt30_bctoe",
+            "/QCD_Pt_80to170_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                   : "qcd_pt80_bctoe",
+            "/QCD_Pt_170to250_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                  : "qcd_pt170_bctoe",
+            "/QCD_Pt_250toInf_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                  : "qcd_pt250_bctoe",
+            "/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "ttbar_1ltop_madgraph",
+            "/TTJets_SingleLeptFromTbar_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"  : "ttbar_1ltbr_madgraph",
+            "/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"              : "ttbar_dilep_madgraph",
+            "/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"     : "wjets_ht100_madgraph",
+            "/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "wjets_ht200_madgraph",
+            "/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "wjets_ht400_madgraph",
+            "/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "wjets_ht600_madgraph",
+            "/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"    : "wjets_ht800_madgraph",
+            "/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"   : "wjets_ht1200_madgraph",
+            "/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3/MINIAODSIM"    : "wjets_ht2500_madgraph",
+
+            }
+
+    dinfos["fr_2017_94x_v2"] = {
+            "samples" : sample_info,
+            "year" : 2017,
+            "baby_type" : "FR"
+            }
+
+    ##########################################
+    ######## TnP BABY MC 2017 94x v2 #########
+    ##########################################
+
+    sample_info = {
+
+            "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM" : "dy_m50_madgraph",
+            "/SingleElectron/Run2017B-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017B_se",
+            "/SingleElectron/Run2017C-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017C_se",
+            "/SingleElectron/Run2017D-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017D_se",
+            "/SingleElectron/Run2017E-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017E_se",
+            "/SingleElectron/Run2017F-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017F_se",
+            "/SingleMuon/Run2017B-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017B_sm",
+            "/SingleMuon/Run2017C-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017C_sm",
+            "/SingleMuon/Run2017D-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017D_sm",
+            "/SingleMuon/Run2017E-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017E_sm",
+            "/SingleMuon/Run2017F-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017F_sm",
+            "/MET/Run2017B-31Mar2018-v1/MINIAOD"                                                                                                         : "data_Run2017B_xe",
+            "/MET/Run2017C-31Mar2018-v1/MINIAOD"                                                                                                         : "data_Run2017C_xe",
+            "/MET/Run2017D-31Mar2018-v1/MINIAOD"                                                                                                         : "data_Run2017D_xe",
+            "/MET/Run2017E-31Mar2018-v1/MINIAOD"                                                                                                         : "data_Run2017E_xe",
+            "/MET/Run2017F-31Mar2018-v1/MINIAOD"                                                                                                         : "data_Run2017F_xe",
+
+            }
+
+    dinfos["tnp_2017_94x_v2"] = {
+            "samples" : sample_info,
+            "year" : 2017,
+            "baby_type" : "TnP"
+            }
+
+
+    return dinfos
+
+#################################################################################################################################################################################################
+# SUBMIT JOBS
+#################################################################################################################################################################################################
+
+def submit_condor_jobs(tag):
+
+    dinfos = get_master_list()
+
+    for campaign in dinfos:
+
+        submit_condor_jobs(
+                samples_dictionary = dinfos[campaign]["samples"],
+                year               = dinfos[campaign]["year"],
+                baby_type          = dinfos[campaign]["baby_type"],
+                baby_version_tag   = tag
+                )
 
 if __name__ == "__main__":
-    main()
+
+    submit_condor_jobs("v5.0.1") # Submitting 94x v2 2017 samples
 
 #eof
