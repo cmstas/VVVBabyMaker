@@ -129,6 +129,10 @@ def get_master_list():
 
             }
 
+    sample_info = {
+            "/PrivateWWW/www-cms4-Private80X-v1/MINIAODSIM" : "www_2l_mia",
+            }
+
     dinfos["www_2016_80x"] = {
             "samples" : sample_info,
             "year" : 2016,
