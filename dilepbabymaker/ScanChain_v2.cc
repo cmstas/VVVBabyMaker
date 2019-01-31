@@ -60,7 +60,7 @@ void babyMaker_v2::ScanChain_v2(bool verbose)
         }
         catch (const std::ios_base::failure& e)
         {
-            if (SampleNiceName().BeginsWith("data"))
+            if (isData())
             {
                 std::cout << "Found bad event in data" << std::endl;
                 FATALERROR(__FUNCTION__);
@@ -85,6 +85,9 @@ void babyMaker_v2::Init()
 
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
     coreJec.setJECFor(looper.getCurrentFileName(), isFastSim());
+
+    // Provide which year it is to determine which JER config files to load
+    coreJer.setJERFor(gconf.year);
 
     // Output root file
     CreateOutput();
@@ -316,10 +319,19 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<float>>("jets_csv");
     tx->createBranch<vector<float>>("jets_up_csv");
     tx->createBranch<vector<float>>("jets_dn_csv");
+    tx->createBranch<vector<float>>("jets_jer_csv");
+    tx->createBranch<vector<float>>("jets_jerup_csv");
+    tx->createBranch<vector<float>>("jets_jerdn_csv");
+    tx->createBranch<vector<LorentzVector>>("jets_jer_p4");
+    tx->createBranch<vector<LorentzVector>>("jets_jerup_p4");
+    tx->createBranch<vector<LorentzVector>>("jets_jerdn_p4");
 
     tx->createBranch<vector<LorentzVector>>("jets30_p4");
     tx->createBranch<vector<LorentzVector>>("jets30_up_p4");
     tx->createBranch<vector<LorentzVector>>("jets30_dn_p4");
+    tx->createBranch<vector<LorentzVector>>("jets30_jer_p4");
+    tx->createBranch<vector<LorentzVector>>("jets30_jerup_p4");
+    tx->createBranch<vector<LorentzVector>>("jets30_jerdn_p4");
 
     tx->createBranch<vector<LorentzVector>>("ak8jets_p4");
     tx->createBranch<vector<float>>("ak8jets_softdropMass");
@@ -346,6 +358,12 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<float>("met_dn_phi");
     tx->createBranch<float>("met_gen_pt");
     tx->createBranch<float>("met_gen_phi");
+    tx->createBranch<float>("met_jer_pt");
+    tx->createBranch<float>("met_jerup_pt");
+    tx->createBranch<float>("met_jerdn_pt");
+    tx->createBranch<float>("met_jer_phi");
+    tx->createBranch<float>("met_jerup_phi");
+    tx->createBranch<float>("met_jerdn_phi");
 
     tx->createBranch<int>("firstgoodvertex");
     tx->createBranch<int>("nTrueInt");
@@ -368,6 +386,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<int>>("genPart_status");
     tx->createBranch<int>("ngenLep");
     tx->createBranch<int>("ngenLepFromTau");
+    tx->createBranch<int>("ngenLepFromBoson");
 
     tx->createBranch<int>("Flag_AllEventFilters");
     tx->createBranch<int>("Flag_EcalDeadCellTriggerPrimitiveFilter");
@@ -406,114 +425,198 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("nj");
     tx->createBranch<int>("nj_up");
     tx->createBranch<int>("nj_dn");
+    tx->createBranch<int>("nj_jer");
+    tx->createBranch<int>("nj_jerup");
+    tx->createBranch<int>("nj_jerdn");
 
     tx->createBranch<int>("nj30");
     tx->createBranch<int>("nj30_up");
     tx->createBranch<int>("nj30_dn");
+    tx->createBranch<int>("nj30_jer");
+    tx->createBranch<int>("nj30_jerup");
+    tx->createBranch<int>("nj30_jerdn");
 
     tx->createBranch<int>("nb");
     tx->createBranch<int>("nb_up");
     tx->createBranch<int>("nb_dn");
+    tx->createBranch<int>("nb_jer");
+    tx->createBranch<int>("nb_jerup");
+    tx->createBranch<int>("nb_jerdn");
 
     tx->createBranch<float>("Ml0j0");
     tx->createBranch<float>("Ml0j0_up");
     tx->createBranch<float>("Ml0j0_dn");
+    tx->createBranch<float>("Ml0j0_jer");
+    tx->createBranch<float>("Ml0j0_jerup");
+    tx->createBranch<float>("Ml0j0_jerdn");
 
     tx->createBranch<float>("Ml0j1");
     tx->createBranch<float>("Ml0j1_up");
     tx->createBranch<float>("Ml0j1_dn");
+    tx->createBranch<float>("Ml0j1_jer");
+    tx->createBranch<float>("Ml0j1_jerup");
+    tx->createBranch<float>("Ml0j1_jerdn");
 
     tx->createBranch<float>("Ml1j0");
     tx->createBranch<float>("Ml1j0_up");
     tx->createBranch<float>("Ml1j0_dn");
+    tx->createBranch<float>("Ml1j0_jer");
+    tx->createBranch<float>("Ml1j0_jerup");
+    tx->createBranch<float>("Ml1j0_jerdn");
 
     tx->createBranch<float>("Ml1j1");
     tx->createBranch<float>("Ml1j1_up");
     tx->createBranch<float>("Ml1j1_dn");
+    tx->createBranch<float>("Ml1j1_jer");
+    tx->createBranch<float>("Ml1j1_jerup");
+    tx->createBranch<float>("Ml1j1_jerdn");
 
     tx->createBranch<float>("MinMlj");
     tx->createBranch<float>("MinMlj_up");
     tx->createBranch<float>("MinMlj_dn");
+    tx->createBranch<float>("MinMlj_jer");
+    tx->createBranch<float>("MinMlj_jerup");
+    tx->createBranch<float>("MinMlj_jerdn");
 
     tx->createBranch<float>("SumMinMlj01");
     tx->createBranch<float>("SumMinMlj01_up");
     tx->createBranch<float>("SumMinMlj01_dn");
+    tx->createBranch<float>("SumMinMlj01_jer");
+    tx->createBranch<float>("SumMinMlj01_jerup");
+    tx->createBranch<float>("SumMinMlj01_jerdn");
 
     tx->createBranch<float>("MaxMlj");
     tx->createBranch<float>("MaxMlj_up");
     tx->createBranch<float>("MaxMlj_dn");
+    tx->createBranch<float>("MaxMlj_jer");
+    tx->createBranch<float>("MaxMlj_jerup");
+    tx->createBranch<float>("MaxMlj_jerdn");
 
     tx->createBranch<float>("SumMlj");
     tx->createBranch<float>("SumMlj_up");
     tx->createBranch<float>("SumMlj_dn");
+    tx->createBranch<float>("SumMlj_jer");
+    tx->createBranch<float>("SumMlj_jerup");
+    tx->createBranch<float>("SumMlj_jerdn");
 
     tx->createBranch<float>("Ml0jj");
     tx->createBranch<float>("Ml0jj_up");
     tx->createBranch<float>("Ml0jj_dn");
+    tx->createBranch<float>("Ml0jj_jer");
+    tx->createBranch<float>("Ml0jj_jerup");
+    tx->createBranch<float>("Ml0jj_jerdn");
 
     tx->createBranch<float>("Ml1jj");
     tx->createBranch<float>("Ml1jj_up");
     tx->createBranch<float>("Ml1jj_dn");
+    tx->createBranch<float>("Ml1jj_jer");
+    tx->createBranch<float>("Ml1jj_jerup");
+    tx->createBranch<float>("Ml1jj_jerdn");
 
     tx->createBranch<float>("MinMljj");
     tx->createBranch<float>("MinMljj_up");
     tx->createBranch<float>("MinMljj_dn");
+    tx->createBranch<float>("MinMljj_jer");
+    tx->createBranch<float>("MinMljj_jerup");
+    tx->createBranch<float>("MinMljj_jerdn");
 
     tx->createBranch<float>("MaxMljj");
     tx->createBranch<float>("MaxMljj_up");
     tx->createBranch<float>("MaxMljj_dn");
+    tx->createBranch<float>("MaxMljj_jer");
+    tx->createBranch<float>("MaxMljj_jerup");
+    tx->createBranch<float>("MaxMljj_jerdn");
 
     tx->createBranch<float>("SumMljj");
     tx->createBranch<float>("SumMljj_up");
     tx->createBranch<float>("SumMljj_dn");
+    tx->createBranch<float>("SumMljj_jer");
+    tx->createBranch<float>("SumMljj_jerup");
+    tx->createBranch<float>("SumMljj_jerdn");
 
     tx->createBranch<float>("Mjj");
     tx->createBranch<float>("Mjj_up");
     tx->createBranch<float>("Mjj_dn");
+    tx->createBranch<float>("Mjj_jer");
+    tx->createBranch<float>("Mjj_jerup");
+    tx->createBranch<float>("Mjj_jerdn");
 
     tx->createBranch<float>("DRjj");
     tx->createBranch<float>("DRjj_up");
     tx->createBranch<float>("DRjj_dn");
+    tx->createBranch<float>("DRjj_jer");
+    tx->createBranch<float>("DRjj_jerup");
+    tx->createBranch<float>("DRjj_jerdn");
 
     tx->createBranch<LV>("jet0_wtag_p4");
     tx->createBranch<LV>("jet0_wtag_p4_up");
     tx->createBranch<LV>("jet0_wtag_p4_dn");
+    tx->createBranch<LV>("jet0_wtag_p4_jer");
+    tx->createBranch<LV>("jet0_wtag_p4_jerup");
+    tx->createBranch<LV>("jet0_wtag_p4_jerdn");
 
     tx->createBranch<LV>("jet1_wtag_p4");
     tx->createBranch<LV>("jet1_wtag_p4_up");
     tx->createBranch<LV>("jet1_wtag_p4_dn");
+    tx->createBranch<LV>("jet1_wtag_p4_jer");
+    tx->createBranch<LV>("jet1_wtag_p4_jerup");
+    tx->createBranch<LV>("jet1_wtag_p4_jerdn");
 
     tx->createBranch<float>("MjjDR1");
     tx->createBranch<float>("MjjDR1_up");
     tx->createBranch<float>("MjjDR1_dn");
+    tx->createBranch<float>("MjjDR1_jer");
+    tx->createBranch<float>("MjjDR1_jerup");
+    tx->createBranch<float>("MjjDR1_jerdn");
 
     tx->createBranch<float>("DRjjDR1");
     tx->createBranch<float>("DRjjDR1_up");
     tx->createBranch<float>("DRjjDR1_dn");
+    tx->createBranch<float>("DRjjDR1_jer");
+    tx->createBranch<float>("DRjjDR1_jerup");
+    tx->createBranch<float>("DRjjDR1_jerdn");
 
     tx->createBranch<LV>("jet0_wtag_p4_DR1");
     tx->createBranch<LV>("jet0_wtag_p4_DR1_up");
     tx->createBranch<LV>("jet0_wtag_p4_DR1_dn");
+    tx->createBranch<LV>("jet0_wtag_p4_DR1_jer");
+    tx->createBranch<LV>("jet0_wtag_p4_DR1_jerup");
+    tx->createBranch<LV>("jet0_wtag_p4_DR1_jerdn");
 
     tx->createBranch<LV>("jet1_wtag_p4_DR1");
     tx->createBranch<LV>("jet1_wtag_p4_DR1_up");
     tx->createBranch<LV>("jet1_wtag_p4_DR1_dn");
+    tx->createBranch<LV>("jet1_wtag_p4_DR1_jer");
+    tx->createBranch<LV>("jet1_wtag_p4_DR1_jerup");
+    tx->createBranch<LV>("jet1_wtag_p4_DR1_jerdn");
 
     tx->createBranch<float>("MjjVBF");
     tx->createBranch<float>("MjjVBF_up");
     tx->createBranch<float>("MjjVBF_dn");
+    tx->createBranch<float>("MjjVBF_jer");
+    tx->createBranch<float>("MjjVBF_jerup");
+    tx->createBranch<float>("MjjVBF_jerdn");
 
     tx->createBranch<float>("DetajjVBF");
     tx->createBranch<float>("DetajjVBF_up");
     tx->createBranch<float>("DetajjVBF_dn");
+    tx->createBranch<float>("DetajjVBF_jer");
+    tx->createBranch<float>("DetajjVBF_jerup");
+    tx->createBranch<float>("DetajjVBF_jerdn");
 
     tx->createBranch<float>("MjjL");
     tx->createBranch<float>("MjjL_up");
     tx->createBranch<float>("MjjL_dn");
+    tx->createBranch<float>("MjjL_jer");
+    tx->createBranch<float>("MjjL_jerup");
+    tx->createBranch<float>("MjjL_jerdn");
 
     tx->createBranch<float>("DetajjL");
     tx->createBranch<float>("DetajjL_up");
     tx->createBranch<float>("DetajjL_dn");
+    tx->createBranch<float>("DetajjL_jer");
+    tx->createBranch<float>("DetajjL_jerup");
+    tx->createBranch<float>("DetajjL_jerdn");
 
     tx->createBranch<float>("MllSS");
     tx->createBranch<float>("MeeSS");
@@ -532,23 +635,38 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<float>("DPhi3lMET");
     tx->createBranch<float>("DPhi3lMET_up");
     tx->createBranch<float>("DPhi3lMET_dn");
+    tx->createBranch<float>("DPhi3lMET_jer");
+    tx->createBranch<float>("DPhi3lMET_jerup");
+    tx->createBranch<float>("DPhi3lMET_jerdn");
     tx->createBranch<float>("DPhi3lMET_gen");
     tx->createBranch<float>("MTmax");
     tx->createBranch<float>("MTmax_up");
     tx->createBranch<float>("MTmax_dn");
+    tx->createBranch<float>("MTmax_jer");
+    tx->createBranch<float>("MTmax_jerup");
+    tx->createBranch<float>("MTmax_jerdn");
     tx->createBranch<float>("MTmax_gen");
     tx->createBranch<float>("MTmin");
     tx->createBranch<float>("MTmin_up");
     tx->createBranch<float>("MTmin_dn");
+    tx->createBranch<float>("MTmin_jer");
+    tx->createBranch<float>("MTmin_jerup");
+    tx->createBranch<float>("MTmin_jerdn");
     tx->createBranch<float>("MTmin_gen");
 
     tx->createBranch<float>("MT3rd");
     tx->createBranch<float>("MT3rd_up");
     tx->createBranch<float>("MT3rd_dn");
+    tx->createBranch<float>("MT3rd_jer");
+    tx->createBranch<float>("MT3rd_jerup");
+    tx->createBranch<float>("MT3rd_jerdn");
     tx->createBranch<float>("MT3rd_gen");
     tx->createBranch<float>("MTmax3L");
     tx->createBranch<float>("MTmax3L_up");
     tx->createBranch<float>("MTmax3L_dn");
+    tx->createBranch<float>("MTmax3L_jer");
+    tx->createBranch<float>("MTmax3L_jerup");
+    tx->createBranch<float>("MTmax3L_jerdn");
     tx->createBranch<float>("MTmax3L_gen");
 
     tx->createBranch<int>("passSSee");
@@ -1474,13 +1592,13 @@ void babyMaker_v2::ProcessPOGMuons() { coreMuon.process(is2017POGVetoMuon); }
 void babyMaker_v2::ProcessTnPMuons() { coreMuon.process(isProbeMuon, isTagMuon); }
 
 //##############################################################################################################
-void babyMaker_v2::ProcessJets() { coreJet.process(coreJec); }
+void babyMaker_v2::ProcessJets() { coreJet.process(coreJec, coreJer); }
 
 //##############################################################################################################
 void babyMaker_v2::ProcessFatJets() { coreFatJet.process(coreJec); }
 
 //##############################################################################################################
-void babyMaker_v2::ProcessMET() { coreMET.process(coreJec); }
+void babyMaker_v2::ProcessMET() { coreMET.process(coreJec, coreJer); }
 
 //##############################################################################################################
 void babyMaker_v2::ProcessTracks() { coreTrack.process(); }
@@ -1650,7 +1768,7 @@ bool babyMaker_v2::PassPresel_v2()
     if (nveto == 1)
     {
         // Check if data,
-        bool isdata = SampleNiceName().BeginsWith("data");
+        bool isdata = isData();
         if (isdata)
         {
             // If data then check the triggers
@@ -1675,14 +1793,7 @@ bool babyMaker_v2::PassPresel_v2()
             // If it reaches this point, then it means that none of the trigger passed
             return false;
         }
-        bool isqcd   = SampleNiceName().BeginsWith("qcd_");
-        bool isttbar = SampleNiceName().BeginsWith("ttbar_");
-        bool isW     = SampleNiceName().BeginsWith("wjets_");
-        bool isZ     = SampleNiceName().BeginsWith("dy_");
-        bool isWW    = SampleNiceName().BeginsWith("ww_");
-        bool isWZ    = SampleNiceName().BeginsWith("wz_");
-        bool isZZ    = SampleNiceName().BeginsWith("zz_");
-        return isqcd || isttbar || isW || isZ || isWW || isWZ || isZZ;
+        return true;
     }
 
     // Anything else dump
@@ -1826,7 +1937,7 @@ bool babyMaker_v2::PassFRPreselection()
 //    if (el_idx.size() + mu_idx.size() == 1)
 //    {
         // Check if data,
-        if (SampleNiceName().BeginsWith("data"))
+        if (isData())
         {
             if (coreSample.is2016(looper.getCurrentFileName()))
             {
@@ -1878,14 +1989,6 @@ bool babyMaker_v2::PassFRPreselection()
                 return false;
             }
         }
-        bool isqcd   = SampleNiceName().BeginsWith("qcd_");
-        bool isttbar = SampleNiceName().BeginsWith("ttbar_");
-        bool isW     = SampleNiceName().BeginsWith("wjets_");
-        bool isZ     = SampleNiceName().BeginsWith("dy_");
-        bool isWW    = SampleNiceName().BeginsWith("ww_");
-        bool isWZ    = SampleNiceName().BeginsWith("wz_");
-        bool isZZ    = SampleNiceName().BeginsWith("zz_");
-        return isqcd || isttbar || isW || isZ || isWW || isWZ || isZZ;
         return true;
 //    }
 //    else
@@ -2153,15 +2256,18 @@ void babyMaker_v2::FillElectrons()
         float conecorrptfactorraw = coreElectron.index.size() + coreMuon.index.size() > 2 ? eleRelIso03EA(idx, 2, true) - 0.03: eleRelIso03EA(idx, 2, true) - 0.05;
         float conecorrptfactor = max(0., (double) conecorrptfactorraw) + 1.; // To clip correcting once it passes tight isolation criteria
 
-        if (coreElectron.index.size() + coreMuon.index.size() == 2)
+        if (babymode != kFRBaby)
         {
-            if (!( passElectronSelection_VVV(idx, VVV_FO_SS) ))
-                continue;
-        }
-        else if (coreElectron.index.size() + coreMuon.index.size() > 2)
-        {
-            if (!( passElectronSelection_VVV(idx, VVV_FO_3L) ))
-                continue;
+            if (coreElectron.index.size() + coreMuon.index.size() == 2)
+            {
+                if (!( passElectronSelection_VVV(idx, VVV_FO_SS) ))
+                    continue;
+            }
+            else if (coreElectron.index.size() + coreMuon.index.size() > 2)
+            {
+                if (!( passElectronSelection_VVV(idx, VVV_FO_3L) ))
+                    continue;
+            }
         }
 
         tx->pushbackToBranch<LorentzVector> ("lep_p4"                           , cms3.els_p4()[idx]);
@@ -2246,15 +2352,18 @@ void babyMaker_v2::FillMuons()
         float conecorrptfactorraw = coreElectron.index.size() + coreMuon.index.size() > 2 ? muRelIso03EA(idx, 2, true) - 0.03: muRelIso03EA(idx, 2, true) - 0.07;
         float conecorrptfactor = max(0., (double) conecorrptfactorraw) + 1.; // To clip correcting once it passes tight isolation criteria
 
-        if (coreMuon.index.size() + coreMuon.index.size() == 2)
+        if (babymode != kFRBaby)
         {
-            if (!( passMuonSelection_VVV(idx, VVV_FO_SS) ))
-                continue;
-        }
-        else if (coreMuon.index.size() + coreMuon.index.size() > 2)
-        {
-            if (!( passMuonSelection_VVV(idx, VVV_FO_3L) ))
-                continue;
+            if (coreElectron.index.size() + coreMuon.index.size() == 2)
+            {
+                if (!( passMuonSelection_VVV(idx, VVV_FO_SS) ))
+                    continue;
+            }
+            else if (coreElectron.index.size() + coreMuon.index.size() > 2)
+            {
+                if (!( passMuonSelection_VVV(idx, VVV_FO_3L) ))
+                    continue;
+            }
         }
 
         tx->pushbackToBranch<LorentzVector> ("lep_p4"                           , cms3.mus_p4()[idx]);
@@ -2344,6 +2453,7 @@ void babyMaker_v2::FillGenParticles()
     tx->setBranch<vector<int>>("genPart_status", coreGenPart.genPart_status);
     tx->setBranch<int>("ngenLep", coreGenPart.ngenLep);
     tx->setBranch<int>("ngenLepFromTau", coreGenPart.ngenLepFromTau);
+    tx->setBranch<int>("ngenLepFromBoson", coreGenPart.ngenLepFromBoson);
 }
 
 //##############################################################################################################
@@ -2422,6 +2532,12 @@ void babyMaker_v2::FillJets()
             continue;
 
         LorentzVector jet = cms3.pfjets_p4()[idx] * cms3.pfjets_undoJEC()[idx] * corr;
+
+        // Smear value for JER (only MC for data set it to nominal)
+        float smear = cms3.evt_isRealData() ? 1 : coreJet.smears[ijet];
+        float smearup = cms3.evt_isRealData() ? 1 : coreJet.smears_up[ijet];
+        float smeardn = cms3.evt_isRealData() ? 1 : coreJet.smears_dn[ijet];
+
         if (jet.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_p4", jet);
@@ -2451,6 +2567,34 @@ void babyMaker_v2::FillJets()
             if (jet_dn.pt() > 30. and abs(jet_dn.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_dn_p4", jet_dn);
         }
+
+        LorentzVector jet_jer = jet * smear;
+        if (jet_jer.pt() > 20)
+        {
+            tx->pushbackToBranch<LorentzVector>("jets_jer_p4", jet_jer);
+            tx->pushbackToBranch<float>("jets_jer_csv", current_csv_val);
+            if (jet_jer.pt() > 30. and abs(jet_jer.eta()) < 2.5)
+                tx->pushbackToBranch<LorentzVector>("jets30_jer_p4", jet_jer);
+        }
+
+        LorentzVector jet_jerup = jet * smearup;
+        if (jet_jerup.pt() > 20)
+        {
+            tx->pushbackToBranch<LorentzVector>("jets_jerup_p4", jet_jerup);
+            tx->pushbackToBranch<float>("jets_jerup_csv", current_csv_val);
+            if (jet_jerup.pt() > 30. and abs(jet_jerup.eta()) < 2.5)
+                tx->pushbackToBranch<LorentzVector>("jets30_jerup_p4", jet_jerup);
+        }
+
+        LorentzVector jet_jerdn = jet * smeardn;
+        if (jet_jerdn.pt() > 20)
+        {
+            tx->pushbackToBranch<LorentzVector>("jets_jerdn_p4", jet_jerdn);
+            tx->pushbackToBranch<float>("jets_jerdn_csv", current_csv_val);
+            if (jet_jerdn.pt() > 30. and abs(jet_jerdn.eta()) < 2.5)
+                tx->pushbackToBranch<LorentzVector>("jets30_jerdn_p4", jet_jerdn);
+        }
+
     }
 
     if (!cms3.evt_isRealData())
@@ -2539,6 +2683,12 @@ void babyMaker_v2::FillMET()
     tx->setBranch<float>("met_dn_phi", coreMET.met_dn_phi);
     tx->setBranch<float>("met_gen_pt", cms3.gen_met());
     tx->setBranch<float>("met_gen_phi", cms3.gen_metPhi());
+    tx->setBranch<float>("met_jer_pt", coreMET.met_jer_pt);
+    tx->setBranch<float>("met_jer_phi", coreMET.met_jer_phi);
+    tx->setBranch<float>("met_jerup_pt", coreMET.met_jerup_pt);
+    tx->setBranch<float>("met_jerup_phi", coreMET.met_jerup_phi);
+    tx->setBranch<float>("met_jerdn_pt", coreMET.met_jerdn_pt);
+    tx->setBranch<float>("met_jerdn_phi", coreMET.met_jerdn_phi);
 }
 
 //##############################################################################################################
@@ -2563,9 +2713,13 @@ void babyMaker_v2::SortJetBranches()
     tx->sortVecBranchesByPt("jets_p4", {"jets_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_up_p4", {"jets_up_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_dn_p4", {"jets_dn_csv"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jer_p4", {"jets_jer_csv"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jerup_p4", {"jets_jerup_csv"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jerdn_p4", {"jets_jerdn_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets30_p4", {}, {}, {});
     tx->sortVecBranchesByPt("jets30_up_p4", {}, {}, {});
     tx->sortVecBranchesByPt("jets30_dn_p4", {}, {}, {});
+    tx->sortVecBranchesByPt("jets30_jer_p4", {}, {}, {});
 }
 
 //##############################################################################################################
@@ -2641,9 +2795,9 @@ void babyMaker_v2::FillTrigger()
         bool trig_ee = coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_DoubleEl_2017 : coreTrigger.HLT_DoubleEl || coreTrigger.HLT_DoubleEl_DZ;
         bool trig_em = coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_MuEG_2017     : coreTrigger.HLT_MuEG;
         bool trig_mm = coreSample.is2017(looper.getCurrentFileName()) ? coreTrigger.HLT_DoubleMu_2017 : coreTrigger.HLT_DoubleMu;
-        bool is_pd_ee = SampleNiceName().BeginsWith("data_ee");
-        bool is_pd_em = SampleNiceName().BeginsWith("data_em");
-        bool is_pd_mm = SampleNiceName().BeginsWith("data_mm");
+        bool is_pd_ee = looper.getCurrentFileName().Contains("DoubleEG");
+        bool is_pd_em = looper.getCurrentFileName().Contains("MuonEG");
+        bool is_pd_mm = looper.getCurrentFileName().Contains("DoubleMuon");
         bool pass_duplicate_ee_em_mm = false;
         bool pass_duplicate_mm_em_ee = false;
         if (is_pd_ee)
@@ -3030,7 +3184,7 @@ void babyMaker_v2::FillLbntLeptons()
 
     // Figure out the index by whichever one is the loose but not tight
     int index = -1;
-    for (int ilep = 0; ilep < nVlep; ++ilep)
+    for (int ilep = 0; ilep < nLlep; ++ilep)
     {
         if (!istight[ilep] && isloose[ilep])
             index = ilep;
@@ -3074,6 +3228,10 @@ void babyMaker_v2::FillLbntLeptons()
     }
     else
     {
+        std::cout <<  " index: " << index <<  std::endl;
+        std::cout <<  " tx->getBranch<vector<int>>('lep_pdgId').size(): " << tx->getBranch<vector<int>>("lep_pdgId").size() <<  std::endl;
+        std::cout <<  " abs(tx->getBranch<vector<int>>('lep_pdgId')[index]): " << abs(tx->getBranch<vector<int>>("lep_pdgId")[index]) <<  std::endl;
+        std::cout <<  " nVlep: " << nVlep <<  std::endl;
         FATALERROR(__FUNCTION__);
     }
 
@@ -3093,10 +3251,16 @@ void babyMaker_v2::FillSummaryVariables()
     FillJetVariables(0);
     FillJetVariables(1);
     FillJetVariables(-1);
+    FillJetVariables(2); // JER
+    FillJetVariables(3); // JER up
+    FillJetVariables(-2); // JER down
     FillLeptonVariables();
     FillLepJetVariables(0);
     FillLepJetVariables(1);
     FillLepJetVariables(-1);
+    FillLepJetVariables(2); // JER
+    FillLepJetVariables(3); // JER up
+    FillLepJetVariables(-3); // JER down
     FillEventTags();
 }
 
@@ -3649,23 +3813,23 @@ void babyMaker_v2::FillJetVariables(int variation)
     // Assumes FillJets and SortJetBranches are already called
     //
 
-    TString jets_csv     = variation == 0 ? "jets_csv"   : variation == 1 ? "jets_up_csv"   : "jets_dn_csv";
-    TString jets_p4      = variation == 0 ? "jets_p4"    : variation == 1 ? "jets_up_p4"    : "jets_dn_p4";
-    TString nj_bn        = variation == 0 ? "nj"         : variation == 1 ? "nj_up"         : "nj_dn";
-    TString nj30_bn      = variation == 0 ? "nj30"       : variation == 1 ? "nj30_up"       : "nj30_dn";
-    TString nb_bn        = variation == 0 ? "nb"         : variation == 1 ? "nb_up"         : "nb_dn";
-    TString Mjj_bn       = variation == 0 ? "Mjj"        : variation == 1 ? "Mjj_up"        : "Mjj_dn";
-    TString MjjL_bn      = variation == 0 ? "MjjL"       : variation == 1 ? "MjjL_up"       : "MjjL_dn";
-    TString DetajjL_bn   = variation == 0 ? "DetajjL"    : variation == 1 ? "DetajjL_up"    : "DetajjL_dn";
-    TString MjjVBF_bn    = variation == 0 ? "MjjVBF"     : variation == 1 ? "MjjVBF_up"     : "MjjVBF_dn";
-    TString DetajjVBF_bn = variation == 0 ? "DetajjVBF"  : variation == 1 ? "DetajjVBF_up"  : "DetajjVBF_dn";
-    TString MjjDR1_bn    = variation == 0 ? "MjjDR1"     : variation == 1 ? "MjjDR1_up"     : "MjjDR1_dn";
-    TString DRjj_bn      = variation == 0 ? "DRjj"       : variation == 1 ? "DRjj_up"       : "DRjj_dn";
-    TString DRjjDR1_bn   = variation == 0 ? "DRjjDR1"    : variation == 1 ? "DRjjDR1_up"    : "DRjjDR1_dn";
-    TString j0_p4_bn     = variation == 0 ? "jet0_wtag_p4"      : variation == 1 ? "jet0_wtag_p4_up"      : "jet0_wtag_p4_dn";
-    TString j1_p4_bn     = variation == 0 ? "jet1_wtag_p4"      : variation == 1 ? "jet1_wtag_p4_up"      : "jet1_wtag_p4_dn";
-    TString j0_p4_DR1_bn = variation == 0 ? "jet0_wtag_p4_DR1"  : variation == 1 ? "jet0_wtag_p4_DR1_up"  : "jet0_wtag_p4_DR1_dn";
-    TString j1_p4_DR1_bn = variation == 0 ? "jet1_wtag_p4_DR1"  : variation == 1 ? "jet1_wtag_p4_DR1_up"  : "jet1_wtag_p4_DR1_dn";
+    TString jets_csv     = variation == 0 ? "jets_csv"          : variation == 1 ? "jets_up_csv"          : variation ==-1 ?  "jets_dn_csv"         : variation == 2 ? "jets_jer_csv"         : variation == 3 ? "jets_jerup_csv"        : /*variation ==-3 ?*/ "jets_jerdn_csv"        ;
+    TString jets_p4      = variation == 0 ? "jets_p4"           : variation == 1 ? "jets_up_p4"           : variation ==-1 ?  "jets_dn_p4"          : variation == 2 ? "jets_jer_p4"          : variation == 3 ? "jets_jerup_p4"         : /*variation ==-3 ?*/ "jets_jerdn_p4"         ;
+    TString nj_bn        = variation == 0 ? "nj"                : variation == 1 ? "nj_up"                : variation ==-1 ?  "nj_dn"               : variation == 2 ? "nj_jer"               : variation == 3 ? "nj_jerup"              : /*variation ==-3 ?*/ "nj_jerdn"              ;
+    TString nj30_bn      = variation == 0 ? "nj30"              : variation == 1 ? "nj30_up"              : variation ==-1 ?  "nj30_dn"             : variation == 2 ? "nj30_jer"             : variation == 3 ? "nj30_jerup"            : /*variation ==-3 ?*/ "nj30_jerdn"            ;
+    TString nb_bn        = variation == 0 ? "nb"                : variation == 1 ? "nb_up"                : variation ==-1 ?  "nb_dn"               : variation == 2 ? "nb_jer"               : variation == 3 ? "nb_jerup"              : /*variation ==-3 ?*/ "nb_jerdn"              ;
+    TString Mjj_bn       = variation == 0 ? "Mjj"               : variation == 1 ? "Mjj_up"               : variation ==-1 ?  "Mjj_dn"              : variation == 2 ? "Mjj_jer"              : variation == 3 ? "Mjj_jerup"             : /*variation ==-3 ?*/ "Mjj_jerdn"             ;
+    TString MjjL_bn      = variation == 0 ? "MjjL"              : variation == 1 ? "MjjL_up"              : variation ==-1 ?  "MjjL_dn"             : variation == 2 ? "MjjL_jer"             : variation == 3 ? "MjjL_jerup"            : /*variation ==-3 ?*/ "MjjL_jerdn"            ;
+    TString DetajjL_bn   = variation == 0 ? "DetajjL"           : variation == 1 ? "DetajjL_up"           : variation ==-1 ?  "DetajjL_dn"          : variation == 2 ? "DetajjL_jer"          : variation == 3 ? "DetajjL_jerup"         : /*variation ==-3 ?*/ "DetajjL_jerdn"         ;
+    TString MjjVBF_bn    = variation == 0 ? "MjjVBF"            : variation == 1 ? "MjjVBF_up"            : variation ==-1 ?  "MjjVBF_dn"           : variation == 2 ? "MjjVBF_jer"           : variation == 3 ? "MjjVBF_jerup"          : /*variation ==-3 ?*/ "MjjVBF_jerdn"          ;
+    TString DetajjVBF_bn = variation == 0 ? "DetajjVBF"         : variation == 1 ? "DetajjVBF_up"         : variation ==-1 ?  "DetajjVBF_dn"        : variation == 2 ? "DetajjVBF_jer"        : variation == 3 ? "DetajjVBF_jerup"       : /*variation ==-3 ?*/ "DetajjVBF_jerdn"       ;
+    TString MjjDR1_bn    = variation == 0 ? "MjjDR1"            : variation == 1 ? "MjjDR1_up"            : variation ==-1 ?  "MjjDR1_dn"           : variation == 2 ? "MjjDR1_jer"           : variation == 3 ? "MjjDR1_jerup"          : /*variation ==-3 ?*/ "MjjDR1_jerdn"          ;
+    TString DRjj_bn      = variation == 0 ? "DRjj"              : variation == 1 ? "DRjj_up"              : variation ==-1 ?  "DRjj_dn"             : variation == 2 ? "DRjj_jer"             : variation == 3 ? "DRjj_jerup"            : /*variation ==-3 ?*/ "DRjj_jerdn"            ;
+    TString DRjjDR1_bn   = variation == 0 ? "DRjjDR1"           : variation == 1 ? "DRjjDR1_up"           : variation ==-1 ?  "DRjjDR1_dn"          : variation == 2 ? "DRjjDR1_jer"          : variation == 3 ? "DRjjDR1_jerup"         : /*variation ==-3 ?*/ "DRjjDR1_jerdn"         ;
+    TString j0_p4_bn     = variation == 0 ? "jet0_wtag_p4"      : variation == 1 ? "jet0_wtag_p4_up"      : variation ==-1 ?  "jet0_wtag_p4_dn"     : variation == 2 ? "jet0_wtag_p4_jer"     : variation == 3 ? "jet0_wtag_p4_jerup"    : /*variation ==-3 ?*/ "jet0_wtag_p4_jerdn"    ;
+    TString j1_p4_bn     = variation == 0 ? "jet1_wtag_p4"      : variation == 1 ? "jet1_wtag_p4_up"      : variation ==-1 ?  "jet1_wtag_p4_dn"     : variation == 2 ? "jet1_wtag_p4_jer"     : variation == 3 ? "jet1_wtag_p4_jerup"    : /*variation ==-3 ?*/ "jet1_wtag_p4_jerdn"    ;
+    TString j0_p4_DR1_bn = variation == 0 ? "jet0_wtag_p4_DR1"  : variation == 1 ? "jet0_wtag_p4_DR1_up"  : variation ==-1 ?  "jet0_wtag_p4_DR1_dn" : variation == 2 ? "jet0_wtag_p4_DR1_jer" : variation == 3 ? "jet0_wtag_p4_DR1_jerup": /*variation ==-3 ?*/ "jet0_wtag_p4_DR1_jerdn";
+    TString j1_p4_DR1_bn = variation == 0 ? "jet1_wtag_p4_DR1"  : variation == 1 ? "jet1_wtag_p4_DR1_up"  : variation ==-1 ?  "jet1_wtag_p4_DR1_dn" : variation == 2 ? "jet1_wtag_p4_DR1_jer" : variation == 3 ? "jet1_wtag_p4_DR1_jerup": /*variation ==-3 ?*/ "jet1_wtag_p4_DR1_jerdn";
 
     int nj = 0;
     int nj30 = 0;
@@ -3836,7 +4000,7 @@ void babyMaker_v2::FillLepJetVariables(int variation)
 {
 
     // check if two leptons and two jets
-    TString nj30  = variation == 0 ? "nj30"  : variation == 1 ? "nj30_up"  : "nj30_dn";
+    TString nj30  = variation == 0 ? "nj30"  : variation == 1 ? "nj30_up"  : variation ==-1 ? "nj30_dn" : variation== 2 ? "nj30_jer" : variation == 3 ? "nj30_jerup" : /*variation ==-3 ?*/ "nj30_jerdn";
     if (tx->getBranch<int>("nVlep") == 2 and tx->getBranch<int>(nj30) >= 2)
     {
 
@@ -3848,20 +4012,20 @@ void babyMaker_v2::FillLepJetVariables(int variation)
         // Assumes FillJets and SortJetBranches are already called as well as leptons
         //
 
-        TString Ml0j0_bn   = variation == 0 ? "Ml0j0"      : variation == 1 ? "Ml0j0_up"      : "Ml0j0_dn";
-        TString Ml0j1_bn   = variation == 0 ? "Ml0j1"      : variation == 1 ? "Ml0j1_up"      : "Ml0j1_dn";
-        TString Ml1j0_bn   = variation == 0 ? "Ml1j0"      : variation == 1 ? "Ml1j0_up"      : "Ml1j0_dn";
-        TString Ml1j1_bn   = variation == 0 ? "Ml1j1"      : variation == 1 ? "Ml1j1_up"      : "Ml1j1_dn";
-        TString MinMlj_bn  = variation == 0 ? "MinMlj"     : variation == 1 ? "MinMlj_up"     : "MinMlj_dn";
-        TString MaxMlj_bn  = variation == 0 ? "MaxMlj"     : variation == 1 ? "MaxMlj_up"     : "MaxMlj_dn";
-        TString SumMlj_bn  = variation == 0 ? "SumMlj"     : variation == 1 ? "SumMlj_up"     : "SumMlj_dn";
-        TString Ml0jj_bn   = variation == 0 ? "Ml0jj"      : variation == 1 ? "Ml0jj_up"      : "Ml0jj_dn";
-        TString Ml1jj_bn   = variation == 0 ? "Ml1jj"      : variation == 1 ? "Ml1jj_up"      : "Ml1jj_dn";
-        TString MinMljj_bn = variation == 0 ? "MinMljj"    : variation == 1 ? "MinMljj_up"    : "MinMljj_dn";
-        TString MaxMljj_bn = variation == 0 ? "MaxMljj"    : variation == 1 ? "MaxMljj_up"    : "MaxMljj_dn";
-        TString SumMljj_bn = variation == 0 ? "SumMljj"    : variation == 1 ? "SumMljj_up"    : "SumMljj_dn";
-        TString SumMinMlj01= variation == 0 ? "SumMinMlj01": variation == 1 ? "SumMinMlj01_up": "SumMinMlj01_dn";
-        TString jets30_p4  = variation == 0 ? "jets30_p4"  : variation == 1 ? "jets30_up_p4"  : "jets30_dn_p4";
+        TString Ml0j0_bn   = variation == 0 ? "Ml0j0"      : variation == 1 ? "Ml0j0_up"      : variation ==-1 ? "Ml0j0_dn"       : variation == 2 ? "Ml0j0_jer"       : variation == 3 ? "Ml0j0_jerup"       : /*variation ==-3 ?*/ "Ml0j0_jerdn"      ;
+        TString Ml0j1_bn   = variation == 0 ? "Ml0j1"      : variation == 1 ? "Ml0j1_up"      : variation ==-1 ? "Ml0j1_dn"       : variation == 2 ? "Ml0j1_jer"       : variation == 3 ? "Ml0j1_jerup"       : /*variation ==-3 ?*/ "Ml0j1_jerdn"      ;
+        TString Ml1j0_bn   = variation == 0 ? "Ml1j0"      : variation == 1 ? "Ml1j0_up"      : variation ==-1 ? "Ml1j0_dn"       : variation == 2 ? "Ml1j0_jer"       : variation == 3 ? "Ml1j0_jerup"       : /*variation ==-3 ?*/ "Ml1j0_jerdn"      ;
+        TString Ml1j1_bn   = variation == 0 ? "Ml1j1"      : variation == 1 ? "Ml1j1_up"      : variation ==-1 ? "Ml1j1_dn"       : variation == 2 ? "Ml1j1_jer"       : variation == 3 ? "Ml1j1_jerup"       : /*variation ==-3 ?*/ "Ml1j1_jerdn"      ;
+        TString MinMlj_bn  = variation == 0 ? "MinMlj"     : variation == 1 ? "MinMlj_up"     : variation ==-1 ? "MinMlj_dn"      : variation == 2 ? "MinMlj_jer"      : variation == 3 ? "MinMlj_jerup"      : /*variation ==-3 ?*/ "MinMlj_jerdn"     ;
+        TString MaxMlj_bn  = variation == 0 ? "MaxMlj"     : variation == 1 ? "MaxMlj_up"     : variation ==-1 ? "MaxMlj_dn"      : variation == 2 ? "MaxMlj_jer"      : variation == 3 ? "MaxMlj_jerup"      : /*variation ==-3 ?*/ "MaxMlj_jerdn"     ;
+        TString SumMlj_bn  = variation == 0 ? "SumMlj"     : variation == 1 ? "SumMlj_up"     : variation ==-1 ? "SumMlj_dn"      : variation == 2 ? "SumMlj_jer"      : variation == 3 ? "SumMlj_jerup"      : /*variation ==-3 ?*/ "SumMlj_jerdn"     ;
+        TString Ml0jj_bn   = variation == 0 ? "Ml0jj"      : variation == 1 ? "Ml0jj_up"      : variation ==-1 ? "Ml0jj_dn"       : variation == 2 ? "Ml0jj_jer"       : variation == 3 ? "Ml0jj_jerup"       : /*variation ==-3 ?*/ "Ml0jj_jerdn"      ;
+        TString Ml1jj_bn   = variation == 0 ? "Ml1jj"      : variation == 1 ? "Ml1jj_up"      : variation ==-1 ? "Ml1jj_dn"       : variation == 2 ? "Ml1jj_jer"       : variation == 3 ? "Ml1jj_jerup"       : /*variation ==-3 ?*/ "Ml1jj_jerdn"      ;
+        TString MinMljj_bn = variation == 0 ? "MinMljj"    : variation == 1 ? "MinMljj_up"    : variation ==-1 ? "MinMljj_dn"     : variation == 2 ? "MinMljj_jer"     : variation == 3 ? "MinMljj_jerup"     : /*variation ==-3 ?*/ "MinMljj_jerdn"    ;
+        TString MaxMljj_bn = variation == 0 ? "MaxMljj"    : variation == 1 ? "MaxMljj_up"    : variation ==-1 ? "MaxMljj_dn"     : variation == 2 ? "MaxMljj_jer"     : variation == 3 ? "MaxMljj_jerup"     : /*variation ==-3 ?*/ "MaxMljj_jerdn"    ;
+        TString SumMljj_bn = variation == 0 ? "SumMljj"    : variation == 1 ? "SumMljj_up"    : variation ==-1 ? "SumMljj_dn"     : variation == 2 ? "SumMljj_jer"     : variation == 3 ? "SumMljj_jerup"     : /*variation ==-3 ?*/ "SumMljj_jerdn"    ;
+        TString SumMinMlj01= variation == 0 ? "SumMinMlj01": variation == 1 ? "SumMinMlj01_up": variation ==-1 ? "SumMinMlj01_dn" : variation == 2 ? "SumMinMlj01_jer" : variation == 3 ? "SumMinMlj01_jerup" : /*variation ==-3 ?*/ "SumMinMlj01_jerdn";
+        TString jets30_p4  = variation == 0 ? "jets30_p4"  : variation == 1 ? "jets30_up_p4"  : variation ==-1 ? "jets30_dn_p4"   : variation == 2 ? "jets30_jer_p4"   : variation == 3 ? "jets30_jerup_p4"   : /*variation ==-3 ?*/ "jets30_jerdn_p4"  ;
 
         const LV& jet_p4_0 = tx->getBranch<vector<LV>>(jets30_p4)[0];
         const LV& jet_p4_1 = tx->getBranch<vector<LV>>(jets30_p4)[1];
@@ -3922,14 +4086,26 @@ void babyMaker_v2::FillSSLeptonVariables(int idx0, int idx1)
     const float& met_dn_phi = tx->getBranch<float>("met_dn_phi");
     const float& met_gen_pt = tx->getBranch<float>("met_gen_pt");
     const float& met_gen_phi = tx->getBranch<float>("met_gen_phi");
+    const float& met_jer_pt = tx->getBranch<float>("met_jer_pt");
+    const float& met_jer_phi = tx->getBranch<float>("met_jer_phi");
+    const float& met_jerup_pt = tx->getBranch<float>("met_jerup_pt");
+    const float& met_jerup_phi = tx->getBranch<float>("met_jerup_phi");
+    const float& met_jerdn_pt = tx->getBranch<float>("met_jerdn_pt");
+    const float& met_jerdn_phi = tx->getBranch<float>("met_jerdn_phi");
     LV MET;
     LV MET_up;
     LV MET_dn;
     LV MET_gen;
+    LV MET_jer;
+    LV MET_jerup;
+    LV MET_jerdn;
     MET.SetPxPyPzE(met_pt * TMath::Cos(met_phi), met_pt * TMath::Sin(met_phi), 0, met_pt);
     MET_up.SetPxPyPzE(met_up_pt * TMath::Cos(met_up_phi), met_up_pt * TMath::Sin(met_up_phi), 0, met_up_pt);
     MET_dn.SetPxPyPzE(met_dn_pt * TMath::Cos(met_dn_phi), met_dn_pt * TMath::Sin(met_dn_phi), 0, met_dn_pt);
     MET_gen.SetPxPyPzE(met_gen_pt * TMath::Cos(met_gen_phi), met_gen_pt * TMath::Sin(met_gen_phi), 0, met_gen_pt);
+    MET_jer.SetPxPyPzE(met_jer_pt * TMath::Cos(met_jer_phi), met_jer_pt * TMath::Sin(met_jer_phi), 0, met_jer_pt);
+    MET_jerup.SetPxPyPzE(met_jerup_pt * TMath::Cos(met_jerup_phi), met_jerup_pt * TMath::Sin(met_jerup_phi), 0, met_jerup_pt);
+    MET_jerdn.SetPxPyPzE(met_jerdn_pt * TMath::Cos(met_jerdn_phi), met_jerdn_pt * TMath::Sin(met_jerdn_phi), 0, met_jerdn_pt);
 
     float MT0    = mT(lep_p4[idx0], MET);
     float MT1    = mT(lep_p4[idx1], MET);
@@ -3939,15 +4115,27 @@ void babyMaker_v2::FillSSLeptonVariables(int idx0, int idx1)
     float MT1_dn = mT(lep_p4[idx1], MET_dn);
     float MT0_gen = mT(lep_p4[idx0], MET_gen);
     float MT1_gen = mT(lep_p4[idx1], MET_gen);
+    float MT0_jer = mT(lep_p4[idx0], MET_jer);
+    float MT1_jer = mT(lep_p4[idx1], MET_jer);
+    float MT0_jerup = mT(lep_p4[idx0], MET_jerup);
+    float MT1_jerup = mT(lep_p4[idx1], MET_jerup);
+    float MT0_jerdn = mT(lep_p4[idx0], MET_jerdn);
+    float MT1_jerdn = mT(lep_p4[idx1], MET_jerdn);
 
     tx->setBranch<float>("MTmax", MT0 > MT1 ? MT0 : MT1);
     tx->setBranch<float>("MTmax_up", MT0_up > MT1_up ? MT0_up : MT1_up);
     tx->setBranch<float>("MTmax_dn", MT0_dn > MT1_dn ? MT0_dn : MT1_dn);
     tx->setBranch<float>("MTmax_gen", MT0_gen > MT1_gen ? MT0_gen : MT1_gen);
+    tx->setBranch<float>("MTmax_jer", MT0_jer > MT1_jer ? MT0_jer : MT1_jer);
+    tx->setBranch<float>("MTmax_jerup", MT0_jerup > MT1_jerup ? MT0_jerup : MT1_jerup);
+    tx->setBranch<float>("MTmax_jerdn", MT0_jerdn > MT1_jerdn ? MT0_jerdn : MT1_jerdn);
     tx->setBranch<float>("MTmin", MT0 < MT1 ? MT0 : MT1);
     tx->setBranch<float>("MTmin_up", MT0_up < MT1_up ? MT0_up : MT1_up);
     tx->setBranch<float>("MTmin_dn", MT0_dn < MT1_dn ? MT0_dn : MT1_dn);
     tx->setBranch<float>("MTmin_gen", MT0_gen < MT1_gen ? MT0_gen : MT1_gen);
+    tx->setBranch<float>("MTmin_jer", MT0_jer < MT1_jer ? MT0_jer : MT1_jer);
+    tx->setBranch<float>("MTmin_jerup", MT0_jerup < MT1_jerup ? MT0_jerup : MT1_jerup);
+    tx->setBranch<float>("MTmin_jerdn", MT0_jerdn < MT1_jerdn ? MT0_jerdn : MT1_jerdn);
 }
 
 //##############################################################################################################
@@ -4000,20 +4188,35 @@ void babyMaker_v2::Fill3LLeptonVariables()
     const float& met_dn_phi = tx->getBranch<float>("met_dn_phi");
     const float& met_gen_pt = tx->getBranch<float>("met_gen_pt");
     const float& met_gen_phi = tx->getBranch<float>("met_gen_phi");
+    const float& met_jer_pt = tx->getBranch<float>("met_jer_pt");
+    const float& met_jer_phi = tx->getBranch<float>("met_jer_phi");
+    const float& met_jerup_pt = tx->getBranch<float>("met_jerup_pt");
+    const float& met_jerup_phi = tx->getBranch<float>("met_jerup_phi");
+    const float& met_jerdn_pt = tx->getBranch<float>("met_jerdn_pt");
+    const float& met_jerdn_phi = tx->getBranch<float>("met_jerdn_phi");
     LV MET;
     LV MET_up;
     LV MET_dn;
     LV MET_gen;
+    LV MET_jer;
+    LV MET_jerup;
+    LV MET_jerdn;
     MET.SetPxPyPzE( met_pt * TMath::Cos(met_phi), met_pt * TMath::Sin(met_phi), 0, met_pt);
     MET_up.SetPxPyPzE( met_up_pt * TMath::Cos(met_up_phi), met_up_pt * TMath::Sin(met_up_phi), 0, met_up_pt);
     MET_dn.SetPxPyPzE( met_dn_pt * TMath::Cos(met_dn_phi), met_dn_pt * TMath::Sin(met_dn_phi), 0, met_dn_pt);
     MET_gen.SetPxPyPzE(met_gen_pt * TMath::Cos(met_gen_phi), met_gen_pt * TMath::Sin(met_gen_phi), 0, met_gen_pt);
+    MET_jer.SetPxPyPzE(met_jer_pt * TMath::Cos(met_jer_phi), met_jer_pt * TMath::Sin(met_jer_phi), 0, met_jer_pt);
+    MET_jerup.SetPxPyPzE(met_jerup_pt * TMath::Cos(met_jerup_phi), met_jerup_pt * TMath::Sin(met_jerup_phi), 0, met_jerup_pt);
+    MET_jerdn.SetPxPyPzE(met_jerdn_pt * TMath::Cos(met_jerdn_phi), met_jerdn_pt * TMath::Sin(met_jerdn_phi), 0, met_jerdn_pt);
 
     // Set MET lep related variables
     tx->setBranch<float>("DPhi3lMET"   , fabs(ROOT::Math::VectorUtil::DeltaPhi((lep_p4[0] + lep_p4[1] + lep_p4[2]), MET   )));
     tx->setBranch<float>("DPhi3lMET_up", fabs(ROOT::Math::VectorUtil::DeltaPhi((lep_p4[0] + lep_p4[1] + lep_p4[2]), MET_up)));
     tx->setBranch<float>("DPhi3lMET_dn", fabs(ROOT::Math::VectorUtil::DeltaPhi((lep_p4[0] + lep_p4[1] + lep_p4[2]), MET_dn)));
     tx->setBranch<float>("DPhi3lMET_gen", fabs(ROOT::Math::VectorUtil::DeltaPhi((lep_p4[0] + lep_p4[1] + lep_p4[2]), MET_gen)));
+    tx->setBranch<float>("DPhi3lMET_jer", fabs(ROOT::Math::VectorUtil::DeltaPhi((lep_p4[0] + lep_p4[1] + lep_p4[2]), MET_jer)));
+    tx->setBranch<float>("DPhi3lMET_jerup", fabs(ROOT::Math::VectorUtil::DeltaPhi((lep_p4[0] + lep_p4[1] + lep_p4[2]), MET_jerup)));
+    tx->setBranch<float>("DPhi3lMET_jerdn", fabs(ROOT::Math::VectorUtil::DeltaPhi((lep_p4[0] + lep_p4[1] + lep_p4[2]), MET_jerdn)));
 
     if (nSFOS == 1)
     {
@@ -4025,6 +4228,9 @@ void babyMaker_v2::Fill3LLeptonVariables()
         tx->setBranch<float>("MT3rd_up", mT(lep_p4[idx], MET_up));
         tx->setBranch<float>("MT3rd_dn", mT(lep_p4[idx], MET_dn));
         tx->setBranch<float>("MT3rd_gen", mT(lep_p4[idx], MET_gen));
+        tx->setBranch<float>("MT3rd_jer", mT(lep_p4[idx], MET_jer));
+        tx->setBranch<float>("MT3rd_jerup", mT(lep_p4[idx], MET_jerup));
+        tx->setBranch<float>("MT3rd_jerdn", mT(lep_p4[idx], MET_jerdn));
     }
 
     float MT0    = mT(lep_p4[0], MET);
@@ -4039,11 +4245,23 @@ void babyMaker_v2::Fill3LLeptonVariables()
     float MT0_gen = mT(lep_p4[0], MET_gen);
     float MT1_gen = mT(lep_p4[1], MET_gen);
     float MT2_gen = mT(lep_p4[2], MET_gen);
+    float MT0_jer = mT(lep_p4[0], MET_jer);
+    float MT1_jer = mT(lep_p4[1], MET_jer);
+    float MT2_jer = mT(lep_p4[2], MET_jer);
+    float MT0_jerup = mT(lep_p4[0], MET_jerup);
+    float MT1_jerup = mT(lep_p4[1], MET_jerup);
+    float MT2_jerup = mT(lep_p4[2], MET_jerup);
+    float MT0_jerdn = mT(lep_p4[0], MET_jerdn);
+    float MT1_jerdn = mT(lep_p4[1], MET_jerdn);
+    float MT2_jerdn = mT(lep_p4[2], MET_jerdn);
 
     tx->setBranch<float>("MTmax3L", TMath::Max(MT0, TMath::Max(MT1, MT2)));
     tx->setBranch<float>("MTmax3L_up", TMath::Max(MT0_up, TMath::Max(MT1_up, MT2_up)));
     tx->setBranch<float>("MTmax3L_dn", TMath::Max(MT0_dn, TMath::Max(MT1_dn, MT2_dn)));
     tx->setBranch<float>("MTmax3L_gen", TMath::Max(MT0_gen, TMath::Max(MT1_gen, MT2_gen)));
+    tx->setBranch<float>("MTmax3L_jer", TMath::Max(MT0_jer, TMath::Max(MT1_jer, MT2_jer)));
+    tx->setBranch<float>("MTmax3L_jerup", TMath::Max(MT0_jerup, TMath::Max(MT1_jerup, MT2_jerup)));
+    tx->setBranch<float>("MTmax3L_jerdn", TMath::Max(MT0_jerdn, TMath::Max(MT1_jerdn, MT2_jerdn)));
 }
 
 //##############################################################################################################
@@ -4538,12 +4756,12 @@ TString babyMaker_v2::process()
 {
     if (coreSample.is2016(looper.getCurrentFileName()))
     {
-        if (cms3.evt_isRealData())                    return "Data";
-        if (splitVH())                                return "WHtoWWW";
-        if (SampleNiceName().BeginsWith("www_2l_"))         return "WWW";
-        if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))         return "WWW";
-        if (SampleNiceName().BeginsWith("www_incl_amcnlo")) return "WWWv2";
-        if (SampleNiceName().BeginsWith("data_"))           return "Data";
+        if (cms3.evt_isRealData()) return "Data";
+        if (splitVH()) return "WHtoWWW";
+        if (isSMWWW()) return "WWW";
+        if (isSMWWW() && coreSample.is2017(looper.getCurrentFileName())) return "WWW";
+        if (isSMWWW()) return "WWWv2";
+        if (isData()) return "Data";
         if (tx->getBranch<int>("nVlep") == 2 && tx->getBranch<int>("nLlep") == 2)
         {
             if (tx->getBranch<int>("nLlep") < 2) return "not2l";
@@ -4582,13 +4800,13 @@ TString babyMaker_v2::process()
         if (splitVH())
             return "WHtoWWW";
 
-        if (SampleNiceName().BeginsWith("www_2l_"))
+        if (isSMWWW())
             return "WWW";
 
-        if (SampleNiceName().BeginsWith("www_") && coreSample.is2017(looper.getCurrentFileName()))
+        if (isSMWWW() && coreSample.is2017(looper.getCurrentFileName()))
             return "WWW";
 
-        if (SampleNiceName().BeginsWith("data_"))
+        if (isData())
             return "Data";
 
         return gentype_v3();
@@ -4598,7 +4816,7 @@ TString babyMaker_v2::process()
 //##############################################################################################################
 bool babyMaker_v2::splitVH()
 {
-    if (!SampleNiceName().BeginsWith("vh_")) return false; //file is certainly no WHtoWWW
+    if (!isVH()) return false; //file is certainly no WHtoWWW
     bool isHtoWW = false;
     bool isWnotFromH = false;
     bool isZthere = false;
@@ -5731,6 +5949,7 @@ int babyMaker_v2::gentype_v2()
     if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
     {
         int ngenLepFromTau = tx->getBranch<int>("ngenLepFromTau");
+        int ngenLepFromBoson = tx->getBranch<int>("ngenLepFromBoson");
         int ngenLep = tx->getBranch<int>("ngenLep");
         int nVlep = tx->getBranch<int>("nVlep");
         int nLlep = tx->getBranch<int>("nLlep");
@@ -5742,6 +5961,7 @@ int babyMaker_v2::gentype_v2()
         vector<int> lep_charge = tx->getBranch<vector<int>>("lep_charge");
         vector<int> lep_genPart_index = tx->getBranch<vector<int>>("lep_genPart_index");
         std::cout <<  " ngenLepFromTau: " << ngenLepFromTau <<  std::endl;
+        std::cout <<  " ngenLepFromBoson: " << ngenLepFromBoson <<  std::endl;
         std::cout <<  " ngenLep: " << ngenLep <<  std::endl;
         std::cout <<  " nVlep: " << nVlep <<  std::endl;
         std::cout <<  " nLlep: " << nLlep <<  std::endl;
@@ -5774,7 +5994,7 @@ int babyMaker_v2::gentype_v2()
 
     bool gammafake = false;
     bool jetfake   = false;
-    unsigned int ngenlep = tx->getBranch<int>("ngenLepFromTau") + tx->getBranch<int>("ngenLep");
+    unsigned int ngenlep = tx->getBranch<int>("ngenLepFromTau") + tx->getBranch<int>("ngenLepFromBoson");
     unsigned int nW(0), nZ(0);
     bool lep1_real = tx->getBranch<vector<int>>("lep_motherIdSS")[0] > 0;
     bool lep2_real = tx->getBranch<vector<int>>("lep_motherIdSS")[1] > 0;
@@ -5984,20 +6204,25 @@ bool babyMaker_v2::vetophotonprocess()
 {
     bool process = tx->getBranch<TString>("bkgtype").EqualTo("photonfakes");
     if (
-        (SampleNiceName().BeginsWith("wjets_")
-       ||SampleNiceName().BeginsWith("dy_")
-       ||SampleNiceName().BeginsWith("ttbar_")
-       ||SampleNiceName().BeginsWith("ww_")
-       ||SampleNiceName().BeginsWith("wz_")   )
+        (looper.getCurrentFileName().Contains("/WJetsToLNu")
+       ||looper.getCurrentFileName().Contains("/DYJets")
+       ||looper.getCurrentFileName().Contains("/TT_")
+       ||looper.getCurrentFileName().Contains("/TTJets_")
+       ||looper.getCurrentFileName().Contains("/WW_")
+       ||looper.getCurrentFileName().Contains("/WWTo")
+       ||looper.getCurrentFileName().Contains("/WZ_")
+       ||looper.getCurrentFileName().Contains("/WZTo")
+       )
         &&(process)
        ) return true;
     if (
-        (SampleNiceName().BeginsWith("wgjets_")
-       ||SampleNiceName().BeginsWith("wgstar_")
-       ||SampleNiceName().BeginsWith("zgamma_")
-       ||SampleNiceName().BeginsWith("ttg_")
-       ||SampleNiceName().BeginsWith("wwg_")
-       ||SampleNiceName().BeginsWith("wzg_")   )
+        (looper.getCurrentFileName().Contains("/WGTo")
+       ||looper.getCurrentFileName().Contains("/WGstar")
+       ||looper.getCurrentFileName().Contains("/ZGTo")
+       ||looper.getCurrentFileName().Contains("/TTGamma")
+       ||looper.getCurrentFileName().Contains("/WWG")
+       ||looper.getCurrentFileName().Contains("/WZG")
+       )
         &&(!process)
        )
         return true;
