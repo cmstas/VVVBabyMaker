@@ -28,8 +28,6 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag):
     metis_path           = os.path.dirname(os.path.dirname(metis.__file__))
     tar_path             = os.path.join(metis_path, "package.tar")
     tar_gz_path          = tar_path + ".gz"
-    #metis_dashboard_path = os.path.join(metis_path, "dashboard")
-    metis_dashboard_path = "~/public_html/dump"
     exec_path            = os.path.join(main_dir, "metis.sh")
     merge_exec_path      = os.path.join(main_dir, "merge.sh")
     hadoop_path          = "metis/wwwbaby/{}".format(job_tag) # The output goes to /hadoop/cms/store/user/$USER/"hadoop_path"
@@ -174,7 +172,8 @@ def submit(dinfos, version_tag):
             all_tasks_complete = all_tasks_complete and task.complete()
 
         # parse the total summary and write out the dashboard
-        metis_dashboard_path = os.path.join(os.path.dirname(os.path.dirname(metis.__file__)), "dashboard")
+        #metis_dashboard_path = os.path.join(os.path.dirname(os.path.dirname(metis.__file__)), "dashboard")
+        metis_dashboard_path = "~/public_html/dump"
 
         # Go through each tag and do StatsParser
         for tag in total_summary:
