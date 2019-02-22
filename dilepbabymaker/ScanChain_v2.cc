@@ -2067,6 +2067,19 @@ bool babyMaker_v2::PassPOGPreselection()
 bool babyMaker_v2::PassLoosePreselection()
 {
 
+    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    {
+        std::cout <<  " cms3.evt_run(): " << cms3.evt_run() <<  " cms3.evt_lumiBlock(): " << cms3.evt_lumiBlock() <<  " cms3.evt_event(): " << cms3.evt_event() <<  std::endl;
+        std::cout << "here" << std::endl;
+        coreGenPart.process();
+        coreGenPart.printAllParticles();
+        abort();
+    }
+    else
+    {
+        return false;
+    }
+
     // Select 2 SS lepton events or 3 or more lepton events
     vector<int> el_idx = coreElectron.index;
     vector<int> mu_idx = coreMuon.index;
@@ -3729,7 +3742,7 @@ bool babyMaker_v2::is2017POGTightMuon(int idx)
     if (!( cms3.mus_p4()[idx].pt() > 20.        )) return false;
     if (!( fabs(cms3.mus_p4()[idx].eta()) < 2.4 )) return false;
     if (!( isTightMuonPOG(idx)                  )) return false;
-    if (!( muRelIso04DB(idx) < 0.25             )) return false;
+    if (!( muRelIso04DB(idx) < 0.05             )) return false;
     return true;
 }
 

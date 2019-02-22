@@ -19,7 +19,7 @@ import subprocess
 import dataset
 
 #______________________________________________________________________________________
-def get_tasks(samples_dictionary, year, baby_type, baby_version_tag):
+def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=False):
 
     job_tag = "{}{}_{}".format(baby_type, year, baby_version_tag)
 
@@ -76,6 +76,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag):
                 condor_submit_params = {"sites" : "T2_US_UCSD"},
                 open_dataset         = False,
                 flush                = True,
+                max_jobs             = 5 if dotestrun else 0
                 #no_load_from_backup  = True,
                 )
 
@@ -87,7 +88,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag):
         # Job 2 : Merging baby outputs
         #
 
-        if maker_task.complete():
+        if maker_task.complete() and not dotestrun:
 
             merge_sample_name = "/MERGE_"+sample[1:]
 
@@ -127,7 +128,7 @@ def create_tar_ball():
     os.system("tar -chzf {} localsetup.sh processBaby *.so *.pcm coreutil/data coreutil/lib*.so *.txt btagsf MVAinput jetCorrections leptonSFs puWeight2016.root pileup_jul21_nominalUpDown.root ../CORE/Tools/ mergeHadoopFiles.C xsec_susy_13tev.root roccor.2017.v0/*.txt rooutil/hadd.py".format(tar_gz_path))
 
 #______________________________________________________________________________________
-def submit(dinfos, version_tag):
+def submit(dinfos, version_tag, dotestrun=False):
 
     create_tar_ball() # Create tar ball
 
