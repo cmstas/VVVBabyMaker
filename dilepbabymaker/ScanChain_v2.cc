@@ -229,6 +229,7 @@ void babyMaker_v2::AddWWWBabyOutput()
 
     tx->createBranch<int>("is2016");
     tx->createBranch<int>("is2017");
+    tx->createBranch<int>("is2018");
 
     // Until something weird about 2016 is resolved
     tx->createBranch<int>("HLT_MuEG_2016");
@@ -3243,6 +3244,7 @@ void babyMaker_v2::FillYearInfo()
 {
     tx->setBranch<int>("is2016", (coreSample.is2016(looper.getCurrentFileName())));
     tx->setBranch<int>("is2017", (coreSample.is2017(looper.getCurrentFileName())));
+    tx->setBranch<int>("is2018", (coreSample.is2018(looper.getCurrentFileName())));
 }
 
 //##############################################################################################################

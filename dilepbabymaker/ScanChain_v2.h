@@ -368,7 +368,7 @@ public:
     void AddWWWSignalOutput();
     bool studyWWW();
     bool studyWHWWW();
-    bool isData() { return coreSample.is2017Data(looper.getCurrentFileName()) or coreSample.is2016Data(looper.getCurrentFileName()); }
+    bool isData() { return coreSample.is2017Data(looper.getCurrentFileName()) or coreSample.is2016Data(looper.getCurrentFileName()) or coreSample.is2018Data(looper.getCurrentFileName()); }
 
     // Doubly Charged Higgs process related
     bool isDoublyChargedHiggs() { return SampleNiceName().BeginsWith("hpmpm_hww"); }
