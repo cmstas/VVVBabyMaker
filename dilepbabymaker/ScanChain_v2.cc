@@ -1097,6 +1097,8 @@ void babyMaker_v2::AddWHsusyOutput()
 void babyMaker_v2::SetYear()
 {
     TString filename = looper.getCurrentFileName();
+    gconf.GetConfigsFromDatasetName(filename); // get global configs
+    std::cout<<gconf.cmssw_ver<<std::endl;
     if (
             filename.Contains("Run2016")
             || filename.Contains("Moriond17")
