@@ -81,6 +81,10 @@ void babyMaker_v2::ScanChain_v2(bool verbose)
 void babyMaker_v2::Init()
 {
     // Set year via "GlobalConfig gconf"
+    
+    gconf.GetConfigsFromDatasetName(looper.getCurrentFileName()); // get global configs
+    std::cout<<"Year"<<gconf.year<<std::endl;
+
     SetYear();
 
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
@@ -1097,8 +1101,6 @@ void babyMaker_v2::AddWHsusyOutput()
 void babyMaker_v2::SetYear()
 {
     TString filename = looper.getCurrentFileName();
-    gconf.GetConfigsFromDatasetName(filename); // get global configs
-    std::cout<<gconf.cmssw_ver<<std::endl;
     if (
             filename.Contains("Run2016")
             || filename.Contains("Moriond17")
@@ -1192,7 +1194,7 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_fo     = true;
         gconf.el_addlep_3l_tight  = true;
     }
-    else if (gconf.year == 2017)
+    else if (gconf.year == 2017 || gconf.year == 2018)
     {
         gconf.ea_version = 4;
         //_________________________________
@@ -1201,14 +1203,14 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.mu_reliso_veto      = 0.4;
         gconf.mu_reliso_fo        = 0.4;
         gconf.mu_reliso_tight     = 0.03;
-        gconf.mu_addlep_veto      = false;
+        gconf.mu_addlep_veto      = true;
         gconf.mu_addlep_fo        = true;
         gconf.mu_addlep_tight     = true;
         // Same-sign electrons
         gconf.el_reliso_veto      = 0.4;
         gconf.el_reliso_fo        = 0.4;
         gconf.el_reliso_tight     = 0.03;
-        gconf.el_addlep_veto      = false;
+        gconf.el_addlep_veto      = true;
         gconf.el_addlep_fo        = true;
         gconf.el_addlep_tight     = true;
         // Three-lepton muons (Shares same veto as same-sign)
@@ -1222,8 +1224,7 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_fo     = true;
         gconf.el_addlep_3l_tight  = true;
     }
-    else
-    {
+    else   {
         std::cout << "year not recognized! gconf.year = " << gconf.year << std::endl;
         FATALERROR(__FUNCTION__);
     }
@@ -1238,7 +1239,7 @@ void babyMaker_v2::SetPOGAnalysisLeptonID()
     gconf.wwwcfg["3llooseid"] = "lep_pass_POG_loose";
     gconf.wwwcfg["3ltightid"] = "lep_pass_POG_tight";
 
-    if (gconf.year == 2016 || gconf.year == 2017)
+    if (gconf.year == 2016 || gconf.year == 2017 || gconf.year == 2018)
     {
         gconf.ea_version = 2;
         //_________________________________
