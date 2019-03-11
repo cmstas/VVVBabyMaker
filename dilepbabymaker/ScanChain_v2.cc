@@ -83,7 +83,6 @@ void babyMaker_v2::Init()
     // Set year via "GlobalConfig gconf"
     
     gconf.GetConfigsFromDatasetName(looper.getCurrentFileName()); // get global configs
-    std::cout<<"Year"<<gconf.year<<std::endl;
 
     SetYear();
 
@@ -4797,7 +4796,7 @@ TString babyMaker_v2::process()
         else if (gentype == 5) return "photonfakes";
         else                   return "others";
     }
-    else if (coreSample.is2017(looper.getCurrentFileName()))
+    else if (coreSample.is2017(looper.getCurrentFileName()) || coreSample.is2018(looper.getCurrentFileName()))
     {
         if (cms3.evt_isRealData())
             return "Data";
@@ -4808,7 +4807,7 @@ TString babyMaker_v2::process()
         if (isSMWWW())
             return "WWW";
 
-        if (isSMWWW() && coreSample.is2017(looper.getCurrentFileName()))
+        if (isSMWWW() && (coreSample.is2017(looper.getCurrentFileName())||coreSample.is2018(looper.getCurrentFileName())))
             return "WWW";
 
         if (isData())
