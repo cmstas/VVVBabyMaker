@@ -2528,7 +2528,29 @@ void babyMaker_v2::FillJets()
         int idx = coreJet.index[ijet];
         float corr = coreJet.corrs[ijet];
         float shift = coreJet.shifts[ijet];
-        float current_csv_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+        static TString deepCSV_prefix = "NULL";
+        if( deepCSV_prefix == "NULL" ) {
+        for( TString discName : cms3.pfjets_bDiscriminatorNames() ) {
+           if( discName.Contains("pfDeepCSV") ) { // 2017 convention
+            deepCSV_prefix = "pfDeepCSV";
+           break;
+         }
+        else if( discName.Contains("deepFlavour") ) { // 2016 convention
+          deepCSV_prefix = "deepFlavour";
+          break;
+         }
+       } // end loop over b discriminator names
+
+       if( deepCSV_prefix == "NULL" ) {
+         cout << "Error in JetTree.cc: Can't find DeepCSV discriminator names!" << endl;
+         exit(1);
+       }
+     } // end if prefix == "NULL"
+      float current_csv_val;
+      if(gconf.year==2016) current_csv_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+      else if(gconf.year==2017||gconf.year==2018) 
+      current_csv_val = cms3.getbtagvalue(deepCSV_prefix+"JetTags:probb",ijet) + cms3.getbtagvalue(deepCSV_prefix+"JetTags:probbb",ijet);
+      bool isData = cms3.evt_isRealData();
 
         // Check whether this jet overlaps with any of the leptons
         if (isLeptonOverlappingWithJet(ijet))
