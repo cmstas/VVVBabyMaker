@@ -5353,6 +5353,7 @@ bool babyMaker_v2::studyWWW()
     vector<int> w_m_id;
     vector<LV> l;
     vector<int> l_id;
+    vector<int> l_idx;
     vector<int> l_m_idx;
     vector<LV> v;
     vector<int> v_m_idx;
@@ -5379,6 +5380,7 @@ bool babyMaker_v2::studyWWW()
         {
             l.push_back(p4);
             l_id.push_back(pdgId);
+            l_idx.push_back(i);
             l_m_idx.push_back(mother_idx);
             std::cout <<  " pdgId: " << pdgId <<  " motherId: " << motherId <<  " grandmaId: " << grandmaId <<  " status: " << status <<  " p4.pt(): " << p4.pt() <<  " p4.eta(): " << p4.eta() <<  " p4.phi(): " << p4.phi() <<  std::endl;
         }
@@ -5452,7 +5454,18 @@ bool babyMaker_v2::studyWWW()
     else if (l_id.size() == 3) tx->setBranch<int>("www_channel", 3);
     else if (l_id.size() == 1) tx->setBranch<int>("www_channel", 1);
     else if (l_id.size() == 0) tx->setBranch<int>("www_channel", 0);
-    else FATALERROR(__FUNCTION__);
+    else
+    {
+        // There is an event where I find 4 leptons + 2 quarks, where a pair of 11 -11 is probably from a photon radiation off of a W
+        // I'll deal witht his later........
+        std::cout <<  " l_id.size(): " << l_id.size() <<  std::endl;
+        for (auto& id: l_id)
+            std::cout <<  " id: " << id <<  std::endl;
+        for (auto& idx: l_idx)
+            std::cout <<  " idx: " << idx <<  std::endl;
+        coreGenPart.printAllParticles();
+        FATALERROR(__FUNCTION__);
+    }
 
     // Set w boson variables
     for (unsigned i = 0; i < w.size(); ++i)

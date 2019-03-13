@@ -149,7 +149,8 @@ def submit(dinfos, version_tag, dotestrun=False):
                     samples_dictionary = dinfos[campaign]["samples"],
                     year               = dinfos[campaign]["year"],
                     baby_type          = dinfos[campaign]["baby_type"],
-                    baby_version_tag   = version_tag
+                    baby_version_tag   = version_tag,
+                    dotestrun          = dotestrun,
                     )
 
             # Need separate dictionaries for each tag in order to let StatsParsers uniquely handle same dataset name jobs.

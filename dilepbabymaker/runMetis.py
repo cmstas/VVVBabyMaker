@@ -335,7 +335,7 @@ def get_master_list():
     ######## WWW BABY MC 2018 102x #########
     ########################################
 
-    sample_info = [
+    sample_info = {
 
         "/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                               : "www_amcatnlo"               , 
         "/VHToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                        : "vh_nonbb_amcatnlo"         , 
@@ -412,7 +412,7 @@ def get_master_list():
         # "/TTWW_TuneCP5_13TeV-madgraph-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                                 : "TTWW"              , 
 
 
-        ]
+        }
 
     dinfos["www_2018_102x"] = {
             "samples" : sample_info,
@@ -430,14 +430,40 @@ def get_master_list():
 
 if __name__ == "__main__":
 
+    import argparse
+    import sys
+    
+    parser = argparse.ArgumentParser(description="Submitting Baby Maker Jobs to Condor")
+    parser.add_argument('-p' , '--production' , dest='production' , help='To submit ALL jobs for production'        , default=False         , action='store_true') 
+    parser.add_argument('-t' , '--test'       , dest='test'       , help='To submit test jobs (5 jobs each sample)' , default=False         , action='store_true') 
+    parser.add_argument(       '--tag'        , dest='tag'        , help='job tag'                                                          , required=True      ) 
+    
+    args = parser.parse_args()
+    
+    if args.test and args.production:
+        parser.print_help()
+        print "ERROR: Option conflict. Can't have both -t,--test and -p,--production at the same time."
+        sys.exit(1)
+
+    if not args.test and not args.production:
+        parser.print_help()
+        print "ERROR: Option missing. Choose either -t,--test or -p,--production."
+        sys.exit(1)
+
+    if args.test:
+        print "Submitting a test job (i.e. 5 jobs max each sample) with tag =", args.tag
+
+    if args.production:
+        print "Submitting a production job (i.e. ALL jobs per sample) with tag =", args.tag
+
     grand_master_list = get_master_list()
 
-    # filter out master list
+    # filter out grand master list and form a master list to be passed on to submit function
     master_list = {}
     master_list["www_2016_80x"] = grand_master_list["www_2016_80x"]
-    master_list["pog_2016_80x"] = grand_master_list["pog_2016_80x"]
+    # master_list["pog_2016_80x"] = grand_master_list["pog_2016_80x"]
+    # master_list["www_2018_102x"] = grand_master_list["www_2018_102x"]
 
-    # submit(master_list, "v5.0.3")
-    submit(master_list, "test", dotestrun=True)
+    submit(master_list, args.tag, dotestrun=args.test)
 
 #eof
