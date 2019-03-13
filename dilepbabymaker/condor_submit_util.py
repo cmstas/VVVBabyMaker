@@ -168,7 +168,7 @@ def submit(dinfos, version_tag, dotestrun=False):
             task.process()
 
             # save some information for the dashboard
-            total_summary[task.tag][task.get_sample().get_datasetname()] = task.get_task_summary()
+            total_summary[task.tag]["[" + task.tag + "] " + task.get_sample().get_datasetname()] = task.get_task_summary()
 
             # Aggregate task complete booleans
             all_tasks_complete = all_tasks_complete and task.complete()

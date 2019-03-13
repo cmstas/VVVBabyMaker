@@ -460,9 +460,9 @@ if __name__ == "__main__":
 
     # filter out grand master list and form a master list to be passed on to submit function
     master_list = {}
-    master_list["www_2016_80x"] = grand_master_list["www_2016_80x"]
+    # master_list["www_2016_80x"] = grand_master_list["www_2016_80x"]
     # master_list["pog_2016_80x"] = grand_master_list["pog_2016_80x"]
-    # master_list["www_2018_102x"] = grand_master_list["www_2018_102x"]
+    master_list["www_2018_102x"] = grand_master_list["www_2018_102x"]
 
     submit(master_list, args.tag, dotestrun=args.test)
 
