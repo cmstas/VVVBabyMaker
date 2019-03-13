@@ -81,6 +81,9 @@ void babyMaker_v2::ScanChain_v2(bool verbose)
 void babyMaker_v2::Init()
 {
     // Set year via "GlobalConfig gconf"
+    
+    gconf.GetConfigsFromDatasetName(looper.getCurrentFileName()); // get global configs
+
     SetYear();
 
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
@@ -229,6 +232,7 @@ void babyMaker_v2::AddWWWBabyOutput()
 
     tx->createBranch<int>("is2016");
     tx->createBranch<int>("is2017");
+    tx->createBranch<int>("is2018");
 
     // Until something weird about 2016 is resolved
     tx->createBranch<int>("HLT_MuEG_2016");
@@ -1189,7 +1193,7 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_fo     = true;
         gconf.el_addlep_3l_tight  = true;
     }
-    else if (gconf.year == 2017)
+    else if (gconf.year == 2017 || gconf.year == 2018)
     {
         gconf.ea_version = 4;
         //_________________________________
@@ -1198,14 +1202,14 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.mu_reliso_veto      = 0.4;
         gconf.mu_reliso_fo        = 0.4;
         gconf.mu_reliso_tight     = 0.03;
-        gconf.mu_addlep_veto      = false;
+        gconf.mu_addlep_veto      = true;
         gconf.mu_addlep_fo        = true;
         gconf.mu_addlep_tight     = true;
         // Same-sign electrons
         gconf.el_reliso_veto      = 0.4;
         gconf.el_reliso_fo        = 0.4;
         gconf.el_reliso_tight     = 0.03;
-        gconf.el_addlep_veto      = false;
+        gconf.el_addlep_veto      = true;
         gconf.el_addlep_fo        = true;
         gconf.el_addlep_tight     = true;
         // Three-lepton muons (Shares same veto as same-sign)
@@ -1219,8 +1223,7 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_fo     = true;
         gconf.el_addlep_3l_tight  = true;
     }
-    else
-    {
+    else   {
         std::cout << "year not recognized! gconf.year = " << gconf.year << std::endl;
         FATALERROR(__FUNCTION__);
     }
@@ -1235,7 +1238,7 @@ void babyMaker_v2::SetPOGAnalysisLeptonID()
     gconf.wwwcfg["3llooseid"] = "lep_pass_POG_loose";
     gconf.wwwcfg["3ltightid"] = "lep_pass_POG_tight";
 
-    if (gconf.year == 2016 || gconf.year == 2017)
+    if (gconf.year == 2016 || gconf.year == 2017 || gconf.year == 2018)
     {
         gconf.ea_version = 2;
         //_________________________________
@@ -2538,7 +2541,29 @@ void babyMaker_v2::FillJets()
         int idx = coreJet.index[ijet];
         float corr = coreJet.corrs[ijet];
         float shift = coreJet.shifts[ijet];
-        float current_csv_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+        static TString deepCSV_prefix = "NULL";
+        if( deepCSV_prefix == "NULL" ) {
+        for( TString discName : cms3.pfjets_bDiscriminatorNames() ) {
+           if( discName.Contains("pfDeepCSV") ) { // 2017 convention
+            deepCSV_prefix = "pfDeepCSV";
+           break;
+         }
+        else if( discName.Contains("deepFlavour") ) { // 2016 convention
+          deepCSV_prefix = "deepFlavour";
+          break;
+         }
+       } // end loop over b discriminator names
+
+       if( deepCSV_prefix == "NULL" ) {
+         cout << "Error in JetTree.cc: Can't find DeepCSV discriminator names!" << endl;
+         exit(1);
+       }
+     } // end if prefix == "NULL"
+      float current_csv_val;
+      if(gconf.year==2016) current_csv_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+      else if(gconf.year==2017||gconf.year==2018) 
+      current_csv_val = cms3.getbtagvalue(deepCSV_prefix+"JetTags:probb",ijet) + cms3.getbtagvalue(deepCSV_prefix+"JetTags:probbb",ijet);
+      bool isData = cms3.evt_isRealData();
 
         // Check whether this jet overlaps with any of the leptons
         if (isLeptonOverlappingWithJet(ijet))
@@ -3256,6 +3281,7 @@ void babyMaker_v2::FillYearInfo()
 {
     tx->setBranch<int>("is2016", (coreSample.is2016(looper.getCurrentFileName())));
     tx->setBranch<int>("is2017", (coreSample.is2017(looper.getCurrentFileName())));
+    tx->setBranch<int>("is2018", (coreSample.is2018(looper.getCurrentFileName())));
 }
 
 //##############################################################################################################
@@ -4805,7 +4831,7 @@ TString babyMaker_v2::process()
         else if (gentype == 5) return "photonfakes";
         else                   return "others";
     }
-    else if (coreSample.is2017(looper.getCurrentFileName()))
+    else if (coreSample.is2017(looper.getCurrentFileName()) || coreSample.is2018(looper.getCurrentFileName()))
     {
         if (cms3.evt_isRealData())
             return "Data";
@@ -4816,7 +4842,7 @@ TString babyMaker_v2::process()
         if (isSMWWW())
             return "WWW";
 
-        if (isSMWWW() && coreSample.is2017(looper.getCurrentFileName()))
+        if (isSMWWW() && (coreSample.is2017(looper.getCurrentFileName())||coreSample.is2018(looper.getCurrentFileName())))
             return "WWW";
 
         if (isData())
