@@ -320,12 +320,12 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<LorentzVector>>("jets_p4");
     tx->createBranch<vector<LorentzVector>>("jets_up_p4");
     tx->createBranch<vector<LorentzVector>>("jets_dn_p4");
-    tx->createBranch<vector<float>>("jets_csv");
-    tx->createBranch<vector<float>>("jets_up_csv");
-    tx->createBranch<vector<float>>("jets_dn_csv");
-    tx->createBranch<vector<float>>("jets_jer_csv");
-    tx->createBranch<vector<float>>("jets_jerup_csv");
-    tx->createBranch<vector<float>>("jets_jerdn_csv");
+    tx->createBranch<vector<float>>("jets_btag_score");
+    tx->createBranch<vector<float>>("jets_up_btag_score");
+    tx->createBranch<vector<float>>("jets_dn_btag_score");
+    tx->createBranch<vector<float>>("jets_jer_btag_score");
+    tx->createBranch<vector<float>>("jets_jerup_btag_score");
+    tx->createBranch<vector<float>>("jets_jerdn_btag_score");
     tx->createBranch<vector<LorentzVector>>("jets_jer_p4");
     tx->createBranch<vector<LorentzVector>>("jets_jerup_p4");
     tx->createBranch<vector<LorentzVector>>("jets_jerdn_p4");
@@ -2559,10 +2559,10 @@ void babyMaker_v2::FillJets()
          exit(1);
        }
      } // end if prefix == "NULL"
-      float current_csv_val;
-      if(gconf.year==2016) current_csv_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+      float current_btag_score_val;
+      if(gconf.year==2016) current_btag_score_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
       else if(gconf.year==2017||gconf.year==2018) 
-      current_csv_val = cms3.getbtagvalue(deepCSV_prefix+"JetTags:probb",ijet) + cms3.getbtagvalue(deepCSV_prefix+"JetTags:probbb",ijet);
+      current_btag_score_val = cms3.getbtagvalue(deepCSV_prefix+"JetTags:probb",ijet) + cms3.getbtagvalue(deepCSV_prefix+"JetTags:probbb",ijet);
       bool isData = cms3.evt_isRealData();
 
         // Check whether this jet overlaps with any of the leptons
@@ -2579,7 +2579,7 @@ void babyMaker_v2::FillJets()
         if (jet.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_p4", jet);
-            tx->pushbackToBranch<float>("jets_csv", current_csv_val);
+            tx->pushbackToBranch<float>("jets_btag_score", current_btag_score_val);
             if (!isWHSUSY())
                 coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
             else
@@ -2592,7 +2592,7 @@ void babyMaker_v2::FillJets()
         if (jet_up.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_up_p4", jet_up);
-            tx->pushbackToBranch<float>("jets_up_csv", current_csv_val);
+            tx->pushbackToBranch<float>("jets_up_btag_score", current_btag_score_val);
             if (jet_up.pt() > 30. and abs(jet_up.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_up_p4", jet_up);
         }
@@ -2601,7 +2601,7 @@ void babyMaker_v2::FillJets()
         if (jet_dn.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_dn_p4", jet_dn);
-            tx->pushbackToBranch<float>("jets_dn_csv", current_csv_val);
+            tx->pushbackToBranch<float>("jets_dn_btag_score", current_btag_score_val);
             if (jet_dn.pt() > 30. and abs(jet_dn.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_dn_p4", jet_dn);
         }
@@ -2610,7 +2610,7 @@ void babyMaker_v2::FillJets()
         if (jet_jer.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_jer_p4", jet_jer);
-            tx->pushbackToBranch<float>("jets_jer_csv", current_csv_val);
+            tx->pushbackToBranch<float>("jets_jer_btag_score", current_btag_score_val);
             if (jet_jer.pt() > 30. and abs(jet_jer.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_jer_p4", jet_jer);
         }
@@ -2619,7 +2619,7 @@ void babyMaker_v2::FillJets()
         if (jet_jerup.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_jerup_p4", jet_jerup);
-            tx->pushbackToBranch<float>("jets_jerup_csv", current_csv_val);
+            tx->pushbackToBranch<float>("jets_jerup_btag_score", current_btag_score_val);
             if (jet_jerup.pt() > 30. and abs(jet_jerup.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_jerup_p4", jet_jerup);
         }
@@ -2628,7 +2628,7 @@ void babyMaker_v2::FillJets()
         if (jet_jerdn.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_jerdn_p4", jet_jerdn);
-            tx->pushbackToBranch<float>("jets_jerdn_csv", current_csv_val);
+            tx->pushbackToBranch<float>("jets_jerdn_btag_score", current_btag_score_val);
             if (jet_jerdn.pt() > 30. and abs(jet_jerdn.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_jerdn_p4", jet_jerdn);
         }
@@ -2748,12 +2748,12 @@ void babyMaker_v2::FillTracks()
 //##############################################################################################################
 void babyMaker_v2::SortJetBranches()
 {
-    tx->sortVecBranchesByPt("jets_p4", {"jets_csv"}, {}, {});
-    tx->sortVecBranchesByPt("jets_up_p4", {"jets_up_csv"}, {}, {});
-    tx->sortVecBranchesByPt("jets_dn_p4", {"jets_dn_csv"}, {}, {});
-    tx->sortVecBranchesByPt("jets_jer_p4", {"jets_jer_csv"}, {}, {});
-    tx->sortVecBranchesByPt("jets_jerup_p4", {"jets_jerup_csv"}, {}, {});
-    tx->sortVecBranchesByPt("jets_jerdn_p4", {"jets_jerdn_csv"}, {}, {});
+    tx->sortVecBranchesByPt("jets_p4", {"jets_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_up_p4", {"jets_up_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_dn_p4", {"jets_dn_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jer_p4", {"jets_jer_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jerup_p4", {"jets_jerup_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jerdn_p4", {"jets_jerdn_btag_score"}, {}, {});
     tx->sortVecBranchesByPt("jets30_p4", {}, {}, {});
     tx->sortVecBranchesByPt("jets30_up_p4", {}, {}, {});
     tx->sortVecBranchesByPt("jets30_dn_p4", {}, {}, {});
@@ -3852,23 +3852,23 @@ void babyMaker_v2::FillJetVariables(int variation)
     // Assumes FillJets and SortJetBranches are already called
     //
 
-    TString jets_csv     = variation == 0 ? "jets_csv"          : variation == 1 ? "jets_up_csv"          : variation ==-1 ?  "jets_dn_csv"         : variation == 2 ? "jets_jer_csv"         : variation == 3 ? "jets_jerup_csv"        : /*variation ==-3 ?*/ "jets_jerdn_csv"        ;
-    TString jets_p4      = variation == 0 ? "jets_p4"           : variation == 1 ? "jets_up_p4"           : variation ==-1 ?  "jets_dn_p4"          : variation == 2 ? "jets_jer_p4"          : variation == 3 ? "jets_jerup_p4"         : /*variation ==-3 ?*/ "jets_jerdn_p4"         ;
-    TString nj_bn        = variation == 0 ? "nj"                : variation == 1 ? "nj_up"                : variation ==-1 ?  "nj_dn"               : variation == 2 ? "nj_jer"               : variation == 3 ? "nj_jerup"              : /*variation ==-3 ?*/ "nj_jerdn"              ;
-    TString nj30_bn      = variation == 0 ? "nj30"              : variation == 1 ? "nj30_up"              : variation ==-1 ?  "nj30_dn"             : variation == 2 ? "nj30_jer"             : variation == 3 ? "nj30_jerup"            : /*variation ==-3 ?*/ "nj30_jerdn"            ;
-    TString nb_bn        = variation == 0 ? "nb"                : variation == 1 ? "nb_up"                : variation ==-1 ?  "nb_dn"               : variation == 2 ? "nb_jer"               : variation == 3 ? "nb_jerup"              : /*variation ==-3 ?*/ "nb_jerdn"              ;
-    TString Mjj_bn       = variation == 0 ? "Mjj"               : variation == 1 ? "Mjj_up"               : variation ==-1 ?  "Mjj_dn"              : variation == 2 ? "Mjj_jer"              : variation == 3 ? "Mjj_jerup"             : /*variation ==-3 ?*/ "Mjj_jerdn"             ;
-    TString MjjL_bn      = variation == 0 ? "MjjL"              : variation == 1 ? "MjjL_up"              : variation ==-1 ?  "MjjL_dn"             : variation == 2 ? "MjjL_jer"             : variation == 3 ? "MjjL_jerup"            : /*variation ==-3 ?*/ "MjjL_jerdn"            ;
-    TString DetajjL_bn   = variation == 0 ? "DetajjL"           : variation == 1 ? "DetajjL_up"           : variation ==-1 ?  "DetajjL_dn"          : variation == 2 ? "DetajjL_jer"          : variation == 3 ? "DetajjL_jerup"         : /*variation ==-3 ?*/ "DetajjL_jerdn"         ;
-    TString MjjVBF_bn    = variation == 0 ? "MjjVBF"            : variation == 1 ? "MjjVBF_up"            : variation ==-1 ?  "MjjVBF_dn"           : variation == 2 ? "MjjVBF_jer"           : variation == 3 ? "MjjVBF_jerup"          : /*variation ==-3 ?*/ "MjjVBF_jerdn"          ;
-    TString DetajjVBF_bn = variation == 0 ? "DetajjVBF"         : variation == 1 ? "DetajjVBF_up"         : variation ==-1 ?  "DetajjVBF_dn"        : variation == 2 ? "DetajjVBF_jer"        : variation == 3 ? "DetajjVBF_jerup"       : /*variation ==-3 ?*/ "DetajjVBF_jerdn"       ;
-    TString MjjDR1_bn    = variation == 0 ? "MjjDR1"            : variation == 1 ? "MjjDR1_up"            : variation ==-1 ?  "MjjDR1_dn"           : variation == 2 ? "MjjDR1_jer"           : variation == 3 ? "MjjDR1_jerup"          : /*variation ==-3 ?*/ "MjjDR1_jerdn"          ;
-    TString DRjj_bn      = variation == 0 ? "DRjj"              : variation == 1 ? "DRjj_up"              : variation ==-1 ?  "DRjj_dn"             : variation == 2 ? "DRjj_jer"             : variation == 3 ? "DRjj_jerup"            : /*variation ==-3 ?*/ "DRjj_jerdn"            ;
-    TString DRjjDR1_bn   = variation == 0 ? "DRjjDR1"           : variation == 1 ? "DRjjDR1_up"           : variation ==-1 ?  "DRjjDR1_dn"          : variation == 2 ? "DRjjDR1_jer"          : variation == 3 ? "DRjjDR1_jerup"         : /*variation ==-3 ?*/ "DRjjDR1_jerdn"         ;
-    TString j0_p4_bn     = variation == 0 ? "jet0_wtag_p4"      : variation == 1 ? "jet0_wtag_p4_up"      : variation ==-1 ?  "jet0_wtag_p4_dn"     : variation == 2 ? "jet0_wtag_p4_jer"     : variation == 3 ? "jet0_wtag_p4_jerup"    : /*variation ==-3 ?*/ "jet0_wtag_p4_jerdn"    ;
-    TString j1_p4_bn     = variation == 0 ? "jet1_wtag_p4"      : variation == 1 ? "jet1_wtag_p4_up"      : variation ==-1 ?  "jet1_wtag_p4_dn"     : variation == 2 ? "jet1_wtag_p4_jer"     : variation == 3 ? "jet1_wtag_p4_jerup"    : /*variation ==-3 ?*/ "jet1_wtag_p4_jerdn"    ;
-    TString j0_p4_DR1_bn = variation == 0 ? "jet0_wtag_p4_DR1"  : variation == 1 ? "jet0_wtag_p4_DR1_up"  : variation ==-1 ?  "jet0_wtag_p4_DR1_dn" : variation == 2 ? "jet0_wtag_p4_DR1_jer" : variation == 3 ? "jet0_wtag_p4_DR1_jerup": /*variation ==-3 ?*/ "jet0_wtag_p4_DR1_jerdn";
-    TString j1_p4_DR1_bn = variation == 0 ? "jet1_wtag_p4_DR1"  : variation == 1 ? "jet1_wtag_p4_DR1_up"  : variation ==-1 ?  "jet1_wtag_p4_DR1_dn" : variation == 2 ? "jet1_wtag_p4_DR1_jer" : variation == 3 ? "jet1_wtag_p4_DR1_jerup": /*variation ==-3 ?*/ "jet1_wtag_p4_DR1_jerdn";
+    TString jets_btag_score     = variation == 0 ? "jets_btag_score"  : variation == 1 ? "jets_up_btag_score"  : variation ==-1 ?  "jets_dn_btag_score"  : variation == 2 ? "jets_jer_btag_score"  : variation == 3 ? "jets_jerup_btag_score"  : /*variation ==-3 ?*/ "jets_jerdn_btag_score" ;
+    TString jets_p4             = variation == 0 ? "jets_p4"          : variation == 1 ? "jets_up_p4"          : variation ==-1 ?  "jets_dn_p4"          : variation == 2 ? "jets_jer_p4"          : variation == 3 ? "jets_jerup_p4"          : /*variation ==-3 ?*/ "jets_jerdn_p4"         ;
+    TString nj_bn               = variation == 0 ? "nj"               : variation == 1 ? "nj_up"               : variation ==-1 ?  "nj_dn"               : variation == 2 ? "nj_jer"               : variation == 3 ? "nj_jerup"               : /*variation ==-3 ?*/ "nj_jerdn"              ;
+    TString nj30_bn             = variation == 0 ? "nj30"             : variation == 1 ? "nj30_up"             : variation ==-1 ?  "nj30_dn"             : variation == 2 ? "nj30_jer"             : variation == 3 ? "nj30_jerup"             : /*variation ==-3 ?*/ "nj30_jerdn"            ;
+    TString nb_bn               = variation == 0 ? "nb"               : variation == 1 ? "nb_up"               : variation ==-1 ?  "nb_dn"               : variation == 2 ? "nb_jer"               : variation == 3 ? "nb_jerup"               : /*variation ==-3 ?*/ "nb_jerdn"              ;
+    TString Mjj_bn              = variation == 0 ? "Mjj"              : variation == 1 ? "Mjj_up"              : variation ==-1 ?  "Mjj_dn"              : variation == 2 ? "Mjj_jer"              : variation == 3 ? "Mjj_jerup"              : /*variation ==-3 ?*/ "Mjj_jerdn"             ;
+    TString MjjL_bn             = variation == 0 ? "MjjL"             : variation == 1 ? "MjjL_up"             : variation ==-1 ?  "MjjL_dn"             : variation == 2 ? "MjjL_jer"             : variation == 3 ? "MjjL_jerup"             : /*variation ==-3 ?*/ "MjjL_jerdn"            ;
+    TString DetajjL_bn          = variation == 0 ? "DetajjL"          : variation == 1 ? "DetajjL_up"          : variation ==-1 ?  "DetajjL_dn"          : variation == 2 ? "DetajjL_jer"          : variation == 3 ? "DetajjL_jerup"          : /*variation ==-3 ?*/ "DetajjL_jerdn"         ;
+    TString MjjVBF_bn           = variation == 0 ? "MjjVBF"           : variation == 1 ? "MjjVBF_up"           : variation ==-1 ?  "MjjVBF_dn"           : variation == 2 ? "MjjVBF_jer"           : variation == 3 ? "MjjVBF_jerup"           : /*variation ==-3 ?*/ "MjjVBF_jerdn"          ;
+    TString DetajjVBF_bn        = variation == 0 ? "DetajjVBF"        : variation == 1 ? "DetajjVBF_up"        : variation ==-1 ?  "DetajjVBF_dn"        : variation == 2 ? "DetajjVBF_jer"        : variation == 3 ? "DetajjVBF_jerup"        : /*variation ==-3 ?*/ "DetajjVBF_jerdn"       ;
+    TString MjjDR1_bn           = variation == 0 ? "MjjDR1"           : variation == 1 ? "MjjDR1_up"           : variation ==-1 ?  "MjjDR1_dn"           : variation == 2 ? "MjjDR1_jer"           : variation == 3 ? "MjjDR1_jerup"           : /*variation ==-3 ?*/ "MjjDR1_jerdn"          ;
+    TString DRjj_bn             = variation == 0 ? "DRjj"             : variation == 1 ? "DRjj_up"             : variation ==-1 ?  "DRjj_dn"             : variation == 2 ? "DRjj_jer"             : variation == 3 ? "DRjj_jerup"             : /*variation ==-3 ?*/ "DRjj_jerdn"            ;
+    TString DRjjDR1_bn          = variation == 0 ? "DRjjDR1"          : variation == 1 ? "DRjjDR1_up"          : variation ==-1 ?  "DRjjDR1_dn"          : variation == 2 ? "DRjjDR1_jer"          : variation == 3 ? "DRjjDR1_jerup"          : /*variation ==-3 ?*/ "DRjjDR1_jerdn"         ;
+    TString j0_p4_bn            = variation == 0 ? "jet0_wtag_p4"     : variation == 1 ? "jet0_wtag_p4_up"     : variation ==-1 ?  "jet0_wtag_p4_dn"     : variation == 2 ? "jet0_wtag_p4_jer"     : variation == 3 ? "jet0_wtag_p4_jerup"     : /*variation ==-3 ?*/ "jet0_wtag_p4_jerdn"    ;
+    TString j1_p4_bn            = variation == 0 ? "jet1_wtag_p4"     : variation == 1 ? "jet1_wtag_p4_up"     : variation ==-1 ?  "jet1_wtag_p4_dn"     : variation == 2 ? "jet1_wtag_p4_jer"     : variation == 3 ? "jet1_wtag_p4_jerup"     : /*variation ==-3 ?*/ "jet1_wtag_p4_jerdn"    ;
+    TString j0_p4_DR1_bn        = variation == 0 ? "jet0_wtag_p4_DR1" : variation == 1 ? "jet0_wtag_p4_DR1_up" : variation ==-1 ?  "jet0_wtag_p4_DR1_dn" : variation == 2 ? "jet0_wtag_p4_DR1_jer" : variation == 3 ? "jet0_wtag_p4_DR1_jerup" : /*variation ==-3 ?*/ "jet0_wtag_p4_DR1_jerdn";
+    TString j1_p4_DR1_bn        = variation == 0 ? "jet1_wtag_p4_DR1" : variation == 1 ? "jet1_wtag_p4_DR1_up" : variation ==-1 ?  "jet1_wtag_p4_DR1_dn" : variation == 2 ? "jet1_wtag_p4_DR1_jer" : variation == 3 ? "jet1_wtag_p4_DR1_jerup" : /*variation ==-3 ?*/ "jet1_wtag_p4_DR1_jerdn";
 
     int nj = 0;
     int nj30 = 0;
@@ -3887,15 +3887,20 @@ void babyMaker_v2::FillJetVariables(int variation)
     LV j1_p4;
     LV j0_p4_DR1;
     LV j1_p4_DR1;
-    for (unsigned int i = 0; i < tx->getBranch<vector<float>>(jets_csv, false).size(); ++i)
+    float btag_loose_threshold = -999;
+    if (gconf.year == 2016)
+        btag_loose_threshold = gconf.WP_CSVv2_LOOSE;
+    else if (gconf.year == 2017 or gconf.year == 2018)
+        btag_loose_threshold = gconf.WP_DEEPCSV_LOOSE;
+    for (unsigned int i = 0; i < tx->getBranch<vector<float>>(jets_btag_score, false).size(); ++i)
     {
         const LV& p4 = tx->getBranch<vector<LV>>(jets_p4, false)[i];
-        const float& csv= tx->getBranch<vector<float>>(jets_csv, false)[i];
+        const float& btag_score= tx->getBranch<vector<float>>(jets_btag_score, false)[i];
 
         // nb jets
         if (!( p4.pt() > 20. ))
             continue;
-        if (fabs(p4.eta()) < 2.4 && csv >= 0.5426)
+        if (fabs(p4.eta()) < 2.4 && btag_score >= btag_loose_threshold)
             nb++;
 
         // njets across all eta
@@ -3909,7 +3914,7 @@ void babyMaker_v2::FillJetVariables(int variation)
             nj30++;
 
         // Compute Mjj using the closest two jets
-        for (unsigned int j = i + 1; j < tx->getBranch<vector<float>>(jets_csv, false).size(); ++j)
+        for (unsigned int j = i + 1; j < tx->getBranch<vector<float>>(jets_btag_score, false).size(); ++j)
         {
             const LV& p4_2 = tx->getBranch<vector<LV>>(jets_p4, false)[j];
 
