@@ -2,6 +2,9 @@
 
 PACKAGE=package.tar.gz
 
+# Echo exact command
+echo "$(basename $0) $*"
+
 
 ###################################################################################################
 # ProjectMetis/CondorTask specific (Setting up some common environment)
@@ -40,6 +43,7 @@ else
     IFILE=$4
     CMSSWVERSION=$5
     SCRAMARCH=$6
+    BABYMODE=$7
     if [ "x${_CONDOR_SLOT}" == "x" ]; then
         WORKDIR=/tmp/phchang_condor_local_${OUTPUTDIR//\//_}_${OUTPUTNAME}_${IFILE}
         mkdir -p ${WORKDIR}
@@ -58,7 +62,8 @@ else
     echo "IFILE         : $4"
     echo "CMSSWVERSION  : $5"
     echo "SCRAMARCH     : $6"
-    shift 6
+    echo "BABYMODE      : $7"
+    shift 7
     tar xvzf package.tar.gz
     if [ $? -eq 0 ]; then
         echo "Successfully untarred package."
@@ -76,7 +81,7 @@ echo ">>> ls -l"
 ls -l
 echo ">>> export COREDIR=$PWD/CORE/"
 export COREDIR=$PWD/CORE/
-echo ">>> ./processBaby dummy ${INPUTFILENAMES} -1"
+echo ">>> ./processBaby ${INPUTFILENAMES} -1"
 INPUTFILES=$(echo ${INPUTFILENAMES} | tr ',' ' ')
 ISDATA=false
 if [[ ${INPUTFILENAMES} == *Run201* ]]; then
@@ -84,7 +89,7 @@ if [[ ${INPUTFILENAMES} == *Run201* ]]; then
 fi
 INDEX=1
 for file in $INPUTFILES; do
-    ./processBaby dummy "$file" -1 ${INDEX} &
+    ./processBaby "$file" -1 ${INDEX} ${BABYMODE} &
     JOBS[${INDEX}]=$!
     FILES[${INDEX}]="$file"
     INDEX=$((INDEX + 1))
@@ -123,7 +128,12 @@ if [ "$ISDATA" = true ]; then
     fi
 else
     if [ ${NFAILED} -le 1 ]; then
-        hadd -f output.root ${GOODOUTPUTS}
+        if [ -z ${GOODOUTPUTS} ]; then
+            echo "[ERROR::HASBADJOB] This is a MC sample. But no inputs succeeded!"
+            exit
+        else
+            hadd -f output.root ${GOODOUTPUTS}
+        fi
     else
         echo "[ERROR::HASBADJOB] This is a MC sample. so it is less pertinent to have EVERY job succeed."
         echo "[ERROR::HASBADJOB] This set of job has ${NFAILED} failed job more than 1. So will not produce output.root nor copy it to hadoop."
@@ -178,19 +188,21 @@ else
             for OUTPUTFILE in $(ls output.root); do
                 if [ $INDEX -lt 1 ]; then
                     echo gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}.root --checksum ADLER32
-                    gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}.root --checksum ADLER32
+                    env -i X509_USER_PROXY=${X509_USER_PROXY} gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}.root --checksum ADLER32
+                    GFALCOPYSTATUS=$?
                 else
                     echo gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}_${INDEX}.root --checksum ADLER32
-                    gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}_${INDEX}.root --checksum ADLER32
+                    env -i X509_USER_PROXY=${X509_USER_PROXY} gfal-copy -p -f -t 4200 --verbose file://`pwd`/${OUTPUTFILE} gsiftp://gftp.t2.ucsd.edu/${OUTPUTDIR}/${OUTPUTNAME}_${IFILE}_${INDEX}.root --checksum ADLER32
+                    GFALCOPYSTATUS=$?
                 fi
                 INDEX=$((INDEX+1))
             done
         fi
     fi
-    if [ $? -eq 0 ]; then
+    if [ ${GFALCOPYSTATUS} -eq 0 ]; then
         echo "Hadoop Copy Job Success"
     else
-        echo "HAdoop Copy Job Failed"
+        echo "Hadoop Copy Job Failed"
     fi
     date
 fi

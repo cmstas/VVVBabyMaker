@@ -5,7 +5,6 @@
 *.so
 *.pcm
 *.cxx
-CORE
 Software
 Tools
 NTupleTools
@@ -35,3 +34,10 @@ sync
 
 Loopers/qscripts/cutflows*
 Loopers/qscripts/*.txt
+
+dilepbabymaker/localfiles/
+dilepbabymaker/testjobs
+dilepbabymaker/.*
+dilepbabymaker/CORE
+
+*.pyc

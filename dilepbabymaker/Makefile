@@ -20,14 +20,17 @@ endif
 #	ROOFITINCLUDE = $(shell scramv1 tool info roofitcore | grep INCLUDE | sed 's/^INCLUDE=/-I/')
 #endif
 
-PACKAGES = rooutil coreutil
+PACKAGES = coreutil
 
 CC = g++
 CMSROOT = ./
-INCLUDE = $(shell root-config --cflags) -I$(CMSROOT) -I$(CMSROOT)../CORE
+INCLUDE = $(shell root-config --cflags) -I$(CMSROOT) -I$(COREDIR) -I/cvmfs/cms.cern.ch/$(SCRAM_ARCH)/external/boost/1.57.0-ikhhed/include/ 
 CFLAGS = -Wall -Wno-unused-function -g -O2 -fPIC $(INCLUDE) $(EXTRACFLAGS) -fno-var-tracking
 ROOTLIBS = $(shell root-config --ldflags --cflags --libs) -lTMVA #-lEG -lGenVector
-COREDIR = ../CORE
+#COREDIR = ../CORE
+ifndef COREDIR
+    $(error COREDIR is not set. Please export COREDIR=/abspath/to/CORE)
+endif
 
 DICTINCLUDE = $(ROOTSYS)/include/Math/QuantFuncMathCore.h $(ROOTSYS)/include/TLorentzVector.h $(ROOTSYS)/include/Math/Vector4D.h
 
@@ -43,12 +46,12 @@ SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)
 LIB = libScanChain.so
 
-CORESOURCES = $(wildcard ../CORE/*.cc)
+CORESOURCES = $(wildcard $(COREDIR)/*.cc)
 COREOBJECTS = $(CORESOURCES:.cc=.o) 
 CORELIB = libBabymakerCORE.so
 
-TOOLSSOURCES = $(wildcard ../CORE/Tools/*.cc) $(wildcard ../CORE/Tools/MT2/*.cc) $(wildcard ../CORE/Tools/btagsf/*.cc) $(wildcard ../CORE/Tools/datasetinfo/*.cc)
-TOOLSOBJECTS = $(TOOLSSOURCES:.cc=.o) 
+TOOLSSOURCES = $(wildcard $(COREDIR)/Tools/*.cc) $(wildcard $(COREDIR)/Tools/MT2/*.cc) $(wildcard $(COREDIR)/Tools/btagsf/*.cc) $(wildcard $(COREDIR)/Tools/datasetinfo/*.cc) $(wildcard $(COREDIR)/Tools/JetResolution/JetResolution.cxx)
+TOOLSOBJECTS = $(addsuffix .o,$(basename $(TOOLSSOURCES)))
 TOOLSLIB = libBabymakerTools.so
 
 # #FWLIB = libMiniFWLite.so
@@ -157,7 +160,7 @@ $(EXE): $(PACKAGES) $(LIBS)
 
 %.o:    %.cxx 
 	$(QUIET) echo "Compiling $<"; \
-	$(CC) $(CFLAGS) $< -c -o $@
+	$(CC) $(CFLAGS) $(ROOTLIBS) $< -c -o $@
 
 libs:	$(LIBS)
 
@@ -171,15 +174,21 @@ clean:
 	*.o \
 	$(LIBS) \
 	$(EXE) \
-        ../CORE/*.o \
-        ../CORE/*.d \
-        ../CORE/*.so \
-        ../CORE/Tools/*.o \
-		../CORE/Tools/*.d \
-        ../CORE/Tools/*.so \
-        ../CORE/Tools/MT2/*.o \
-		../CORE/Tools/MT2/*.d \
-        ../CORE/Tools/MT2/*.so 
+	roccor.2017.v0/*.o \
+	coreutil/*.o \
+	coreutil/*.so \
+	$(COREDIR)/*.o \
+	$(COREDIR)/*.d \
+	$(COREDIR)/*.so \
+	$(COREDIR)/Tools/*.o \
+	$(COREDIR)/Tools/*.d \
+	$(COREDIR)/Tools/*.so \
+	$(COREDIR)/Tools/MT2/*.o \
+	$(COREDIR)/Tools/MT2/*.d \
+	$(COREDIR)/Tools/MT2/*.so \
+	$(COREDIR)/Tools/JetResolution/*.o \
+	$(COREDIR)/Tools/JetResolution/*.d \
+	$(COREDIR)/Tools/JetResolution/*.so
 
 localclean:
 	rm -f \

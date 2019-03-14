@@ -1,104 +1,161 @@
 #!/bin/bash
 
-make -j5
-didcompile=$?
+##############################################################################################
+#
+# For pretty printing
+#
+##############################################################################################
+#
+# Set Colors
+#
 
-if [ ! $didcompile == "0" ]; then
-	echo "did not compile. exiting."
-	exit $didcompile
+bold=$(tput bold)
+underline=$(tput sgr 0 1)
+reset=$(tput sgr0)
+
+purple=$(tput setaf 7)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+tan=$(tput setaf 3)
+blue=$(tput setaf 4)
+bluebkg=$(tput setab 4)
+
+#
+# Headers and  Logging
+#
+
+e_header() { printf "\n${bold}${purple}==========  %s  ==========${reset}\n" "$@"
+}
+e_arrow() { printf "➜ $@\n"
+}
+e_success() { printf "${green}✔ %s${reset}\n" "$@"
+}
+e_error() { printf "${red}✖ %s${reset}\n" "$@"
+}
+e_warning() { printf "${tan}➜ %s${reset}\n" "$@"
+}
+e_msg() { printf "${purple}➜ %s${reset}\n" "$@"
+}
+e_underline() { printf "${underline}${bold}%s${reset}\n" "$@"
+}
+e_bold() { printf "${bold}%s${reset}\n" "$@"
+}
+e_note() { printf "${underline}${bold}${blue}Note:${reset}  ${blue}%s${reset}\n" "$@"
+}
+
+
+##############################################################################################
+#
+# <3 of the code goes here
+#
+##############################################################################################
+
+# Print header
+e_header "Baby Maker Test Jobs"
+
+help() {
+    echo "Usage:"
+    echo ""
+    echo ""
+    echo "    $ $0 NEVENTS TESTJOBCONFIGPATH"
+    echo ""
+    echo "NEVENTS               (e.g. =10000)          Number of events to process per test jobs."
+    echo "TESTJOBCONFIGPATH     (e.g. =testjobs.txt)   The path to where the testjobs are defined."
+    echo ""
+    echo ""
+    exit
+}
+
+# Create a directory to put all the test run log files
+mkdir -p testjobs
+
+# Get total entries if an argument is provided other wise set it to 10000
+if [ -z $1 ]; then
+    help
+    #NEVENTS=10000
+else
+    NEVENTS=$1
+    shift
 fi
 
-cp ../json/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_snt.txt .
-
-
-#======================================
-# Process Baby Commands, tests looper
-#======================================
-if [[ $1 == "long" ]]
-then
-  dotest_nEvts=-1
-else 
-  dotest_nEvts=1000
+# if an alternative list of testjobs are to be run
+if [ -z $1 ]; then
+    help
+    #TESTJOBCONFIGPATH="testjobs.txt"
+else
+    TESTJOBCONFIGPATH=$1
+    shift
 fi
 
-#dotest_babyID=test_80_data 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016B_DoubleEG_MINIAOD_PromptReco-v2/merged/V08-00-06/merged_ntuple_32.root
+echo ""
+e_note "For each test job we will test n_evts=$NEVENTS"
 
-#dotest_babyID=test_80_data_photon 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016B_SinglePhoton_MINIAOD_PromptReco-v2/merged/V08-00-04/merged_ntuple_200.root
+# Create an array that will hold each sub process ids (i.e. an array called JOBS)
+INDEX=1
+declare -a JOBS
+declare -a INPUTS
+declare -a SHORTNAMES
+run_test_job()
+{
+    ./processBaby "$1" $NEVENTS ${INDEX} ${2} > testjobs/${3}.log 2>&1 &
+    e_msg     "    ./processBaby "$1" $NEVENTS ${INDEX} ${2} > testjobs/${3}.log 2>&1 &"
+    JOBS[${INDEX}]=$!;
+    INPUTS[${INDEX}]="$1";
+    BABYMODE[${INDEX}]="$2";
+    SHORTNAMES[${INDEX}]="$3";
+    e_warning "    Test job #"$INDEX" pid="${JOBS[${INDEX}]}" submitted "$1
+    INDEX=$((INDEX + 1))
+}
 
-# dotest_babyID=test_80_data_mumu 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016B_DoubleMuon_MINIAOD_PromptReco-v2/merged/V08-00-06/merged_ntuple_1.root 
+report_test_jobs()
+{
+    INDEX=1
+    for job in "${JOBS[@]}"; do
+        wait $job
+        JOBSTATUS=$?
+        if [ $JOBSTATUS -eq 0 ]; then
+            e_success "    Test job #"$INDEX" pid="$job" success "${INPUTS[${INDEX}]}
+            mv output_${INDEX}.root testjobs/output_${SHORTNAMES[${INDEX}]}.root
+        else
+            e_error "    Test job #"$INDEX" pid="$job" failure "${INPUTS[${INDEX}]}
+            e_msg   "    log: "testjobs/${SHORTNAMES[${INDEX}]}.log
+        fi
+        INDEX=$((INDEX + 1))
+    done
+}
 
-# dotest_babyID=test_80_t5zz_fastsim 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_25ns_80MiniAODv2_fastsim/SMS-T5ZZ_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/V08-00-05/merged_ntuple_1.root
+echo ""
+e_note ">>> Issuing 'make' command for double check..."
+echo "$ make"
+make 2>&1 | tee .make.log
 
-# dotest_babyID=edgeexcess_Run2016 
-#dotest_babyPath=/home/users/cwelke/CMSSW/MCNtupling/CMSSW_8_0_11_V08-00-06/src/all_ntuple_merged.root
-
-# dotest_babyID=test_80_data_mumu 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016C_DoubleMuon_MINIAOD_PromptReco-v2/merged/V08-00-07/merged_ntuple_16.root 
-
-# dotest_babyID=test_80_MC_ttbar 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_25ns_80MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8_RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext4-v1/V08-00-05/merged_ntuple_1.root
-
-# dotest_babyID=test_80_tchiwz 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_25ns_80MiniAODv2_fastsim/SMS-TChiWZ_ZToLL_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/V08-00-09/merged_ntuple_1.root 
-
-# dotest_babyID=test_80_data_ph 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016C_SinglePhoton_MINIAOD_PromptReco-v2/merged/V08-00-07/merged_ntuple_1.root 
-
-# dotest_babyID=test_80_data_relval 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_25ns/RelValTTbar_13_CMSSW_8_1_0_pre9-PU25ns_81X_mcRun2_asymptotic_v2-v1/V08-01-00/merged_ntuple_1.root 
-
-# dotest_babyID=test_80_data 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016G_MuonEG_MINIAOD_PromptReco-v1/merged/V08-00-12/merged_ntuple_1.root 
-
-# dotest_babyID=test_80_data_ph 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016G_SinglePhoton_MINIAOD_PromptReco-v1/merged/V08-00-12/merged_ntuple_41.root 
-
-# dotest_babyID=test_80_data_ee 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016G_DoubleEG_MINIAOD_PromptReco-v1/merged/V08-00-12/merged_ntuple_126.root
-
-# dotest_babyID=test_80_datarereco_ee 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_data/Run2016G_DoubleEG_MINIAOD_23Sep2016-v1/merged/V08-00-14/merged_ntuple_1.root 
-
-#dotest_babyID=test_80_Wgamma_withW_P  
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_25ns_80MiniAODv2/WGToLNuG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/V08-00-05/merged_ntuple_1.root 
-
-# dotest_babyID=test_80_WJets_withW_P   
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_25ns_80MiniAODv2/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/V08-00-05/merged_ntuple_1.root
-
-# dotest_babyID=test_80_signal_t5zz 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_25ns_80MiniAODv2_fastsim/SMS-T5ZZ_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/V08-00-09/merged_ntuple_1.root 
-
-#dotest_babyID=test_80_sync_ttbar_mc 
-#dotest_babyPath=/nfs-6/userdata/cwelke/CMSSW/MCNtupling/CMSSW_8_0_21_CMS3_V08-00-16/src/sync_ttbar_80MiniAODv2.root
-
-#dotest_babyID=test_moriondmc_ttbar_1k 
-#dotest_babyPath=/hadoop/cms/store/group/snt/run2_moriond17/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/merged_ntuple_2.root
-
-#dotest_babyID=test_moriondmc_sync_ttbar_dilep_nopostproc
-#dotest_babyPath=/nfs-7/userdata/ZMEToutput/output/sync_Jan2017/sync_ttbar_dilep_Summer16_1file_nopostproc.root 
-
-if [[ $1 != "long" ]]
-then
-  dotest_babyID=test_data
-  dotest_babyPath=/hadoop/cms/store/user/mderdzinski/dataTuple/Run2016D_SingleMuon_MINIAOD_03Feb2017-v1/V08-00-18/SingleMuon_MINIAOD_03Feb2017-v1_110000_70D05BDE-3DEB-E611-BB46-BC305B390A0B.root
-
-  ./processBaby $dotest_babyID $dotest_babyPath $dotest_nEvts
+if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    e_error "Make failed! Please check your code."
+    e_error "Following might give you a hint ..."
+    e_warning "===================================="
+    sed -n -e '/error:/,/warning:/ p' .make.log | head -n -1
+    #grep -m1 -A5 "error: " .make.log
+    e_warning "===================================="
+    exit
 fi
 
-dotest_babyID=test_mia_WWW
-dotest_babyPath=/hadoop/cms/store/group/snt/run2_moriond17/TEST-www_www-Private80X-v1/V08-00-16/merged_ntuple_1.root
+echo ""
+e_note ">>> Retreiving last git commit hash"
+echo "$ git log | head -n 1"
+git log | head -n 1
 
-./processBaby $dotest_babyID $dotest_babyPath $dotest_nEvts
+echo ""
+e_note ">>> Printing out current git status"
+echo "$ git status"
+git status
 
+echo ""
+grep -v -e ^# -e ^$ ${TESTJOBCONFIGPATH} > .testjobs.txt
+e_note ">>> Submitting parallel test jobs..."
+while read p; do
+    run_test_job $p
+done < .testjobs.txt
 
-#======================================
-# Tests Skimmer
-#======================================
-
-dotest_outfile=`ls | grep ${dotest_babyID}.root`
-cp ${dotest_outfile} output.root
-root -b -q skim_macro.C
+echo ""
+e_note ">>> Waiting for test jobs to finish..."
+report_test_jobs

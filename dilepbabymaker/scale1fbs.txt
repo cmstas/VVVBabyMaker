@@ -1,0 +1,5 @@
+# dataset                                                                                                                                                    tag                nevts_tot  nevts_eff  xsec      scale1fb  
+/VHToWW_M125_13TeV_amcatnloFXFX_madspin_pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-ext1-v2/MINIAODSIM                    CMS4_V09-04-19        867463     426765    0.4823   0.00113
+/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM                                  CMS4_V09-04-19       1978499    1734119    0.216    1.245589e-4
+/VHToWW_M125_13TeV_amcatnloFXFX_madspin_pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-ext1-v2/MINIAODSIM                    CMS4_V10-02-05        865970     425996    0.4823   0.001132
+/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/PRIVATE_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM                                  CMS4_V10-02-05       1974999    1731119    0.216    1.247748e-4

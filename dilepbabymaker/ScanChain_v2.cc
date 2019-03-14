@@ -81,6 +81,12 @@ void babyMaker_v2::ScanChain_v2(bool verbose)
 void babyMaker_v2::Init()
 {
     // Set year via "GlobalConfig gconf"
+<<<<<<< HEAD
+=======
+    
+    gconf.GetConfigsFromDatasetName(looper.getCurrentFileName()); // get global configs
+
+>>>>>>> upstream/master
     SetYear();
 
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
@@ -229,6 +235,10 @@ void babyMaker_v2::AddWWWBabyOutput()
 
     tx->createBranch<int>("is2016");
     tx->createBranch<int>("is2017");
+<<<<<<< HEAD
+=======
+    tx->createBranch<int>("is2018");
+>>>>>>> upstream/master
 
     // Until something weird about 2016 is resolved
     tx->createBranch<int>("HLT_MuEG_2016");
@@ -316,12 +326,21 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<LorentzVector>>("jets_p4");
     tx->createBranch<vector<LorentzVector>>("jets_up_p4");
     tx->createBranch<vector<LorentzVector>>("jets_dn_p4");
+<<<<<<< HEAD
     tx->createBranch<vector<float>>("jets_csv");
     tx->createBranch<vector<float>>("jets_up_csv");
     tx->createBranch<vector<float>>("jets_dn_csv");
     tx->createBranch<vector<float>>("jets_jer_csv");
     tx->createBranch<vector<float>>("jets_jerup_csv");
     tx->createBranch<vector<float>>("jets_jerdn_csv");
+=======
+    tx->createBranch<vector<float>>("jets_btag_score");
+    tx->createBranch<vector<float>>("jets_up_btag_score");
+    tx->createBranch<vector<float>>("jets_dn_btag_score");
+    tx->createBranch<vector<float>>("jets_jer_btag_score");
+    tx->createBranch<vector<float>>("jets_jerup_btag_score");
+    tx->createBranch<vector<float>>("jets_jerdn_btag_score");
+>>>>>>> upstream/master
     tx->createBranch<vector<LorentzVector>>("jets_jer_p4");
     tx->createBranch<vector<LorentzVector>>("jets_jerup_p4");
     tx->createBranch<vector<LorentzVector>>("jets_jerdn_p4");
@@ -349,6 +368,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<float>>("ak8jets_puppi_phi");
     tx->createBranch<vector<float>>("ak8jets_puppi_pt");
     tx->createBranch<vector<float>>("ak8jets_puppi_mass");
+<<<<<<< HEAD
     tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_h4q");
     tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_hbb");
     tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_top");
@@ -356,6 +376,8 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_w");
     tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_z");
     tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_zbb");
+=======
+>>>>>>> upstream/master
 
     tx->createBranch<float>("met_pt");
     tx->createBranch<float>("met_phi");
@@ -1196,7 +1218,11 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_fo     = true;
         gconf.el_addlep_3l_tight  = true;
     }
+<<<<<<< HEAD
     else if (gconf.year == 2017)
+=======
+    else if (gconf.year == 2017 || gconf.year == 2018)
+>>>>>>> upstream/master
     {
         gconf.ea_version = 4;
         //_________________________________
@@ -1205,14 +1231,22 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.mu_reliso_veto      = 0.4;
         gconf.mu_reliso_fo        = 0.4;
         gconf.mu_reliso_tight     = 0.03;
+<<<<<<< HEAD
         gconf.mu_addlep_veto      = false;
+=======
+        gconf.mu_addlep_veto      = true;
+>>>>>>> upstream/master
         gconf.mu_addlep_fo        = true;
         gconf.mu_addlep_tight     = true;
         // Same-sign electrons
         gconf.el_reliso_veto      = 0.4;
         gconf.el_reliso_fo        = 0.4;
         gconf.el_reliso_tight     = 0.03;
+<<<<<<< HEAD
         gconf.el_addlep_veto      = false;
+=======
+        gconf.el_addlep_veto      = true;
+>>>>>>> upstream/master
         gconf.el_addlep_fo        = true;
         gconf.el_addlep_tight     = true;
         // Three-lepton muons (Shares same veto as same-sign)
@@ -1226,8 +1260,12 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_fo     = true;
         gconf.el_addlep_3l_tight  = true;
     }
+<<<<<<< HEAD
     else
     {
+=======
+    else   {
+>>>>>>> upstream/master
         std::cout << "year not recognized! gconf.year = " << gconf.year << std::endl;
         FATALERROR(__FUNCTION__);
     }
@@ -1242,7 +1280,11 @@ void babyMaker_v2::SetPOGAnalysisLeptonID()
     gconf.wwwcfg["3llooseid"] = "lep_pass_POG_loose";
     gconf.wwwcfg["3ltightid"] = "lep_pass_POG_tight";
 
+<<<<<<< HEAD
     if (gconf.year == 2016 || gconf.year == 2017)
+=======
+    if (gconf.year == 2016 || gconf.year == 2017 || gconf.year == 2018)
+>>>>>>> upstream/master
     {
         gconf.ea_version = 2;
         //_________________________________
@@ -2545,7 +2587,29 @@ void babyMaker_v2::FillJets()
         int idx = coreJet.index[ijet];
         float corr = coreJet.corrs[ijet];
         float shift = coreJet.shifts[ijet];
-        float current_csv_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+        static TString deepCSV_prefix = "NULL";
+        if( deepCSV_prefix == "NULL" ) {
+        for( TString discName : cms3.pfjets_bDiscriminatorNames() ) {
+           if( discName.Contains("pfDeepCSV") ) { // 2017 convention
+            deepCSV_prefix = "pfDeepCSV";
+           break;
+         }
+        else if( discName.Contains("deepFlavour") ) { // 2016 convention
+          deepCSV_prefix = "deepFlavour";
+          break;
+         }
+       } // end loop over b discriminator names
+
+       if( deepCSV_prefix == "NULL" ) {
+         cout << "Error in JetTree.cc: Can't find DeepCSV discriminator names!" << endl;
+         exit(1);
+       }
+     } // end if prefix == "NULL"
+      float current_btag_score_val;
+      if(gconf.year==2016) current_btag_score_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+      else if(gconf.year==2017||gconf.year==2018) 
+      current_btag_score_val = cms3.getbtagvalue(deepCSV_prefix+"JetTags:probb",ijet) + cms3.getbtagvalue(deepCSV_prefix+"JetTags:probbb",ijet);
+      bool isData = cms3.evt_isRealData();
 
         // Check whether this jet overlaps with any of the leptons
         if (isLeptonOverlappingWithJet(ijet))
@@ -2561,7 +2625,11 @@ void babyMaker_v2::FillJets()
         if (jet.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_p4", jet);
+<<<<<<< HEAD
             tx->pushbackToBranch<float>("jets_csv", current_csv_val);
+=======
+            tx->pushbackToBranch<float>("jets_btag_score", current_btag_score_val);
+>>>>>>> upstream/master
             if (!isWHSUSY())
                 coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
             else
@@ -2574,7 +2642,11 @@ void babyMaker_v2::FillJets()
         if (jet_up.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_up_p4", jet_up);
+<<<<<<< HEAD
             tx->pushbackToBranch<float>("jets_up_csv", current_csv_val);
+=======
+            tx->pushbackToBranch<float>("jets_up_btag_score", current_btag_score_val);
+>>>>>>> upstream/master
             if (jet_up.pt() > 30. and abs(jet_up.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_up_p4", jet_up);
         }
@@ -2583,7 +2655,11 @@ void babyMaker_v2::FillJets()
         if (jet_dn.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_dn_p4", jet_dn);
+<<<<<<< HEAD
             tx->pushbackToBranch<float>("jets_dn_csv", current_csv_val);
+=======
+            tx->pushbackToBranch<float>("jets_dn_btag_score", current_btag_score_val);
+>>>>>>> upstream/master
             if (jet_dn.pt() > 30. and abs(jet_dn.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_dn_p4", jet_dn);
         }
@@ -2592,7 +2668,11 @@ void babyMaker_v2::FillJets()
         if (jet_jer.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_jer_p4", jet_jer);
+<<<<<<< HEAD
             tx->pushbackToBranch<float>("jets_jer_csv", current_csv_val);
+=======
+            tx->pushbackToBranch<float>("jets_jer_btag_score", current_btag_score_val);
+>>>>>>> upstream/master
             if (jet_jer.pt() > 30. and abs(jet_jer.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_jer_p4", jet_jer);
         }
@@ -2601,7 +2681,11 @@ void babyMaker_v2::FillJets()
         if (jet_jerup.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_jerup_p4", jet_jerup);
+<<<<<<< HEAD
             tx->pushbackToBranch<float>("jets_jerup_csv", current_csv_val);
+=======
+            tx->pushbackToBranch<float>("jets_jerup_btag_score", current_btag_score_val);
+>>>>>>> upstream/master
             if (jet_jerup.pt() > 30. and abs(jet_jerup.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_jerup_p4", jet_jerup);
         }
@@ -2610,7 +2694,11 @@ void babyMaker_v2::FillJets()
         if (jet_jerdn.pt() > 20)
         {
             tx->pushbackToBranch<LorentzVector>("jets_jerdn_p4", jet_jerdn);
+<<<<<<< HEAD
             tx->pushbackToBranch<float>("jets_jerdn_csv", current_csv_val);
+=======
+            tx->pushbackToBranch<float>("jets_jerdn_btag_score", current_btag_score_val);
+>>>>>>> upstream/master
             if (jet_jerdn.pt() > 30. and abs(jet_jerdn.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_jerdn_p4", jet_jerdn);
         }
@@ -2683,6 +2771,7 @@ void babyMaker_v2::FillFatJets()
                 tx->pushbackToBranch<float>("ak8jets_softdropMass", cms3.ak8jets_puppi_softdropMass()[idx]);
                 tx->pushbackToBranch<float>("ak8jets_softdropPuppiSubjet1", cms3.ak8jets_softdropPuppiSubjet1()[idx].M());
                 tx->pushbackToBranch<float>("ak8jets_softdropPuppiSubjet2", cms3.ak8jets_softdropPuppiSubjet2()[idx].M());
+<<<<<<< HEAD
                 tx->pushbackToBranch<float>("ak8jets_nJettinessTau1", cms3.ak8jets_nJettinessTau1()[idx]);
                 tx->pushbackToBranch<float>("ak8jets_nJettinessTau2", cms3.ak8jets_nJettinessTau2()[idx]);
                 tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_h4q", cms3.ak8jets_deep_rawdisc_h4q()[idx]);
@@ -2692,6 +2781,8 @@ void babyMaker_v2::FillFatJets()
                 tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_w", cms3.ak8jets_deep_rawdisc_w()[idx]);
                 tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_z", cms3.ak8jets_deep_rawdisc_z()[idx]);
                 tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_zbb", cms3.ak8jets_deep_rawdisc_zbb()[idx]);
+=======
+>>>>>>> upstream/master
             }
 
 
@@ -2739,12 +2830,21 @@ void babyMaker_v2::FillTracks()
 //##############################################################################################################
 void babyMaker_v2::SortJetBranches()
 {
+<<<<<<< HEAD
     tx->sortVecBranchesByPt("jets_p4", {"jets_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_up_p4", {"jets_up_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_dn_p4", {"jets_dn_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_jer_p4", {"jets_jer_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_jerup_p4", {"jets_jerup_csv"}, {}, {});
     tx->sortVecBranchesByPt("jets_jerdn_p4", {"jets_jerdn_csv"}, {}, {});
+=======
+    tx->sortVecBranchesByPt("jets_p4", {"jets_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_up_p4", {"jets_up_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_dn_p4", {"jets_dn_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jer_p4", {"jets_jer_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jerup_p4", {"jets_jerup_btag_score"}, {}, {});
+    tx->sortVecBranchesByPt("jets_jerdn_p4", {"jets_jerdn_btag_score"}, {}, {});
+>>>>>>> upstream/master
     tx->sortVecBranchesByPt("jets30_p4", {}, {}, {});
     tx->sortVecBranchesByPt("jets30_up_p4", {}, {}, {});
     tx->sortVecBranchesByPt("jets30_dn_p4", {}, {}, {});
@@ -3272,6 +3372,10 @@ void babyMaker_v2::FillYearInfo()
 {
     tx->setBranch<int>("is2016", (coreSample.is2016(looper.getCurrentFileName())));
     tx->setBranch<int>("is2017", (coreSample.is2017(looper.getCurrentFileName())));
+<<<<<<< HEAD
+=======
+    tx->setBranch<int>("is2018", (coreSample.is2018(looper.getCurrentFileName())));
+>>>>>>> upstream/master
 }
 
 //##############################################################################################################
@@ -3687,6 +3791,7 @@ bool babyMaker_v2::is2017POGVetoElectron(int idx)
     if (!( isVetoElectronPOGfall17_v2(idx)      )) return false;
     return true;
 }
+<<<<<<< HEAD
 
 //##############################################################################################################
 // Used to overlap remova against tracks
@@ -3705,11 +3810,34 @@ bool babyMaker_v2::is2017POGMediumElectron(int idx)
     if (!( cms3.els_p4()[idx].pt() > 20.        )) return false;
     if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5 )) return false;
     if (!( isMediumElectronPOGfall17_v2(idx)    )) return false;
+=======
+
+//##############################################################################################################
+// Used to overlap remova against tracks
+bool babyMaker_v2::is2017POGLooseElectron(int idx)
+{
+    if (!( cms3.els_p4()[idx].pt() > 20.        )) return false;
+    if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5 )) return false;
+    if (!( isLooseElectronPOGfall17_v2(idx)     )) return false;
+>>>>>>> upstream/master
     return true;
 }
 
 //##############################################################################################################
 // Used to overlap remova against tracks
+<<<<<<< HEAD
+=======
+bool babyMaker_v2::is2017POGMediumElectron(int idx)
+{
+    if (!( cms3.els_p4()[idx].pt() > 20.        )) return false;
+    if (!( fabs(cms3.els_p4()[idx].eta()) < 2.5 )) return false;
+    if (!( isMediumElectronPOGfall17_v2(idx)    )) return false;
+    return true;
+}
+
+//##############################################################################################################
+// Used to overlap remova against tracks
+>>>>>>> upstream/master
 bool babyMaker_v2::is2017POGTightElectron(int idx)
 {
     if (!( cms3.els_p4()[idx].pt() > 20.        )) return false;
@@ -3842,6 +3970,7 @@ void babyMaker_v2::FillJetVariables(int variation)
     // Assumes FillJets and SortJetBranches are already called
     //
 
+<<<<<<< HEAD
     TString jets_csv     = variation == 0 ? "jets_csv"          : variation == 1 ? "jets_up_csv"          : variation ==-1 ?  "jets_dn_csv"         : variation == 2 ? "jets_jer_csv"         : variation == 3 ? "jets_jerup_csv"        : /*variation ==-3 ?*/ "jets_jerdn_csv"        ;
     TString jets_p4      = variation == 0 ? "jets_p4"           : variation == 1 ? "jets_up_p4"           : variation ==-1 ?  "jets_dn_p4"          : variation == 2 ? "jets_jer_p4"          : variation == 3 ? "jets_jerup_p4"         : /*variation ==-3 ?*/ "jets_jerdn_p4"         ;
     TString nj_bn        = variation == 0 ? "nj"                : variation == 1 ? "nj_up"                : variation ==-1 ?  "nj_dn"               : variation == 2 ? "nj_jer"               : variation == 3 ? "nj_jerup"              : /*variation ==-3 ?*/ "nj_jerdn"              ;
@@ -3859,6 +3988,25 @@ void babyMaker_v2::FillJetVariables(int variation)
     TString j1_p4_bn     = variation == 0 ? "jet1_wtag_p4"      : variation == 1 ? "jet1_wtag_p4_up"      : variation ==-1 ?  "jet1_wtag_p4_dn"     : variation == 2 ? "jet1_wtag_p4_jer"     : variation == 3 ? "jet1_wtag_p4_jerup"    : /*variation ==-3 ?*/ "jet1_wtag_p4_jerdn"    ;
     TString j0_p4_DR1_bn = variation == 0 ? "jet0_wtag_p4_DR1"  : variation == 1 ? "jet0_wtag_p4_DR1_up"  : variation ==-1 ?  "jet0_wtag_p4_DR1_dn" : variation == 2 ? "jet0_wtag_p4_DR1_jer" : variation == 3 ? "jet0_wtag_p4_DR1_jerup": /*variation ==-3 ?*/ "jet0_wtag_p4_DR1_jerdn";
     TString j1_p4_DR1_bn = variation == 0 ? "jet1_wtag_p4_DR1"  : variation == 1 ? "jet1_wtag_p4_DR1_up"  : variation ==-1 ?  "jet1_wtag_p4_DR1_dn" : variation == 2 ? "jet1_wtag_p4_DR1_jer" : variation == 3 ? "jet1_wtag_p4_DR1_jerup": /*variation ==-3 ?*/ "jet1_wtag_p4_DR1_jerdn";
+=======
+    TString jets_btag_score     = variation == 0 ? "jets_btag_score"  : variation == 1 ? "jets_up_btag_score"  : variation ==-1 ?  "jets_dn_btag_score"  : variation == 2 ? "jets_jer_btag_score"  : variation == 3 ? "jets_jerup_btag_score"  : /*variation ==-3 ?*/ "jets_jerdn_btag_score" ;
+    TString jets_p4             = variation == 0 ? "jets_p4"          : variation == 1 ? "jets_up_p4"          : variation ==-1 ?  "jets_dn_p4"          : variation == 2 ? "jets_jer_p4"          : variation == 3 ? "jets_jerup_p4"          : /*variation ==-3 ?*/ "jets_jerdn_p4"         ;
+    TString nj_bn               = variation == 0 ? "nj"               : variation == 1 ? "nj_up"               : variation ==-1 ?  "nj_dn"               : variation == 2 ? "nj_jer"               : variation == 3 ? "nj_jerup"               : /*variation ==-3 ?*/ "nj_jerdn"              ;
+    TString nj30_bn             = variation == 0 ? "nj30"             : variation == 1 ? "nj30_up"             : variation ==-1 ?  "nj30_dn"             : variation == 2 ? "nj30_jer"             : variation == 3 ? "nj30_jerup"             : /*variation ==-3 ?*/ "nj30_jerdn"            ;
+    TString nb_bn               = variation == 0 ? "nb"               : variation == 1 ? "nb_up"               : variation ==-1 ?  "nb_dn"               : variation == 2 ? "nb_jer"               : variation == 3 ? "nb_jerup"               : /*variation ==-3 ?*/ "nb_jerdn"              ;
+    TString Mjj_bn              = variation == 0 ? "Mjj"              : variation == 1 ? "Mjj_up"              : variation ==-1 ?  "Mjj_dn"              : variation == 2 ? "Mjj_jer"              : variation == 3 ? "Mjj_jerup"              : /*variation ==-3 ?*/ "Mjj_jerdn"             ;
+    TString MjjL_bn             = variation == 0 ? "MjjL"             : variation == 1 ? "MjjL_up"             : variation ==-1 ?  "MjjL_dn"             : variation == 2 ? "MjjL_jer"             : variation == 3 ? "MjjL_jerup"             : /*variation ==-3 ?*/ "MjjL_jerdn"            ;
+    TString DetajjL_bn          = variation == 0 ? "DetajjL"          : variation == 1 ? "DetajjL_up"          : variation ==-1 ?  "DetajjL_dn"          : variation == 2 ? "DetajjL_jer"          : variation == 3 ? "DetajjL_jerup"          : /*variation ==-3 ?*/ "DetajjL_jerdn"         ;
+    TString MjjVBF_bn           = variation == 0 ? "MjjVBF"           : variation == 1 ? "MjjVBF_up"           : variation ==-1 ?  "MjjVBF_dn"           : variation == 2 ? "MjjVBF_jer"           : variation == 3 ? "MjjVBF_jerup"           : /*variation ==-3 ?*/ "MjjVBF_jerdn"          ;
+    TString DetajjVBF_bn        = variation == 0 ? "DetajjVBF"        : variation == 1 ? "DetajjVBF_up"        : variation ==-1 ?  "DetajjVBF_dn"        : variation == 2 ? "DetajjVBF_jer"        : variation == 3 ? "DetajjVBF_jerup"        : /*variation ==-3 ?*/ "DetajjVBF_jerdn"       ;
+    TString MjjDR1_bn           = variation == 0 ? "MjjDR1"           : variation == 1 ? "MjjDR1_up"           : variation ==-1 ?  "MjjDR1_dn"           : variation == 2 ? "MjjDR1_jer"           : variation == 3 ? "MjjDR1_jerup"           : /*variation ==-3 ?*/ "MjjDR1_jerdn"          ;
+    TString DRjj_bn             = variation == 0 ? "DRjj"             : variation == 1 ? "DRjj_up"             : variation ==-1 ?  "DRjj_dn"             : variation == 2 ? "DRjj_jer"             : variation == 3 ? "DRjj_jerup"             : /*variation ==-3 ?*/ "DRjj_jerdn"            ;
+    TString DRjjDR1_bn          = variation == 0 ? "DRjjDR1"          : variation == 1 ? "DRjjDR1_up"          : variation ==-1 ?  "DRjjDR1_dn"          : variation == 2 ? "DRjjDR1_jer"          : variation == 3 ? "DRjjDR1_jerup"          : /*variation ==-3 ?*/ "DRjjDR1_jerdn"         ;
+    TString j0_p4_bn            = variation == 0 ? "jet0_wtag_p4"     : variation == 1 ? "jet0_wtag_p4_up"     : variation ==-1 ?  "jet0_wtag_p4_dn"     : variation == 2 ? "jet0_wtag_p4_jer"     : variation == 3 ? "jet0_wtag_p4_jerup"     : /*variation ==-3 ?*/ "jet0_wtag_p4_jerdn"    ;
+    TString j1_p4_bn            = variation == 0 ? "jet1_wtag_p4"     : variation == 1 ? "jet1_wtag_p4_up"     : variation ==-1 ?  "jet1_wtag_p4_dn"     : variation == 2 ? "jet1_wtag_p4_jer"     : variation == 3 ? "jet1_wtag_p4_jerup"     : /*variation ==-3 ?*/ "jet1_wtag_p4_jerdn"    ;
+    TString j0_p4_DR1_bn        = variation == 0 ? "jet0_wtag_p4_DR1" : variation == 1 ? "jet0_wtag_p4_DR1_up" : variation ==-1 ?  "jet0_wtag_p4_DR1_dn" : variation == 2 ? "jet0_wtag_p4_DR1_jer" : variation == 3 ? "jet0_wtag_p4_DR1_jerup" : /*variation ==-3 ?*/ "jet0_wtag_p4_DR1_jerdn";
+    TString j1_p4_DR1_bn        = variation == 0 ? "jet1_wtag_p4_DR1" : variation == 1 ? "jet1_wtag_p4_DR1_up" : variation ==-1 ?  "jet1_wtag_p4_DR1_dn" : variation == 2 ? "jet1_wtag_p4_DR1_jer" : variation == 3 ? "jet1_wtag_p4_DR1_jerup" : /*variation ==-3 ?*/ "jet1_wtag_p4_DR1_jerdn";
+>>>>>>> upstream/master
 
     int nj = 0;
     int nj30 = 0;
@@ -3877,15 +4025,31 @@ void babyMaker_v2::FillJetVariables(int variation)
     LV j1_p4;
     LV j0_p4_DR1;
     LV j1_p4_DR1;
+<<<<<<< HEAD
     for (unsigned int i = 0; i < tx->getBranch<vector<float>>(jets_csv, false).size(); ++i)
     {
         const LV& p4 = tx->getBranch<vector<LV>>(jets_p4, false)[i];
         const float& csv= tx->getBranch<vector<float>>(jets_csv, false)[i];
+=======
+    float btag_loose_threshold = -999;
+    if (gconf.year == 2016)
+        btag_loose_threshold = gconf.WP_CSVv2_LOOSE;
+    else if (gconf.year == 2017 or gconf.year == 2018)
+        btag_loose_threshold = gconf.WP_DEEPCSV_LOOSE;
+    for (unsigned int i = 0; i < tx->getBranch<vector<float>>(jets_btag_score, false).size(); ++i)
+    {
+        const LV& p4 = tx->getBranch<vector<LV>>(jets_p4, false)[i];
+        const float& btag_score= tx->getBranch<vector<float>>(jets_btag_score, false)[i];
+>>>>>>> upstream/master
 
         // nb jets
         if (!( p4.pt() > 20. ))
             continue;
+<<<<<<< HEAD
         if (fabs(p4.eta()) < 2.4 && csv >= 0.5426)
+=======
+        if (fabs(p4.eta()) < 2.4 && btag_score >= btag_loose_threshold)
+>>>>>>> upstream/master
             nb++;
 
         // njets across all eta
@@ -3899,7 +4063,11 @@ void babyMaker_v2::FillJetVariables(int variation)
             nj30++;
 
         // Compute Mjj using the closest two jets
+<<<<<<< HEAD
         for (unsigned int j = i + 1; j < tx->getBranch<vector<float>>(jets_csv, false).size(); ++j)
+=======
+        for (unsigned int j = i + 1; j < tx->getBranch<vector<float>>(jets_btag_score, false).size(); ++j)
+>>>>>>> upstream/master
         {
             const LV& p4_2 = tx->getBranch<vector<LV>>(jets_p4, false)[j];
 
@@ -4558,6 +4726,7 @@ void babyMaker_v2::FillGenWeightsNominal()
         for (int ipdf = 9; ipdf < 109; ipdf++)
         {
             average_of_pdf_weights += cms3.genweights().at(ipdf);
+<<<<<<< HEAD
         }
         average_of_pdf_weights =  average_of_pdf_weights / 100;
         //std of weights.
@@ -4565,6 +4734,15 @@ void babyMaker_v2::FillGenWeightsNominal()
         {
             sum_of_pdf_weights += (cms3.genweights().at(ipdf) - average_of_pdf_weights) * (cms3.genweights().at(ipdf) - average_of_pdf_weights);
         }
+=======
+        }
+        average_of_pdf_weights =  average_of_pdf_weights / 100;
+        //std of weights.
+        for (int ipdf = 9; ipdf < 109; ipdf++)
+        {
+            sum_of_pdf_weights += (cms3.genweights().at(ipdf) - average_of_pdf_weights) * (cms3.genweights().at(ipdf) - average_of_pdf_weights);
+        }
+>>>>>>> upstream/master
         tx->setBranch<float>("weight_fr_r1_f1", cms3.genweights()[0]);
         tx->setBranch<float>("weight_fr_r1_f2", cms3.genweights()[1]);
         tx->setBranch<float>("weight_fr_r1_f0p5", cms3.genweights()[2]);
@@ -4642,6 +4820,7 @@ float babyMaker_v2::get1SFOSMll()
 {
     const vector<int>& lep_pdgId = tx->getBranch<vector<int>>("lep_pdgId", true);
     const vector<LV>& lep_p4 = tx->getBranch<vector<LV>>("lep_p4", true);
+<<<<<<< HEAD
 
     int pdgid0 = lep_pdgId[0];
     int pdgid1 = lep_pdgId[1];
@@ -4683,6 +4862,8 @@ float babyMaker_v2::get2SFOSMll0()
 {
     const vector<int>& lep_pdgId = tx->getBranch<vector<int>>("lep_pdgId", true);
     const vector<LV>& lep_p4 = tx->getBranch<vector<LV>>("lep_p4", true);
+=======
+>>>>>>> upstream/master
 
     int pdgid0 = lep_pdgId[0];
     int pdgid1 = lep_pdgId[1];
@@ -4695,6 +4876,50 @@ float babyMaker_v2::get2SFOSMll0()
     else if (pdgid1 == -pdgid2)
         return (lep_p4[1] + lep_p4[2]).mass();
 
+<<<<<<< HEAD
+=======
+    cout << "Warning: get1SFOSMll() Shouldn't be here if function call are at the right places." << endl;
+    std::cout <<  " pdgid0: " << pdgid0 <<  " pdgid1: " << pdgid1 <<  " pdgid2: " << pdgid2 <<  std::endl;
+    std::cout <<  " nSFOS(): " << nSFOS() <<  std::endl;
+
+    for (auto& pdgid0 : tx->getBranch<vector<int>>("lep_pdgId"))
+    {
+        std::cout <<  " pdgid0: " << pdgid0 <<  std::endl;
+    }
+
+    int nSFOS = 0;
+    for (auto& pdgid0 : tx->getBranch<vector<int>>("lep_pdgId"))
+    {
+        for (auto& pdgid1 : tx->getBranch<vector<int>>("lep_pdgId"))
+        {
+            std::cout <<  " pdgid0: " << pdgid0 <<  " pdgid1: " << pdgid1 <<  std::endl;
+            if (pdgid0 == -pdgid1)
+                nSFOS++;
+        }
+    }
+    std::cout <<  " nSFOS: " << nSFOS <<  " nSFOS/2: " << nSFOS/2 <<  std::endl;
+
+    return -999;
+}
+
+//##############################################################################################################
+float babyMaker_v2::get2SFOSMll0()
+{
+    const vector<int>& lep_pdgId = tx->getBranch<vector<int>>("lep_pdgId", true);
+    const vector<LV>& lep_p4 = tx->getBranch<vector<LV>>("lep_p4", true);
+
+    int pdgid0 = lep_pdgId[0];
+    int pdgid1 = lep_pdgId[1];
+    int pdgid2 = lep_pdgId[2];
+
+    if (pdgid0 == -pdgid1)
+        return (lep_p4[0] + lep_p4[1]).mass();
+    else if (pdgid0 == -pdgid2)
+        return (lep_p4[0] + lep_p4[2]).mass();
+    else if (pdgid1 == -pdgid2)
+        return (lep_p4[1] + lep_p4[2]).mass();
+
+>>>>>>> upstream/master
     cout << "Warning: get2SFOSMll0() Shouldn't be here if function call are at the right places." << endl;
 
     return -999;
@@ -4821,7 +5046,11 @@ TString babyMaker_v2::process()
         else if (gentype == 5) return "photonfakes";
         else                   return "others";
     }
+<<<<<<< HEAD
     else if (coreSample.is2017(looper.getCurrentFileName()))
+=======
+    else if (coreSample.is2017(looper.getCurrentFileName()) || coreSample.is2018(looper.getCurrentFileName()))
+>>>>>>> upstream/master
     {
         if (cms3.evt_isRealData())
             return "Data";
@@ -4832,7 +5061,11 @@ TString babyMaker_v2::process()
         if (isSMWWW())
             return "WWW";
 
+<<<<<<< HEAD
         if (isSMWWW() && coreSample.is2017(looper.getCurrentFileName()))
+=======
+        if (isSMWWW() && (coreSample.is2017(looper.getCurrentFileName())||coreSample.is2018(looper.getCurrentFileName())))
+>>>>>>> upstream/master
             return "WWW";
 
         if (isData())
@@ -5369,6 +5602,10 @@ bool babyMaker_v2::studyWWW()
     vector<int> w_m_id;
     vector<LV> l;
     vector<int> l_id;
+<<<<<<< HEAD
+=======
+    vector<int> l_idx;
+>>>>>>> upstream/master
     vector<int> l_m_idx;
     vector<LV> v;
     vector<int> v_m_idx;
@@ -5395,6 +5632,10 @@ bool babyMaker_v2::studyWWW()
         {
             l.push_back(p4);
             l_id.push_back(pdgId);
+<<<<<<< HEAD
+=======
+            l_idx.push_back(i);
+>>>>>>> upstream/master
             l_m_idx.push_back(mother_idx);
             std::cout <<  " pdgId: " << pdgId <<  " motherId: " << motherId <<  " grandmaId: " << grandmaId <<  " status: " << status <<  " p4.pt(): " << p4.pt() <<  " p4.eta(): " << p4.eta() <<  " p4.phi(): " << p4.phi() <<  std::endl;
         }
@@ -5456,6 +5697,7 @@ bool babyMaker_v2::studyWWW()
 //        std::cout <<  " isHtoWW: " << isHtoWW <<  " isZthere: " << isZthere <<  std::endl;
 //
 //    }
+<<<<<<< HEAD
 
     // Set has_tau
     bool has_tau = false;
@@ -5470,6 +5712,33 @@ bool babyMaker_v2::studyWWW()
     else if (l_id.size() == 0) tx->setBranch<int>("www_channel", 0);
     else FATALERROR(__FUNCTION__);
 
+=======
+
+    // Set has_tau
+    bool has_tau = false;
+    for (unsigned i = 0; i < l_id.size(); ++i) if (abs(l_id[i]) == 15) has_tau = true;
+    tx->setBranch<int>("has_tau", has_tau);
+
+    // Set www_channel
+    if      (l_id.size() == 2 && l_id[0] * l_id[1] > 0) tx->setBranch<int>("www_channel", 2);
+    else if (l_id.size() == 2 && l_id[0] * l_id[1] < 0) tx->setBranch<int>("www_channel", 4);
+    else if (l_id.size() == 3) tx->setBranch<int>("www_channel", 3);
+    else if (l_id.size() == 1) tx->setBranch<int>("www_channel", 1);
+    else if (l_id.size() == 0) tx->setBranch<int>("www_channel", 0);
+    else
+    {
+        // There is an event where I find 4 leptons + 2 quarks, where a pair of 11 -11 is probably from a photon radiation off of a W
+        // I'll deal witht his later........
+        std::cout <<  " l_id.size(): " << l_id.size() <<  std::endl;
+        for (auto& id: l_id)
+            std::cout <<  " id: " << id <<  std::endl;
+        for (auto& idx: l_idx)
+            std::cout <<  " idx: " << idx <<  std::endl;
+        coreGenPart.printAllParticles();
+        FATALERROR(__FUNCTION__);
+    }
+
+>>>>>>> upstream/master
     // Set w boson variables
     for (unsigned i = 0; i < w.size(); ++i)
     {
