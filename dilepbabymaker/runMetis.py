@@ -476,6 +476,7 @@ if __name__ == "__main__":
     parser.add_argument('-p' , '--production' , dest='production' , help='To submit ALL jobs for production'        , default=False         , action='store_true') 
     parser.add_argument('-t' , '--test'       , dest='test'       , help='To submit test jobs (5 jobs each sample)' , default=False         , action='store_true') 
     parser.add_argument(       '--tag'        , dest='tag'        , help='job tag'                                                          , required=True      ) 
+    parser.add_argument(       '--sample_sets', dest='sample_sets', help='comma separated sample sets (e.g. WWW2018, WWW2017, FR2017, ...)' , required=True      ) 
     
     args = parser.parse_args()
     
@@ -499,9 +500,12 @@ if __name__ == "__main__":
 
     # filter out grand master list and form a master list to be passed on to submit function
     master_list = {}
-    # master_list["www_2016_80x"] = grand_master_list["www_2016_80x"]
-    # master_list["pog_2016_80x"] = grand_master_list["pog_2016_80x"]
-    master_list["www_2018_102x"] = grand_master_list["www_2018_102x"]
+    if "WWW2016" in args.sample_sets:
+        master_list["www_2016_80x"] = grand_master_list["www_2016_80x"]
+    if "WWW2017" in args.sample_sets:
+        master_list["www_2017_94x_v2"] = grand_master_list["www_2017_94x_v2"]
+    if "WWW2018" in args.sample_sets:
+        master_list["www_2018_102x"] = grand_master_list["www_2018_102x"]
 
     submit(master_list, args.tag, dotestrun=args.test)
 
