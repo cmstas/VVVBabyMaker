@@ -353,6 +353,13 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<float>>("ak8jets_puppi_phi");
     tx->createBranch<vector<float>>("ak8jets_puppi_pt");
     tx->createBranch<vector<float>>("ak8jets_puppi_mass");
+    tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_h4q");
+    tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_hbb");
+    tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_top");
+    tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_qcd");
+    tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_w");
+    tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_z");
+    tx->createBranch<vector<float>>("ak8jets_deep_rawdisc_zbb");
 
     tx->createBranch<float>("met_pt");
     tx->createBranch<float>("met_phi");
@@ -2701,6 +2708,15 @@ void babyMaker_v2::FillFatJets()
                 tx->pushbackToBranch<float>("ak8jets_softdropMass", cms3.ak8jets_puppi_softdropMass()[idx]);
                 tx->pushbackToBranch<float>("ak8jets_softdropPuppiSubjet1", cms3.ak8jets_softdropPuppiSubjet1()[idx].M());
                 tx->pushbackToBranch<float>("ak8jets_softdropPuppiSubjet2", cms3.ak8jets_softdropPuppiSubjet2()[idx].M());
+                tx->pushbackToBranch<float>("ak8jets_nJettinessTau1", cms3.ak8jets_nJettinessTau1()[idx]);
+                tx->pushbackToBranch<float>("ak8jets_nJettinessTau2", cms3.ak8jets_nJettinessTau2()[idx]);
+                tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_h4q", cms3.ak8jets_deep_rawdisc_h4q()[idx]);
+                tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_hbb", cms3.ak8jets_deep_rawdisc_hbb()[idx]);
+                tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_top", cms3.ak8jets_deep_rawdisc_top()[idx]);
+                tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_qcd", cms3.ak8jets_deep_rawdisc_qcd()[idx]);
+                tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_w", cms3.ak8jets_deep_rawdisc_w()[idx]);
+                tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_z", cms3.ak8jets_deep_rawdisc_z()[idx]);
+                tx->pushbackToBranch<float>("ak8jets_deep_rawdisc_zbb", cms3.ak8jets_deep_rawdisc_zbb()[idx]);
             }
 
 
