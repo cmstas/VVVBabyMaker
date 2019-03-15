@@ -89,6 +89,9 @@ void babyMaker_v2::Init()
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
     coreJec.setJECFor(looper.getCurrentFileName(), isFastSim());
 
+    // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
+    coreFatJec.setFatJECFor(looper.getCurrentFileName());
+
     // Provide which year it is to determine which JER config files to load
     coreJer.setJERFor(gconf.year);
 
@@ -1605,7 +1608,7 @@ void babyMaker_v2::ProcessTnPMuons() { coreMuon.process(isProbeMuon, isTagMuon);
 void babyMaker_v2::ProcessJets() { coreJet.process(coreJec, coreJer); }
 
 //##############################################################################################################
-void babyMaker_v2::ProcessFatJets() { coreFatJet.process(coreJec); }
+void babyMaker_v2::ProcessFatJets() { coreFatJet.process(coreFatJec); }
 
 //##############################################################################################################
 void babyMaker_v2::ProcessMET() { coreMET.process(coreJec, coreJer); }

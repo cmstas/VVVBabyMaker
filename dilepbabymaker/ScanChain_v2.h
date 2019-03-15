@@ -144,6 +144,7 @@ public:
 private:
 
     CoreUtil::jec coreJec;
+    CoreUtil::jec coreFatJec;
     CoreUtil::jer coreJer;
     CoreUtil::grl coreGRL;
     CoreUtil::btag coreBtagSF;
