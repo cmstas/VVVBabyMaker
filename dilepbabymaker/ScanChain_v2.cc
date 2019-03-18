@@ -7,7 +7,7 @@
 using namespace std;
 
 //##############################################################################################################
-babyMaker_v2::babyMaker_v2() : coreBtagSFFastSim(true), babymode(kWWWBaby), eventlist("eventlist.txt")
+babyMaker_v2::babyMaker_v2() : coreBtagSFFastSim(true), babymode(kWWWBaby), eventlist("eventlist.txt"), eventlist_debug("eventlist_debug.txt")
 {
 }
 
@@ -28,6 +28,31 @@ int babyMaker_v2::ProcessCMS4(TString filepaths, int max_events, int idx, bool v
     // Initializer job index
     job_index = idx;
 
+    // Debug event list
+    eventlist_debug.load("eventlist_debug.txt");
+
+    // If it is in debug mode make a big splash to warn users
+    if (eventlist_debug.event_list.size() > 0)
+    {
+        std::cout << "*****************************************************************************" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* File eventlist_debug.txt was loaded with non-zero number of events!" << std::endl;
+        std::cout << "* Therefore it will skip events if the run, lumi, evt is not in the txt file!" << std::endl;
+        std::cout << "* Either erase the run:lumi:evt in the file or comment it out via # to disable." << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "* WARNING" << std::endl;
+        std::cout << "*****************************************************************************" << std::endl;
+    }
+
     // Run the loop
     ScanChain_v2(verbose);
 
@@ -41,6 +66,17 @@ void babyMaker_v2::ScanChain_v2(bool verbose)
 {
     while (looper.nextEvent())
     {
+
+        // If eventlist_debug.txt file exists
+        if (eventlist_debug.event_list.size() > 0)
+        {
+            // Check if the given event is in the list if not continue
+            if (not eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+            {
+                continue;
+            }
+        }
+
         try
         {
             if (verbose)
@@ -1817,7 +1853,7 @@ bool babyMaker_v2::PassPresel_v2()
 bool babyMaker_v2::PassPresel_v3()
 {
 
-    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
     {
         std::cout << std::endl;
         std::cout << "This event is in the txt" << std::endl;
@@ -2021,6 +2057,43 @@ bool babyMaker_v2::PassOSPreselection()
     if (el_idx.size() + mu_idx.size() < 2)
         return false;
 
+    if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    {
+        std::cout << std::endl;
+        std::cout << "This event is in the txt" << std::endl;
+        std::cout <<  " coreElectron.index.size(): " << coreElectron.index.size() <<  " coreMuon.index.size(): " << coreMuon.index.size() <<  std::endl;
+        std::cout <<  " coreElectron.index.size()+coreMuon.index.size(): " << coreElectron.index.size()+coreMuon.index.size() <<  std::endl;
+        std::cout <<  " cms3.evt_run(): " << cms3.evt_run() <<  " cms3.evt_lumiBlock(): " << cms3.evt_lumiBlock() <<  " cms3.evt_event(): " << cms3.evt_event() <<  std::endl;
+            std::cout << std::endl;
+        for (auto& iel : coreElectron.index)
+        {
+            std::cout <<  " isMVAHZZNoIsofall17(iel,true): " << isMVAHZZNoIsofall17(iel,true) <<  std::endl;
+            std::cout <<  " isMVAwp80NoIsofall17(iel,true): " << isMVAwp80NoIsofall17(iel,true) <<  std::endl;
+            std::cout <<  " isMVAwp90NoIsofall17(iel,true): " << isMVAwp90NoIsofall17(iel,true) <<  std::endl;
+            std::cout <<  " passElectronSelection_VVV(iel,VVV_FO_SS): " << passElectronSelection_VVV(iel,VVV_FO_SS) <<  " passElectronSelection_VVV(iel,VVV_TIGHT_SS): " << passElectronSelection_VVV(iel,VVV_TIGHT_SS) <<  std::endl;
+            std::cout <<  " passElectronSelection_VVV(iel,VVV_FO_3L): " << passElectronSelection_VVV(iel,VVV_FO_3L) <<  " passElectronSelection_VVV(iel,VVV_TIGHT_3L): " << passElectronSelection_VVV(iel,VVV_TIGHT_3L) <<  std::endl;
+            std::cout <<  " passElectronSelection_VVV(iel,VVV_cutbased_3l_fo_v4): " << passElectronSelection_VVV(iel,VVV_cutbased_3l_fo_v4) <<  " passElectronSelection_VVV(iel,VVV_cutbased_3l_tight_v4): " << passElectronSelection_VVV(iel,VVV_cutbased_3l_tight_v4) <<  std::endl;
+            std::cout <<  " fabs(cms3.els_etaSC().at(iel)): " << fabs(cms3.els_etaSC().at(iel)) <<  std::endl;
+            std::cout <<  " fabs(cms3.els_dxyPV().at(iel)): " << fabs(cms3.els_dxyPV().at(iel)) <<  std::endl;
+            std::cout <<  " fabs(cms3.els_dzPV().at(iel)): " << fabs(cms3.els_dzPV().at(iel)) <<  std::endl;
+            std::cout <<  " getMVAoutput(iel): " << getMVAoutput(iel) <<  std::endl;
+            std::cout <<  " eleRelIso03EA(iel,2,false): " << eleRelIso03EA(iel,2,false) <<  std::endl;
+            std::cout <<  " eleRelIso03EA(iel,2,true): " << eleRelIso03EA(iel,2,true) <<  std::endl;
+            std::cout <<  " eleRelIso03EA(iel,4,false): " << eleRelIso03EA(iel,4,false) <<  std::endl;
+            std::cout <<  " eleRelIso03EA(iel,4,true): " << eleRelIso03EA(iel,4,true) <<  std::endl;
+            std::cout <<  " fabs(cms3.els_ip3d()[iel]): " << fabs(cms3.els_ip3d()[iel]) <<  std::endl;
+            std::cout <<  " threeChargeAgree(iel): " << threeChargeAgree(iel) <<  std::endl;
+            std::cout <<  " isTriggerSafenoIso_v1(iel): " << isTriggerSafenoIso_v1(iel) <<  std::endl;
+            std::cout <<  " isTriggerSafe_v1(iel): " << isTriggerSafe_v1(iel) <<  std::endl;
+            std::cout << std::endl;
+        }
+        for (auto& imu : coreMuon.index)
+        {
+            std::cout <<  " passMuonSelection_VVV(imu,VVV_FO_3L): " << passMuonSelection_VVV(imu,VVV_FO_3L) <<  " passMuonSelection_VVV(imu,VVV_TIGHT_3L): " << passMuonSelection_VVV(imu,VVV_TIGHT_3L) <<  std::endl;
+            std::cout << std::endl;
+        }
+    }
+
     // The 2 veto leptons of 20 GeV each at the least must pass 3L tight options
     int ntight = 0;
     int nloose = 0;
@@ -2080,13 +2153,12 @@ bool babyMaker_v2::PassPOGPreselection()
 bool babyMaker_v2::PassLoosePreselection()
 {
 
-    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
     {
         std::cout <<  " cms3.evt_run(): " << cms3.evt_run() <<  " cms3.evt_lumiBlock(): " << cms3.evt_lumiBlock() <<  " cms3.evt_event(): " << cms3.evt_event() <<  std::endl;
         std::cout << "here" << std::endl;
         coreGenPart.process();
         coreGenPart.printAllParticles();
-        abort();
     }
     else
     {
@@ -2282,7 +2354,15 @@ void babyMaker_v2::FillElectrons()
         float conecorrptfactorraw = coreElectron.index.size() + coreMuon.index.size() > 2 ? eleRelIso03EA(idx, 2, true) - 0.03: eleRelIso03EA(idx, 2, true) - 0.05;
         float conecorrptfactor = max(0., (double) conecorrptfactorraw) + 1.; // To clip correcting once it passes tight isolation criteria
 
-        if (babymode != kFRBaby)
+        if (babymode == kFRBaby)
+        {
+        }
+        else if (babymode == kOSBaby)
+        {
+            if (!( passElectronSelection_VVV(idx, VVV_FO_3L) ))
+                continue;
+        }
+        else
         {
             if (coreElectron.index.size() + coreMuon.index.size() == 2)
             {
@@ -2378,7 +2458,15 @@ void babyMaker_v2::FillMuons()
         float conecorrptfactorraw = coreElectron.index.size() + coreMuon.index.size() > 2 ? muRelIso03EA(idx, 2, true) - 0.03: muRelIso03EA(idx, 2, true) - 0.07;
         float conecorrptfactor = max(0., (double) conecorrptfactorraw) + 1.; // To clip correcting once it passes tight isolation criteria
 
-        if (babymode != kFRBaby)
+        if (babymode == kFRBaby)
+        {
+        }
+        else if (babymode == kOSBaby)
+        {
+            if (!( passMuonSelection_VVV(idx, VVV_FO_3L) ))
+                continue;
+        }
+        else
         {
             if (coreElectron.index.size() + coreMuon.index.size() == 2)
             {
@@ -3550,6 +3638,12 @@ bool babyMaker_v2::isLeptonOverlappingWithJet(int ijet)
 {
     bool is_overlapping = false;
 
+    if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    {
+        std::cout <<  " coreElectron.index.size(): " << coreElectron.index.size() <<  std::endl;
+        std::cout <<  " coreMuon.index.size(): " << coreMuon.index.size() <<  std::endl;
+        std::cout <<  " cms3.evt_run(): " << cms3.evt_run() <<  " cms3.evt_lumiBlock(): " << cms3.evt_lumiBlock() <<  " cms3.evt_event(): " << cms3.evt_event() <<  std::endl;
+    }
     const vector<LV>& lep_p4 = tx->getBranch<vector<LV>>("lep_p4", true);
     const vector<int>& lep_id = tx->getBranch<vector<int>>(gconf.wwwcfg["3llooseid"], true);
 
@@ -3857,7 +3951,7 @@ int babyMaker_v2::nSFOS()
                 nSFOS++;
         }
     }
-    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
     {
         std::cout <<  " nSFOS/2: " << nSFOS/2 <<  std::endl;
     }
@@ -4829,7 +4923,7 @@ TString babyMaker_v2::process()
         {
             if (tx->getBranch<int>("nLlep") < 2) return "not2l";
             int gentype = gentype_v2();
-            if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+            if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
             {
                 std::cout <<  " gentype: " << gentype <<  std::endl;
             }
@@ -4843,7 +4937,7 @@ TString babyMaker_v2::process()
         //this is 3l
         if (tx->getBranch<int>("nLlep") < 3) return "not3l";
         int gentype = gentype_v2();
-        if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+        if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
         {
             std::cout <<  " gentype: " << gentype <<  std::endl;
         }
@@ -6022,7 +6116,7 @@ bool babyMaker_v2::filterWHMass(float chimass, float lspmass)
 //##############################################################################################################
 int babyMaker_v2::gentype_v2()
 {
-    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
     {
         int ngenLepFromTau = tx->getBranch<int>("ngenLepFromTau");
         int ngenLepFromBoson = tx->getBranch<int>("ngenLepFromBoson");
@@ -6088,7 +6182,7 @@ int babyMaker_v2::gentype_v2()
         if (tx->getBranch<vector<int>>("lep_isFromW")[lepindex]) nW++;
         if (tx->getBranch<vector<int>>("lep_isFromZ")[lepindex]) nZ++;
     }
-    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+    if (eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
     {
         std::cout <<  " gammafake: " << gammafake <<  std::endl;
         std::cout <<  " jetfake: " << jetfake <<  std::endl;

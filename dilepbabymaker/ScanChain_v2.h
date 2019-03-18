@@ -190,6 +190,7 @@ private:
 
     //
     RooUtil::EventList eventlist;
+    RooUtil::EventList eventlist_debug;
 
 public:
 
