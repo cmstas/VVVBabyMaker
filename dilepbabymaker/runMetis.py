@@ -141,6 +141,18 @@ def get_master_list():
             "baby_type" : "POG"
             }
 
+    dinfos["loose_2016_80x"] = {
+            "samples" : sample_info,
+            "year" : 2016,
+            "baby_type" : "Loose"
+            }
+
+    dinfos["os_2016_80x"] = {
+            "samples" : sample_info,
+            "year" : 2016,
+            "baby_type" : "OS"
+            }
+
 
     ##########################################
     ######## WWW BABY MC 2017 94x v2 #########
@@ -225,6 +237,18 @@ def get_master_list():
             "samples" : sample_info,
             "year" : 2017,
             "baby_type" : "WWW"
+            }
+
+    dinfos["loose_2017_94x_v2"] = {
+            "samples" : sample_info,
+            "year" : 2017,
+            "baby_type" : "Loose"
+            }
+
+    dinfos["os_2017_94x_v2"] = {
+            "samples" : sample_info,
+            "year" : 2017,
+            "baby_type" : "OS"
             }
 
 
@@ -459,6 +483,18 @@ def get_master_list():
             "baby_type" : "WWW"
             }
 
+    dinfos["loose_2018_102x"] = {
+            "samples" : sample_info,
+            "year" : 2018,
+            "baby_type" : "Loose"
+            }
+
+    dinfos["os_2018_102x"] = {
+            "samples" : sample_info,
+            "year" : 2018,
+            "baby_type" : "OS"
+            }
+
 
     return dinfos
 
@@ -506,6 +542,20 @@ if __name__ == "__main__":
         master_list["www_2017_94x_v2"] = grand_master_list["www_2017_94x_v2"]
     if "WWW2018" in args.sample_sets:
         master_list["www_2018_102x"] = grand_master_list["www_2018_102x"]
+
+    if "Loose2016" in args.sample_sets:
+        master_list["loose_2016_80x"] = grand_master_list["loose_2016_80x"]
+    if "Loose2017" in args.sample_sets:
+        master_list["loose_2017_94x_v2"] = grand_master_list["loose_2017_94x_v2"]
+    if "Loose2018" in args.sample_sets:
+        master_list["loose_2018_102x"] = grand_master_list["loose_2018_102x"]
+
+    if "OS2016" in args.sample_sets:
+        master_list["os_2016_80x"] = grand_master_list["os_2016_80x"]
+    if "OS2017" in args.sample_sets:
+        master_list["os_2017_94x_v2"] = grand_master_list["os_2017_94x_v2"]
+    if "OS2018" in args.sample_sets:
+        master_list["os_2018_102x"] = grand_master_list["os_2018_102x"]
 
     submit(master_list, args.tag, dotestrun=args.test)
 
