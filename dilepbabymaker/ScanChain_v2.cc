@@ -2160,10 +2160,6 @@ bool babyMaker_v2::PassLoosePreselection()
         coreGenPart.process();
         coreGenPart.printAllParticles();
     }
-    else
-    {
-        return false;
-    }
 
     // Select 2 SS lepton events or 3 or more lepton events
     vector<int> el_idx = coreElectron.index;
