@@ -291,6 +291,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<int>>("lep_isTriggerSafe_v1");
     tx->createBranch<vector<int>>("lep_lostHits");
     tx->createBranch<vector<int>>("lep_convVeto");
+    tx->createBranch<vector<int>>("lep_exp_innerlayers");
     tx->createBranch<vector<int>>("lep_motherIdSS");
     tx->createBranch<vector<int>>("lep_pass_VVV_cutbased_3l_fo");
     tx->createBranch<vector<int>>("lep_pass_VVV_cutbased_3l_tight");
@@ -2385,6 +2386,7 @@ void babyMaker_v2::FillElectrons()
         tx->pushbackToBranch<int>           ("lep_isTriggerSafe_v1"             , isTriggerSafe_v1(idx));
         tx->pushbackToBranch<int>           ("lep_lostHits"                     , cms3.els_lostHits()[idx]);
         tx->pushbackToBranch<int>           ("lep_convVeto"                     , !cms3.els_conv_vtx_flag()[idx]);
+        tx->pushbackToBranch<int>           ("lep_exp_innerlayers"              , cms3.els_exp_innerlayers()[idx]);
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_3l_fo"      , cms3.els_p4()[idx].pt() > 20. && passElectronSelection_VVV(idx, VVV_FO_3L));
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_3l_tight"   , cms3.els_p4()[idx].pt() > 20. && passElectronSelection_VVV(idx, VVV_TIGHT_3L));
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_fo"         , cms3.els_p4()[idx].pt() > lpt && passElectronSelection_VVV(idx, VVV_FO_SS));
@@ -2491,6 +2493,7 @@ void babyMaker_v2::FillMuons()
         tx->pushbackToBranch<int>           ("lep_isTriggerSafe_v1"             , true); // Electron specific branch. So muons always pass.
         tx->pushbackToBranch<int>           ("lep_lostHits"                     , cms3.mus_lostHits()[idx]);
         tx->pushbackToBranch<int>           ("lep_convVeto"                     , 1);
+        tx->pushbackToBranch<int>           ("lep_exp_innerlayers"              , cms3.mus_exp_innerlayers()[idx]);
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_3l_fo"      , cms3.mus_p4()[idx].pt() > 20. && passMuonSelection_VVV(idx, VVV_FO_3L));
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_3l_tight"   , cms3.mus_p4()[idx].pt() > 20. && passMuonSelection_VVV(idx, VVV_TIGHT_3L));
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_fo"         , cms3.mus_p4()[idx].pt() > lpt && passMuonSelection_VVV(idx, VVV_FO_SS));
@@ -2612,6 +2615,7 @@ void babyMaker_v2::SortLeptonBranches()
             "lep_isTriggerSafe_v1",
             "lep_lostHits",
             "lep_convVeto",
+            "lep_exp_innerlayers",
             "lep_motherIdSS",
             "lep_genPart_index",
             "lep_pdgId",
