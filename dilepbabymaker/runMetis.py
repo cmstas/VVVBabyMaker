@@ -607,7 +607,7 @@ def get_master_list():
 
             }
 
-    dinfos["fr_2018_102x_v2"] = {
+    dinfos["fr_2018_102x"] = {
             "samples" : sample_info,
             "year" : 2018,
             "baby_type" : "FR"
@@ -672,6 +672,14 @@ if __name__ == "__main__":
         master_list["os_2017_94x_v2"] = grand_master_list["os_2017_94x_v2"]
     if "OS2018" in args.sample_sets:
         master_list["os_2018_102x"] = grand_master_list["os_2018_102x"]
+
+    # FIXME: TODO: ADD 2016 FAKERATE SAMPLES
+    # if "FR2016" in args.sample_sets:
+    #     master_list["os_2016_80x"] = grand_master_list["os_2016_80x"]
+    if "FR2017" in args.sample_sets:
+        master_list["fr_2017_94x_v2"] = grand_master_list["fr_2017_94x_v2"]
+    if "FR2018" in args.sample_sets:
+        master_list["fr_2018_102x"] = grand_master_list["fr_2018_102x"]
 
     submit(master_list, args.tag, dotestrun=args.test)
 
