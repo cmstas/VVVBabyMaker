@@ -2013,7 +2013,7 @@ bool babyMaker_v2::PassFRPreselection()
                 // If it reaches this point, then it means that none of the trigger passed
                 return false;
             }
-            else if (coreSample.is2017(looper.getCurrentFileName()))
+            else if (coreSample.is2017(looper.getCurrentFileName()) or coreSample.is2018(looper.getCurrentFileName()))
             {
                 // If data then check the triggers
                 // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
