@@ -347,12 +347,6 @@ def get_master_list():
 
             }
 
-    sample_info = {
-
-            "/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM"                  : "ttbar_1ltop_mgmlm_ext1",
-
-            }
-
     dinfos["tnp_2017_94x_v2"] = {
             "samples" : sample_info,
             "year" : 2017,
@@ -508,56 +502,6 @@ def get_master_list():
 
     sample_info = {
 
-            "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM" : "dy_m50_madgraph",
-            "/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                    : "ttbar_incl_amcatnlo",
-            "/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v2/MINIAODSIM"            : "wjets_incl_madgraph",
-            "/WW_TuneCP5_13TeV-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                     : "ww_incl_pythia",
-            "/WZ_TuneCP5_13TeV-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                                     : "wz_incl_pythia",
-            "/QCD_Pt-15to20_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt15_muenriched",
-            "/QCD_Pt-20to30_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt20_muenriched",
-            "/QCD_Pt-30to50_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt30_muenriched",
-            "/QCD_Pt-50to80_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt50_muenriched",
-            "/QCD_Pt-80to120_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"           : "qcd_pt80_muenriched",
-            "/QCD_Pt-120to170_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"          : "qcd_pt120_muenriched",
-            "/QCD_Pt-170to300_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"          : "qcd_pt170_muenriched",
-            "/QCD_Pt-300to470_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"          : "qcd_pt300_muenriched",
-            "/QCD_Pt-470to600_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"          : "qcd_pt470_muenriched",
-            "/QCD_Pt-600to800_MuEnrichedPt5_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM"                             : "qcd_pt600_muenriched",
-            "/QCD_Pt-15to20_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "qcd_pt15_emenriched",
-            "/QCD_Pt-20to30_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "qcd_pt20_emenriched",
-            "/QCD_Pt-30to50_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "qcd_pt30_emenriched",
-            "/QCD_Pt-50to80_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"               : "qcd_pt50_emenriched",
-            "/QCD_Pt-80to120_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"              : "qcd_pt80_emenriched",
-            "/QCD_Pt-120to170_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"             : "qcd_pt120_emenriched",
-            "/QCD_Pt-170to300_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM"                                : "qcd_pt170_emenriched",
-            "/QCD_Pt-300toInf_EMEnriched_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"             : "qcd_pt300_emenriched",
-            "/QCD_Pt_15to20_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v11-v1/MINIAODSIM"                                       : "qcd_pt15_bctoe",
-            "/QCD_Pt_20to30_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM"            : "qcd_pt20_bctoe",
-            "/QCD_Pt_30to80_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                    : "qcd_pt30_bctoe",
-            "/QCD_Pt_80to170_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                   : "qcd_pt80_bctoe",
-            "/QCD_Pt_170to250_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                  : "qcd_pt170_bctoe",
-            "/QCD_Pt_250toInf_bcToE_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"                  : "qcd_pt250_bctoe",
-            "/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "ttbar_1ltop_madgraph",
-            "/TTJets_SingleLeptFromTbar_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"  : "ttbar_1ltbr_madgraph",
-            "/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"              : "ttbar_dilep_madgraph",
-            "/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"     : "wjets_ht100_madgraph",
-            "/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "wjets_ht200_madgraph",
-            "/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "wjets_ht400_madgraph",
-            "/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"     : "wjets_ht600_madgraph",
-            "/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"    : "wjets_ht800_madgraph",
-            "/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM"   : "wjets_ht1200_madgraph",
-            "/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3/MINIAODSIM"    : "wjets_ht2500_madgraph",
-            "/SingleElectron/Run2017B-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017B_se",
-            "/SingleElectron/Run2017C-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017C_se",
-            "/SingleElectron/Run2017D-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017D_se",
-            "/SingleElectron/Run2017E-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017E_se",
-            "/SingleElectron/Run2017F-31Mar2018-v1/MINIAOD"                                                                                              : "data_Run2017F_se",
-            "/DoubleMuon/Run2017B-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017B_mm",
-            "/DoubleMuon/Run2017C-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017C_mm",
-            "/DoubleMuon/Run2017D-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017D_mm",
-            "/DoubleMuon/Run2017E-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017E_mm",
-            "/DoubleMuon/Run2017F-31Mar2018-v1/MINIAOD"                                                                                                  : "data_Run2017F_mm",
-
             "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"            : "dy_m50_madgraph",
             "/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"               : "ttbar_incl_amcatnlo",
             "/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM"                 : "wjets_incl_madgraph",
@@ -613,6 +557,38 @@ def get_master_list():
             "year" : 2018,
             "baby_type" : "FR"
             }
+
+
+    ###########################################
+    ######## TnP BABY MC 2018 102x v2 #########
+    ###########################################
+
+    sample_info = {
+
+            "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"            : "dy_m50_madgraph",
+            "/EGamma/Run2018A-17Sep2018-v2/MINIAOD": "data_Run2018Av2_se",
+            "/EGamma/Run2018B-17Sep2018-v1/MINIAOD": "data_Run2018Bv1_se",
+            "/EGamma/Run2018C-17Sep2018-v1/MINIAOD": "data_Run2018Cv1_se",
+            "/EGamma/Run2018D-PromptReco-v2/MINIAOD": "data_Run2018Dv2_se",
+            "/SingleMuon/Run2018A-17Sep2018-v2/MINIAOD": "data_Run2018Av2_sm",
+            "/SingleMuon/Run2018B-17Sep2018-v1/MINIAOD": "data_Run2018Bv1_sm",
+            "/SingleMuon/Run2018C-17Sep2018-v1/MINIAOD": "data_Run2018Cv1_sm",
+            "/SingleMuon/Run2018D-PromptReco-v2/MINIAOD": "data_Run2018Dv2_sm",
+            "/MET/Run2018A-17Sep2018-v1/MINIAOD": "data_Run2018Av1_xe",
+            "/MET/Run2018B-17Sep2018-v1/MINIAOD": "data_Run2018Bv1_xe",
+            "/MET/Run2018C-17Sep2018-v1/MINIAOD": "data_Run2018Cv1_xe",
+            "/MET/Run2018D-PromptReco-v1/MINIAOD": "data_Run2018Dv1_xe",
+            "/MET/Run2018D-PromptReco-v2/MINIAOD": "data_Run2018Dv2_xe",
+
+            }
+
+    dinfos["tnp_2018_102x"] = {
+            "samples" : sample_info,
+            "year" : 2018,
+            "baby_type" : "TnP"
+            }
+
+
     return dinfos
 
 #################################################################################################################################################################################################
@@ -681,6 +657,9 @@ if __name__ == "__main__":
         master_list["fr_2017_94x_v2"] = grand_master_list["fr_2017_94x_v2"]
     if "FR2018" in args.sample_sets:
         master_list["fr_2018_102x"] = grand_master_list["fr_2018_102x"]
+
+    if "TnP2018" in args.sample_sets:
+        master_list["tnp_2018_102x"] = grand_master_list["tnp_2018_102x"]
 
     submit(master_list, args.tag, dotestrun=args.test)
 
