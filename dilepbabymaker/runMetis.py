@@ -874,11 +874,15 @@ if __name__ == "__main__":
     # FIXME: TODO: ADD 2016 FAKERATE SAMPLES
     # if "FR2016" in args.sample_sets:
     #     master_list["os_2016_80x"] = grand_master_list["os_2016_80x"]
+    if "FR2016" in args.sample_sets:
+        master_list["fr_2016_94x"] = grand_master_list["fr_2017_94x"]
     if "FR2017" in args.sample_sets:
         master_list["fr_2017_94x_v2"] = grand_master_list["fr_2017_94x_v2"]
     if "FR2018" in args.sample_sets:
         master_list["fr_2018_102x"] = grand_master_list["fr_2018_102x"]
 
+    if "TnP2016" in args.sample_sets:
+        master_list["tnp_2016_94x"] = grand_master_list["tnp_2016_94x"]
     if "TnP2018" in args.sample_sets:
         master_list["tnp_2018_102x"] = grand_master_list["tnp_2018_102x"]
 
