@@ -622,6 +622,10 @@ def get_master_list():
             "/MuonEG/Run2016G-17Jul2018-v1/MINIAOD"          : "data_Run2016G_em"   , 
             "/MuonEG/Run2016H-17Jul2018-v1/MINIAOD"          : "data_Run2016H_em"   , 
 
+            # Signal
+            "/WWW_4F_DiLeptonFilter_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v3/MINIAODSIM"                                          : "www_2l_amcatnlo",
+            "/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                                                         : "www_incl_amcatnlo",
+
             # ttbar
             "/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/MINIAODSIM"                                 : "ttbar_1ltop_mgmlm_ext1",
             "/TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/MINIAODSIM"                              : "ttbar_1ltbr_mgmlm_ext1",
