@@ -251,6 +251,9 @@ public:
     bool PassPOGPreselection();
     bool PassLoosePreselection();
 
+    bool isPassPostObjectSelection();
+    bool PassFRPostObjectPreselection();
+
     bool PassPresel();
     bool PassPresel_v1();
     bool PassPresel_v2();

@@ -821,6 +821,7 @@ void babyMaker_v2::AddTnPBabyOutput()
     tx->createBranch<bool>("passes_POG_mediumID");
     tx->createBranch<bool>("passes_POG_looseID");
     tx->createBranch<bool>("passes_POG_MVA_HZZ");
+    tx->createBranch<bool>("passes_POG_MVA_wpLoose");
     tx->createBranch<bool>("passes_POG_MVA_wp80");
     tx->createBranch<bool>("passes_POG_MVA_wp90");
 
@@ -842,6 +843,8 @@ void babyMaker_v2::AddTnPBabyOutput()
     tx->createBranch<float>("mva");
     tx->createBranch<float>("mva_25ns");
     tx->createBranch<float>("mva_2017");
+    tx->createBranch<float>("mva_fall17V2NoIso");
+    tx->createBranch<float>("mva_fall17V2Iso");
 
     tx->createBranch<float>("ptErr");
     tx->createBranch<float>("trk_pt");
@@ -1211,7 +1214,7 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
     gconf.wwwcfg["3llooseid"] = "lep_pass_VVV_cutbased_3l_fo";
     gconf.wwwcfg["3ltightid"] = "lep_pass_VVV_cutbased_3l_tight";
 
-    if (gconf.year == 2016)
+    if (gconf.cmssw_ver == 80)
     {
         gconf.ea_version = 2;
         //_________________________________
@@ -1220,14 +1223,14 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.mu_reliso_veto      = 0.4;
         gconf.mu_reliso_fo        = 0.4;
         gconf.mu_reliso_tight     = 0.03;
-        gconf.mu_addlep_veto      = true; // false is what i think it should be at least when we get to do reanalysis
+        gconf.mu_addlep_veto      = true; // it was false when 2016 analysis was done
         gconf.mu_addlep_fo        = true;
         gconf.mu_addlep_tight     = true;
         // Same-sign electrons
         gconf.el_reliso_veto      = 0.4;
         gconf.el_reliso_fo        = 0.4;
         gconf.el_reliso_tight     = 0.03;
-        gconf.el_addlep_veto      = true; // false is what i think it should be at least when we get to do reanalysis
+        gconf.el_addlep_veto      = true; // it was false when 2016 analysis was done
         gconf.el_addlep_fo        = true;
         gconf.el_addlep_tight     = true;
         // Three-lepton muons (Shares same veto as same-sign)
@@ -1241,7 +1244,7 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_fo     = true;
         gconf.el_addlep_3l_tight  = true;
     }
-    else if (gconf.year == 2017 || gconf.year == 2018)
+    else if (gconf.cmssw_ver == 94)
     {
         gconf.ea_version = 4;
         //_________________________________
@@ -1288,21 +1291,21 @@ void babyMaker_v2::SetPOGAnalysisLeptonID()
 
     if (gconf.year == 2016 || gconf.year == 2017 || gconf.year == 2018)
     {
-        gconf.ea_version = 2;
+        gconf.ea_version = 4;
         //_________________________________
         // Isolation configuration
         // Same-sign muons
         gconf.mu_reliso_veto      = 0.4;
         gconf.mu_reliso_fo        = 0.4;
         gconf.mu_reliso_tight     = 0.03;
-        gconf.mu_addlep_veto      = false;
+        gconf.mu_addlep_veto      = true;
         gconf.mu_addlep_fo        = true;
         gconf.mu_addlep_tight     = true;
         // Same-sign electrons
         gconf.el_reliso_veto      = 0.4;
         gconf.el_reliso_fo        = 0.4;
         gconf.el_reliso_tight     = 0.03;
-        gconf.el_addlep_veto      = false;
+        gconf.el_addlep_veto      = true;
         gconf.el_addlep_fo        = true;
         gconf.el_addlep_tight     = true;
         // Three-lepton muons (Shares same veto as same-sign)
@@ -1425,6 +1428,9 @@ void babyMaker_v2::Process()
     // Process other non-lepton objects via CoreUtil
     ProcessNonLeptonObjects();
 
+    if (!isPassPostObjectSelection())
+        return;
+
     // Fill the output ttree
     FillBaby();
 
@@ -1454,6 +1460,28 @@ bool babyMaker_v2::isPass()
         case kAllBaby:   /* no cut is applied accept all */  break;
         case kPOGBaby:   if (!PassPOGPreselection  ()) return false; break;
         case kLooseBaby: if (!PassLoosePreselection()) return false; break;
+        default: return false;
+    }
+
+    // If it passed then accept
+    return true;
+}
+
+//##############################################################################################################
+bool babyMaker_v2::isPassPostObjectSelection()
+{
+    // This is event selection AFTER the all the object has been processed
+    // See isPass() for comparison
+    // Based on the baby mode now preselect and if it doesn't pass return
+    switch (babymode)
+    {
+        case kWWWBaby:   /* no cut is applied */ break;
+        case kFRBaby:    if (!PassFRPostObjectPreselection()) return false; break;
+        case kOSBaby:    /* no cut is applied */ break;
+        case kTnPBaby:   /* no cut is applied */ break;
+        case kAllBaby:   /* no cut is applied */ break;
+        case kPOGBaby:   /* no cut is applied */ break;
+        case kLooseBaby: /* no cut is applied */ break;
         default: return false;
     }
 
@@ -1985,67 +2013,132 @@ bool babyMaker_v2::PassFRPreselection()
     if (el_idx.size() + mu_idx.size() < 1)
         return false;
 
-//    if (el_idx.size() + mu_idx.size() == 1)
-//    {
-        // Check if data,
-        if (isData())
+    // // Count number of 3L loose lepton with pt above 20
+    // int nloose = 0;
+    // for (auto& iel : coreElectron.index)
+    // {
+    //     if (cms3.els_p4()[iel].pt() > 20. && passElectronSelection_VVV(iel, VVV_FO_3L))
+    //     {
+    //         nloose++;
+    //     }
+    // }
+    // for (auto& imu : coreMuon.index)
+    // {
+    //     if (cms3.mus_p4()[imu].pt() > 20. && passMuonSelection_VVV(imu, VVV_FO_3L))
+    //     {
+    //         nloose++;
+    //     }
+    // }
+    //
+    // if (nloose < 1)
+    //     return false;
+
+    // Following is to check whether this is the ttbar 1l sample that is used for closure test
+    if (looper.getCurrentFileName().Contains("SingleLept"))
+        // If it is ttbar 1l sample for closure test require nVlep >= 2
+        // This is the reduce ntuple size
+        return (el_idx.size() + mu_idx.size() >= 2);
+
+    if (isData())
+    {
+        if (coreSample.is2016(looper.getCurrentFileName()))
         {
-            if (coreSample.is2016(looper.getCurrentFileName()))
-            {
-                // If data then check the triggers
-                // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
-                // I don't wish to run coreTrigger.process() for all events
-                int HLT_SingleIsoEl8;
-                int HLT_SingleIsoEl17;
-                int HLT_SingleIsoEl23;
-                int HLT_SingleIsoMu8;
-                int HLT_SingleIsoMu17;
-                setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
-                setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl17 );
-                setHLTBranch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl23 );
-                setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
-                setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
-                if (HLT_SingleIsoEl17 > 0) return true;
-                if (HLT_SingleIsoEl23 > 0) return true;
-                if (HLT_SingleIsoEl8 > 0) return true;
-                if (HLT_SingleIsoMu17 > 0) return true;
-                if (HLT_SingleIsoMu8 > 0) return true;
-                // If it reaches this point, then it means that none of the trigger passed
-                return false;
-            }
-            else if (coreSample.is2017(looper.getCurrentFileName()) or coreSample.is2018(looper.getCurrentFileName()))
-            {
-                // If data then check the triggers
-                // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
-                // I don't wish to run coreTrigger.process() for all events
-                int HLT_SingleEl8;
-                int HLT_SingleEl17;
-                int HLT_SingleIsoEl8;
-                int HLT_SingleIsoEl23;
-                int HLT_SingleIsoMu8;
-                int HLT_SingleIsoMu17;
-                setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v"       ,  true, HLT_SingleEl8 );
-                setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v"      ,  true, HLT_SingleEl17 );
-                setHLTBranch("HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
-                setHLTBranch("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v",  true, HLT_SingleIsoEl23 );
-                setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
-                setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
-                if (HLT_SingleEl8 > 0) return true;
-                if (HLT_SingleEl17 > 0) return true;
-                if (HLT_SingleIsoEl23 > 0) return true;
-                if (HLT_SingleIsoEl8 > 0) return true;
-                if (HLT_SingleIsoMu17 > 0) return true;
-                if (HLT_SingleIsoMu8 > 0) return true;
-                // If it reaches this point, then it means that none of the trigger passed
-                return false;
-            }
+            // If data then check the triggers
+            // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
+            // I don't wish to run coreTrigger.process() for all events
+            int HLT_SingleIsoEl8;
+            int HLT_SingleIsoEl17;
+            int HLT_SingleIsoEl23;
+            int HLT_SingleIsoMu8;
+            int HLT_SingleIsoMu17;
+            setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
+            setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl17 );
+            setHLTBranch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl23 );
+            setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
+            setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
+            if (HLT_SingleIsoEl17 > 0) return true;
+            if (HLT_SingleIsoEl23 > 0) return true;
+            if (HLT_SingleIsoEl8 > 0) return true;
+            if (HLT_SingleIsoMu17 > 0) return true;
+            if (HLT_SingleIsoMu8 > 0) return true;
+            // If it reaches this point, then it means that none of the trigger passed
+            return false;
         }
+        else if (coreSample.is2017(looper.getCurrentFileName()) or coreSample.is2018(looper.getCurrentFileName()))
+        {
+            // If data then check the triggers
+            // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
+            // I don't wish to run coreTrigger.process() for all events
+            int HLT_SingleEl8;
+            int HLT_SingleEl17;
+            int HLT_SingleIsoEl8;
+            int HLT_SingleIsoEl23;
+            int HLT_SingleIsoMu8;
+            int HLT_SingleIsoMu17;
+            setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v"       ,  true, HLT_SingleEl8 );
+            setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v"      ,  true, HLT_SingleEl17 );
+            setHLTBranch("HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
+            setHLTBranch("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v",  true, HLT_SingleIsoEl23 );
+            setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
+            setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
+            if (HLT_SingleEl8 > 0) return true;
+            if (HLT_SingleEl17 > 0) return true;
+            if (HLT_SingleIsoEl23 > 0) return true;
+            if (HLT_SingleIsoEl8 > 0) return true;
+            if (HLT_SingleIsoMu17 > 0) return true;
+            if (HLT_SingleIsoMu8 > 0) return true;
+            // If it reaches this point, then it means that none of the trigger passed
+            return false;
+        }
+    }
+    else // MC sample
+    {
+
         return true;
-//    }
-//    else
-//    {
-//        return false;
-//    }
+
+        // Only for DYJets sample allow nVlep >= 2. The rest of the samples should require only one lepton
+        if (looper.getCurrentFileName().Contains("DYJets"))
+            return (el_idx.size() + mu_idx.size() >= 1);
+        else
+            return (el_idx.size() + mu_idx.size() == 1);
+
+    }
+}
+
+//##############################################################################################################
+bool babyMaker_v2::PassFRPostObjectPreselection()
+{
+
+    return true;
+    // Count number of jets for one lepton events
+
+    // Select 2 SS lepton events or 3 or more lepton events
+    vector<int> el_idx = coreElectron.index;
+    vector<int> mu_idx = coreMuon.index;
+
+    if (el_idx.size() + mu_idx.size() == 1)
+    {
+
+        const vector<LV>& p4s    = tx->getBranch<vector<LV>>("jets_p4"   , false);
+        const vector<LV>& p4s_up = tx->getBranch<vector<LV>>("jets_up_p4", false);
+        const vector<LV>& p4s_dn = tx->getBranch<vector<LV>>("jets_dn_p4", false);
+
+        bool pass    = p4s   .size() > 0 ? p4s   [0].Pt() > 40. : false;
+        bool pass_up = p4s_up.size() > 0 ? p4s_up[0].Pt() > 40. : false;
+        bool pass_dn = p4s_dn.size() > 0 ? p4s_dn[0].Pt() > 40. : false;
+
+        return (pass or pass_up or pass_dn);
+
+    }
+    else if (el_idx.size() + mu_idx.size() > 1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
 }
 
 //##############################################################################################################
@@ -2412,7 +2505,7 @@ void babyMaker_v2::FillElectrons()
         tx->pushbackToBranch<float>         ("lep_trk_pt"                       , cms3.els_trk_p4()[idx].pt());
         tx->pushbackToBranch<int>           ("lep_charge"                       , cms3.els_charge()[idx]);
         tx->pushbackToBranch<float>         ("lep_etaSC"                        , cms3.els_etaSC()[idx]);
-        tx->pushbackToBranch<float>         ("lep_MVA"                          , getMVAoutput(idx, true));
+        tx->pushbackToBranch<float>         ("lep_MVA"                          , gconf.cmssw_ver == 80 ? getMVAoutput(idx, true) : cms3.els_VIDFall17V2NoIsoMvaValue().at(idx));
         tx->pushbackToBranch<int>           ("lep_isMediumPOG"                  , 1);
         tx->pushbackToBranch<int>           ("lep_isTightPOG"                   , 1);
         tx->pushbackToBranch<float>         ("lep_r9"                           , cms3.els_r9()[idx]);
@@ -2519,7 +2612,7 @@ void babyMaker_v2::FillMuons()
         tx->pushbackToBranch<float>         ("lep_trk_pt"                       , cms3.mus_trk_p4()[idx].pt());
         tx->pushbackToBranch<int>           ("lep_charge"                       , cms3.mus_charge()[idx]);
         tx->pushbackToBranch<float>         ("lep_etaSC"                        , cms3.mus_p4()[idx].eta()); // Electron specific branch. Just take muon's regular eta.
-        tx->pushbackToBranch<float>         ("lep_MVA"                          , -99);
+        tx->pushbackToBranch<float>         ("lep_MVA"                          , -999);
         tx->pushbackToBranch<int>           ("lep_isMediumPOG"                  , isMediumMuonPOG(idx));
         tx->pushbackToBranch<int>           ("lep_isTightPOG"                   , isTightMuonPOG(idx));
         tx->pushbackToBranch<float>         ("lep_r9"                           , 0);
@@ -3696,9 +3789,10 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
     tx->setBranch<bool>("passes_VVV_veto_noiso", electronID(idx, VVV_veto_noiso_v5));
     tx->setBranch<bool>("passes_POG_mediumID", isMediumElectronPOG(idx));
     tx->setBranch<bool>("passes_POG_looseID", isLooseElectronPOG(idx));
-    tx->setBranch<bool>("passes_POG_MVA_HZZ", isMVAHZZNoIsofall17(idx));
-    tx->setBranch<bool>("passes_POG_MVA_wp80", isMVAwp80NoIsofall17(idx));
-    tx->setBranch<bool>("passes_POG_MVA_wp90", isMVAwp90NoIsofall17(idx));
+    tx->setBranch<bool>("passes_POG_MVA_HZZ", isMVAHZZIsofall17V2(idx));
+    tx->setBranch<bool>("passes_POG_MVA_wpLoose", isMVAwpLooseNoIsofall17V2(idx));
+    tx->setBranch<bool>("passes_POG_MVA_wp80", isMVAwp80NoIsofall17V2(idx));
+    tx->setBranch<bool>("passes_POG_MVA_wp90", isMVAwp90NoIsofall17V2(idx));
 
     if (!cms3.evt_isRealData())
     {
@@ -3719,6 +3813,8 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
     tx->setBranch<float>("mva", getMVAoutput(idx));
     tx->setBranch<float>("mva_25ns", getMVAoutput(idx));
     tx->setBranch<float>("mva_2017", getMVAoutput(idx, true));
+    tx->setBranch<float>("mva_fall17V2NoIso", cms3.els_VIDFall17V2NoIsoMvaValue().at(idx));
+    tx->setBranch<float>("mva_fall17V2Iso", cms3.els_VIDFall17V2IsoMvaValue().at(idx));
 
     tx->setBranch<int>("evt_event", tx->getBranch<unsigned long long>("evt"));
     tx->setBranch<int>("evt_lumiBlock", tx->getBranch<int>("lumi"));
