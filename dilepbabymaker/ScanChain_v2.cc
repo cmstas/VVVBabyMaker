@@ -1246,7 +1246,10 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
     }
     else if (gconf.cmssw_ver == 94)
     {
-        gconf.ea_version = 4;
+        if (gconf.year == 2016)
+            gconf.ea_version = 2;
+        else
+            gconf.ea_version = 4;
         //_________________________________
         // Isolation configuration
         // Same-sign muons
@@ -1291,7 +1294,10 @@ void babyMaker_v2::SetPOGAnalysisLeptonID()
 
     if (gconf.year == 2016 || gconf.year == 2017 || gconf.year == 2018)
     {
-        gconf.ea_version = 4;
+        if (gconf.year == 2016)
+            gconf.ea_version = 2;
+        else
+            gconf.ea_version = 4;
         //_________________________________
         // Isolation configuration
         // Same-sign muons
