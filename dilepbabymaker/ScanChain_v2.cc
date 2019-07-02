@@ -551,6 +551,55 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<float>("SumMlj_jerup");
     tx->createBranch<float>("SumMlj_jerdn");
 
+    tx->createBranch<float>("Mljmin");
+    tx->createBranch<float>("Mljmin_up");
+    tx->createBranch<float>("Mljmin_dn");
+    tx->createBranch<float>("Mljmin_jer");
+    tx->createBranch<float>("Mljmin_jerup");
+    tx->createBranch<float>("Mljmin_jerdn");
+    tx->createBranch<float>("Mljmax");
+    tx->createBranch<float>("Mljmax_up");
+    tx->createBranch<float>("Mljmax_dn");
+    tx->createBranch<float>("Mljmax_jer");
+    tx->createBranch<float>("Mljmax_jerup");
+    tx->createBranch<float>("Mljmax_jerdn");
+    tx->createBranch<float>("DRljmin");
+    tx->createBranch<float>("DRljmin_up");
+    tx->createBranch<float>("DRljmin_dn");
+    tx->createBranch<float>("DRljmin_jer");
+    tx->createBranch<float>("DRljmin_jerup");
+    tx->createBranch<float>("DRljmin_jerdn");
+    tx->createBranch<float>("DRljmax");
+    tx->createBranch<float>("DRljmax_up");
+    tx->createBranch<float>("DRljmax_dn");
+    tx->createBranch<float>("DRljmax_jer");
+    tx->createBranch<float>("DRljmax_jerup");
+    tx->createBranch<float>("DRljmax_jerdn");
+    tx->createBranch<float>("Mljmin3L");
+    tx->createBranch<float>("Mljmin3L_up");
+    tx->createBranch<float>("Mljmin3L_dn");
+    tx->createBranch<float>("Mljmin3L_jer");
+    tx->createBranch<float>("Mljmin3L_jerup");
+    tx->createBranch<float>("Mljmin3L_jerdn");
+    tx->createBranch<float>("Mljmax3L");
+    tx->createBranch<float>("Mljmax3L_up");
+    tx->createBranch<float>("Mljmax3L_dn");
+    tx->createBranch<float>("Mljmax3L_jer");
+    tx->createBranch<float>("Mljmax3L_jerup");
+    tx->createBranch<float>("Mljmax3L_jerdn");
+    tx->createBranch<float>("DRljmin3L");
+    tx->createBranch<float>("DRljmin3L_up");
+    tx->createBranch<float>("DRljmin3L_dn");
+    tx->createBranch<float>("DRljmin3L_jer");
+    tx->createBranch<float>("DRljmin3L_jerup");
+    tx->createBranch<float>("DRljmin3L_jerdn");
+    tx->createBranch<float>("DRljmax3L");
+    tx->createBranch<float>("DRljmax3L_up");
+    tx->createBranch<float>("DRljmax3L_dn");
+    tx->createBranch<float>("DRljmax3L_jer");
+    tx->createBranch<float>("DRljmax3L_jerup");
+    tx->createBranch<float>("DRljmax3L_jerdn");
+
     tx->createBranch<float>("Ml0jj");
     tx->createBranch<float>("Ml0jj_up");
     tx->createBranch<float>("Ml0jj_dn");
@@ -677,6 +726,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<float>("Mll3L1");
     tx->createBranch<float>("M3l");
     tx->createBranch<float>("Pt3l");
+    tx->createBranch<float>("Pt2l");
     tx->createBranch<float>("M01");
     tx->createBranch<float>("M02");
     tx->createBranch<float>("M12");
@@ -4423,6 +4473,95 @@ void babyMaker_v2::FillLepJetVariables(int variation)
 
     }
 
+    if (tx->getBranch<int>("nVlep") == 2 and tx->getBranch<int>(nj30) >= 1)
+    {
+        // Get leptons
+        const LV& lep_p4_0 = tx->getBranch<vector<LV>>("lep_p4")[0];
+        const LV& lep_p4_1 = tx->getBranch<vector<LV>>("lep_p4")[1];
+
+        TString Mljmin_bn  = variation == 0 ? "Mljmin"     : variation == 1 ? "Mljmin_up"     : variation ==-1 ? "Mljmin_dn"      : variation == 2 ? "Mljmin_jer"      : variation == 3 ? "Mljmin_jerup"      : /*variation ==-3 ?*/ "Mljmin_jerdn"     ;
+        TString Mljmax_bn  = variation == 0 ? "Mljmax"     : variation == 1 ? "Mljmax_up"     : variation ==-1 ? "Mljmax_dn"      : variation == 2 ? "Mljmax_jer"      : variation == 3 ? "Mljmax_jerup"      : /*variation ==-3 ?*/ "Mljmax_jerdn"     ;
+        TString DRljmin_bn  = variation == 0 ? "DRljmin"     : variation == 1 ? "DRljmin_up"     : variation ==-1 ? "DRljmin_dn"      : variation == 2 ? "DRljmin_jer"      : variation == 3 ? "DRljmin_jerup"      : /*variation ==-3 ?*/ "DRljmin_jerdn"     ;
+        TString DRljmax_bn  = variation == 0 ? "DRljmax"     : variation == 1 ? "DRljmax_up"     : variation ==-1 ? "DRljmax_dn"      : variation == 2 ? "DRljmax_jer"      : variation == 3 ? "DRljmax_jerup"      : /*variation ==-3 ?*/ "DRljmax_jerdn"     ;
+        TString jets30_p4  = variation == 0 ? "jets30_p4"  : variation == 1 ? "jets30_up_p4"  : variation ==-1 ? "jets30_dn_p4"   : variation == 2 ? "jets30_jer_p4"   : variation == 3 ? "jets30_jerup_p4"   : /*variation ==-3 ?*/ "jets30_jerdn_p4"  ;
+        
+        float maxMlj = -1e6;
+        float minMlj =  1e6;
+        float maxDRlj = -1e6;
+        float minDRlj =  1e6;
+        for(int idx = 0; idx < tx->getBranch<int>(nj30); ++idx){
+          const LV& jet_p4_idx = tx->getBranch<vector<LV>>(jets30_p4)[idx];
+          float Ml0j = (lep_p4_0+jet_p4_idx).mass();
+          float Ml1j = (lep_p4_1+jet_p4_idx).mass();
+          float DRl0j = ROOT::Math::VectorUtil::DeltaR(lep_p4_0,jet_p4_idx);
+          float DRl1j = ROOT::Math::VectorUtil::DeltaR(lep_p4_1,jet_p4_idx);
+          if(Ml0j>maxMlj) maxMlj = Ml0j;
+          if(Ml1j>maxMlj) maxMlj = Ml1j;
+          if(Ml0j<minMlj) minMlj = Ml0j;
+          if(Ml1j<minMlj) minMlj = Ml1j;
+          if(DRl0j>maxDRlj) maxDRlj = DRl0j;
+          if(DRl1j>maxDRlj) maxDRlj = DRl1j;
+          if(DRl0j<minDRlj) minDRlj = DRl0j;
+          if(DRl1j<minDRlj) minDRlj = DRl1j;
+        }
+        if(minMlj== 1e6) minMlj = -999.;
+        if(maxMlj==-1e6) maxMlj = -999.;
+        if(minDRlj== 1e6) minDRlj = -999.;
+        if(maxDRlj==-1e6) maxDRlj = -999.;
+        tx->setBranch<float>(Mljmin_bn, minMlj);
+        tx->setBranch<float>(Mljmax_bn, maxMlj);
+        tx->setBranch<float>(DRljmin_bn, minDRlj);
+        tx->setBranch<float>(DRljmax_bn, maxDRlj);
+
+    }
+
+    if (tx->getBranch<int>("nVlep") == 3 and tx->getBranch<int>(nj30) >= 1)
+    {
+        // Get leptons
+        const LV& lep_p4_0 = tx->getBranch<vector<LV>>("lep_p4")[0];
+        const LV& lep_p4_1 = tx->getBranch<vector<LV>>("lep_p4")[1];
+        const LV& lep_p4_2 = tx->getBranch<vector<LV>>("lep_p4")[2];
+
+        TString Mljmin3L_bn  = variation == 0 ? "Mljmin3L"     : variation == 1 ? "Mljmin3L_up"     : variation ==-1 ? "Mljmin3L_dn"      : variation == 2 ? "Mljmin3L_jer"      : variation == 3 ? "Mljmin3L_jerup"      : /*variation ==-3 ?*/ "Mljmin3L_jerdn"     ;
+        TString Mljmax3L_bn  = variation == 0 ? "Mljmax3L"     : variation == 1 ? "Mljmax3L_up"     : variation ==-1 ? "Mljmax3L_dn"      : variation == 2 ? "Mljmax3L_jer"      : variation == 3 ? "Mljmax3L_jerup"      : /*variation ==-3 ?*/ "Mljmax3L_jerdn"     ;
+        TString DRljmin3L_bn  = variation == 0 ? "DRljmin3L"     : variation == 1 ? "DRljmin3L_up"     : variation ==-1 ? "DRljmin3L_dn"      : variation == 2 ? "DRljmin3L_jer"      : variation == 3 ? "DRljmin3L_jerup"      : /*variation ==-3 ?*/ "DRljmin3L_jerdn"     ;
+        TString DRljmax3L_bn  = variation == 0 ? "DRljmax3L"     : variation == 1 ? "DRljmax3L_up"     : variation ==-1 ? "DRljmax3L_dn"      : variation == 2 ? "DRljmax3L_jer"      : variation == 3 ? "DRljmax3L_jerup"      : /*variation ==-3 ?*/ "DRljmax3L_jerdn"     ;
+        TString jets30_p4  = variation == 0 ? "jets30_p4"  : variation == 1 ? "jets30_up_p4"  : variation ==-1 ? "jets30_dn_p4"   : variation == 2 ? "jets30_jer_p4"   : variation == 3 ? "jets30_jerup_p4"   : /*variation ==-3 ?*/ "jets30_jerdn_p4"  ;
+        
+        float maxMlj = -1e6;
+        float minMlj =  1e6;
+        float maxDRlj = -1e6;
+        float minDRlj =  1e6;
+        for(int idx = 0; idx < tx->getBranch<int>(nj30); ++idx){
+          const LV& jet_p4_idx = tx->getBranch<vector<LV>>(jets30_p4)[idx];
+          float Ml0j = (lep_p4_0+jet_p4_idx).mass();
+          float Ml1j = (lep_p4_1+jet_p4_idx).mass();
+          float Ml2j = (lep_p4_2+jet_p4_idx).mass();
+          float DRl0j = ROOT::Math::VectorUtil::DeltaR(lep_p4_0,jet_p4_idx);
+          float DRl1j = ROOT::Math::VectorUtil::DeltaR(lep_p4_1,jet_p4_idx);
+          float DRl2j = ROOT::Math::VectorUtil::DeltaR(lep_p4_2,jet_p4_idx);
+          if(Ml0j>maxMlj) maxMlj = Ml0j;
+          if(Ml1j>maxMlj) maxMlj = Ml1j;
+          if(Ml2j>maxMlj) maxMlj = Ml2j;
+          if(Ml0j<minMlj) minMlj = Ml0j;
+          if(Ml1j<minMlj) minMlj = Ml1j;
+          if(Ml2j<minMlj) minMlj = Ml2j;
+          if(DRl0j>maxDRlj) maxDRlj = DRl0j;
+          if(DRl1j>maxDRlj) maxDRlj = DRl1j;
+          if(DRl2j>maxDRlj) maxDRlj = DRl2j;
+          if(DRl0j<minDRlj) minDRlj = DRl0j;
+          if(DRl1j<minDRlj) minDRlj = DRl1j;
+          if(DRl2j<minDRlj) minDRlj = DRl2j;
+        }
+        if(minMlj== 1e6) minMlj = -999.;
+        if(maxMlj==-1e6) maxMlj = -999.;
+        if(minDRlj== 1e6) minDRlj = -999.;
+        if(maxDRlj==-1e6) maxDRlj = -999.;
+        tx->setBranch<float>(Mljmin3L_bn, minMlj);
+        tx->setBranch<float>(Mljmax3L_bn, maxMlj);
+        tx->setBranch<float>(DRljmin3L_bn, minDRlj);
+        tx->setBranch<float>(DRljmax3L_bn, maxDRlj);
+    }
 }
 
 //##############################################################################################################
@@ -4503,6 +4642,7 @@ void babyMaker_v2::FillSSLeptonVariables(int idx0, int idx1)
     tx->setBranch<float>("MTmin_jer", MT0_jer < MT1_jer ? MT0_jer : MT1_jer);
     tx->setBranch<float>("MTmin_jerup", MT0_jerup < MT1_jerup ? MT0_jerup : MT1_jerup);
     tx->setBranch<float>("MTmin_jerdn", MT0_jerdn < MT1_jerdn ? MT0_jerdn : MT1_jerdn);
+    tx->setBranch<float>("Pt2l", (lep_p4[idx0]+lep_p4[idx1]).pt());
 }
 
 //##############################################################################################################
