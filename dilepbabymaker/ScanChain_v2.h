@@ -73,6 +73,7 @@
 #include "coreutil/jec.h"
 #include "coreutil/jer.h"
 #include "coreutil/btag.h"
+#include "coreutil/btagdeepcsv.h"
 #include "coreutil/puwgt.h"
 #include "coreutil/genpart.h"
 #include "coreutil/trigger.h"
@@ -149,6 +150,7 @@ private:
     CoreUtil::grl coreGRL;
     CoreUtil::btag coreBtagSF;
     CoreUtil::btag coreBtagSFFastSim;
+    CoreUtil::btagdeepcsv coreBtagDeepCSVSF;
     CoreUtil::puwgt corePUWgt;
     CoreUtil::trigger coreTrigger;
     CoreUtil::genpart coreGenPart;

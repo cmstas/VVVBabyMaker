@@ -131,6 +131,10 @@ void babyMaker_v2::Init()
     // Provide which year it is to determine which JER config files to load
     coreJer.setJERFor(gconf.year);
 
+    // Set up btagging deepcsv scalefactor machinery
+    coreBtagDeepCSVSF.setup(false, gconf.year);
+    //coreBtagSF.setup(false, true, gconf.year);
+
     // Output root file
     CreateOutput();
 
@@ -2788,6 +2792,15 @@ void babyMaker_v2::FillJets()
 {
     coreBtagSF.clearSF();
     coreBtagSFFastSim.clearSF();
+
+    
+    // For deep csv btagging sf
+    std::vector<double> deepcsv_sf_jet_pt;
+    std::vector<double> deepcsv_sf_jet_eta;
+    std::vector<double> deepcsv_sf_jet_deepCSV;
+    std::vector<int> deepcsv_sf_jet_flavour;
+    
+    
     for (unsigned ijet = 0; ijet < coreJet.index.size(); ++ijet)
     {
         int idx = coreJet.index[ijet];
@@ -2812,9 +2825,10 @@ void babyMaker_v2::FillJets()
        }
      } // end if prefix == "NULL"
       float current_btag_score_val;
-      if(gconf.year==2016) current_btag_score_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
-      else if(gconf.year==2017||gconf.year==2018) 
-      current_btag_score_val = cms3.getbtagvalue(deepCSV_prefix+"JetTags:probb",ijet) + cms3.getbtagvalue(deepCSV_prefix+"JetTags:probbb",ijet);
+      //if(gconf.year==2016) current_btag_score_val = cms3.getbtagvalue("pfCombinedInclusiveSecondaryVertexV2BJetTags", idx);
+      //else if(gconf.year==2017||gconf.year==2018) 
+      current_btag_score_val = cms3.getbtagvalue(deepCSV_prefix+"JetTags:probb",ijet) + cms3.getbtagvalue(deepCSV_prefix+"JetTags:probbb",ijet);//switched all years to 2016
+      int hadron_flavor = cms3.pfjets_hadronFlavour()[ijet];
       bool isData = cms3.evt_isRealData();
 
         // Check whether this jet overlaps with any of the leptons
@@ -2832,10 +2846,17 @@ void babyMaker_v2::FillJets()
         {
             tx->pushbackToBranch<LorentzVector>("jets_p4", jet);
             tx->pushbackToBranch<float>("jets_btag_score", current_btag_score_val);
-            if (!isWHSUSY())
-                coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
-            else
-                coreBtagSFFastSim.accumulateSF(idx, jet.pt(), jet.eta());
+            if(abs(jet.eta())<2.4){
+              // we will stick with loose b-tagging
+              deepcsv_sf_jet_pt.push_back(jet.pt());
+              deepcsv_sf_jet_eta.push_back(jet.eta());
+              deepcsv_sf_jet_deepCSV.push_back(current_btag_score_val);
+              deepcsv_sf_jet_flavour.push_back(abs(hadron_flavor));
+            }
+            //if (!isWHSUSY())
+            //    coreBtagSF.accumulateSF(idx, jet.pt(), jet.eta());
+            //else
+            //    coreBtagSFFastSim.accumulateSF(idx, jet.pt(), jet.eta());
             if (jet.pt() > 30. and abs(jet.eta()) < 2.5)
                 tx->pushbackToBranch<LorentzVector>("jets30_p4", jet);
         }
@@ -2889,6 +2910,23 @@ void babyMaker_v2::FillJets()
 
     if (!cms3.evt_isRealData())
     {
+      double wgt_btagsf = 0;
+      double wgt_btagsf_hf_up = 0;
+      double wgt_btagsf_hf_dn = 0;
+      double wgt_btagsf_lf_up = 0;
+      double wgt_btagsf_lf_dn = 0;
+      double wgt_btagsf_fs_up = 0;
+      double wgt_btagsf_fs_dn = 0;
+      int WP = 0; // Loose working point 1 or 2 for med or tight
+      coreBtagDeepCSVSF.getBTagWeight( WP, deepcsv_sf_jet_pt, deepcsv_sf_jet_eta, deepcsv_sf_jet_deepCSV, deepcsv_sf_jet_flavour, wgt_btagsf, wgt_btagsf_hf_up, wgt_btagsf_hf_dn, wgt_btagsf_lf_up, wgt_btagsf_lf_dn, wgt_btagsf_fs_up, wgt_btagsf_fs_dn );
+      
+      tx->setBranch<float>("weight_btagsf"         , wgt_btagsf);
+      tx->setBranch<float>("weight_btagsf_heavy_DN", wgt_btagsf_hf_dn);
+      tx->setBranch<float>("weight_btagsf_heavy_UP", wgt_btagsf_hf_up);
+      tx->setBranch<float>("weight_btagsf_light_DN", wgt_btagsf_lf_dn);
+      tx->setBranch<float>("weight_btagsf_light_UP", wgt_btagsf_lf_up);
+
+      /*
         if (!isWHSUSY())
         {
             tx->setBranch<float>("weight_btagsf"         , coreBtagSF.btagprob_data     / coreBtagSF.btagprob_mc);
@@ -2905,6 +2943,7 @@ void babyMaker_v2::FillJets()
             tx->setBranch<float>("weight_btagsf_light_DN", coreBtagSFFastSim.btagprob_light_DN / coreBtagSFFastSim.btagprob_mc);
             tx->setBranch<float>("weight_btagsf_light_UP", coreBtagSFFastSim.btagprob_light_UP / coreBtagSFFastSim.btagprob_mc);
         }
+      */
     }
     else
     {
@@ -3372,10 +3411,14 @@ void babyMaker_v2::FillMETFilter()
         tx->setBranch<int>("Flag_EcalDeadCellTriggerPrimitiveFilter", cms3.filt_ecalTP());
         tx->setBranch<int>("Flag_badMuonFilter", cms3.filt_BadPFMuonFilter());
         tx->setBranch<int>("Flag_badChargedCandidateFilter", cms3.filt_BadChargedCandidateFilter());
-        tx->setBranch<int>("Flag_eeBadScFilter", cms3.filt_eeBadSc());
-        tx->setBranch<int>("Flag_ecalBadCalibFilter", cms3.filt_ecalBadCalibFilter());
         if (cms3.evt_isRealData())
+          {
+            tx->setBranch<int>("Flag_eeBadScFilter", cms3.filt_eeBadSc());
+            tx->setBranch<int>("Flag_ecalBadCalibFilter", cms3.filt_ecalBadCalibFilter());
+          }
+        else
         {
+            tx->setBranch<int>("Flag_ecalBadCalibFilter", 1);
             tx->setBranch<int>("Flag_eeBadScFilter", 1); // Not suggested for FullSim
             if (isFastSim())
             {
@@ -4261,10 +4304,10 @@ void babyMaker_v2::FillJetVariables(int variation)
     LV j0_p4_DR1;
     LV j1_p4_DR1;
     float btag_loose_threshold = -999;
-    if (gconf.year == 2016)
-        btag_loose_threshold = gconf.WP_CSVv2_LOOSE;
-    else if (gconf.year == 2017 or gconf.year == 2018)
-        btag_loose_threshold = gconf.WP_DEEPCSV_LOOSE;
+    //if (gconf.year == 2016)
+    //    btag_loose_threshold = gconf.WP_CSVv2_LOOSE;
+    //else if (gconf.year == 2017 or gconf.year == 2018)
+    btag_loose_threshold = gconf.WP_DEEPCSV_LOOSE;//move 2016 to deepCSV
     for (unsigned int i = 0; i < tx->getBranch<vector<float>>(jets_btag_score, false).size(); ++i)
     {
         const LV& p4 = tx->getBranch<vector<LV>>(jets_p4, false)[i];
