@@ -119,7 +119,7 @@ void babyMaker_v2::Init()
     // Set year via "GlobalConfig gconf"
     
     gconf.GetConfigsFromDatasetName(looper.getCurrentFileName()); // get global configs
-
+    cout<<__LINE__<<gconf.year<<endl;
     SetYear();
 
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
@@ -1231,6 +1231,7 @@ void babyMaker_v2::SetYear()
             filename.Contains("Run2018")
             || filename.Contains("RunIISpring18")
             || filename.Contains("RunIISummer18")
+            || filename.Contains("RunIIAutumn18")
             || filename.Contains("run2_mc2018")
        )
     {
@@ -1267,7 +1268,7 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
     gconf.wwwcfg["tightid"] = "lep_pass_VVV_cutbased_tight";
     gconf.wwwcfg["3llooseid"] = "lep_pass_VVV_cutbased_3l_fo";
     gconf.wwwcfg["3ltightid"] = "lep_pass_VVV_cutbased_3l_tight";
-
+    cout<<gconf.cmssw_ver<<endl;
     if (gconf.cmssw_ver == 80)
     {
         gconf.ea_version = 2;
@@ -1298,7 +1299,7 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_fo     = true;
         gconf.el_addlep_3l_tight  = true;
     }
-    else if (gconf.cmssw_ver == 94)
+    else if (gconf.cmssw_ver == 94 ||gconf.cmssw_ver == 102)
     {
         if (gconf.year == 2016)
             gconf.ea_version = 2;
@@ -1332,7 +1333,8 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
         gconf.el_addlep_3l_tight  = true;
     }
     else   {
-        std::cout << "year not recognized! gconf.year = " << gconf.year << std::endl;
+        
+        std::cout << "in function SetWWWAnalysisLeptonID: year not recognized! gconf.year = " << gconf.year << std::endl;
         FATALERROR(__FUNCTION__);
     }
 }

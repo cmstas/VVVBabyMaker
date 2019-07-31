@@ -24,7 +24,7 @@ else
     whoami
     pwd
     echo "ls'ing hadoop"
-    ls -lh /hadoop/cms/store/user/phchang/
+    ls -lh /hadoop/cms/store/user/${USER}/
     echo "_CONDOR_SLOT" ${_CONDOR_SLOT}
     echo "X509_USER_PROXY" ${X509_USER_PROXY}
     echo "_CONDOR_SCRATCH_DIR"             ${_CONDOR_SCRATCH_DIR}
@@ -45,7 +45,7 @@ else
     SCRAMARCH=$6
     BABYMODE=$7
     if [ "x${_CONDOR_SLOT}" == "x" ]; then
-        WORKDIR=/tmp/phchang_condor_local_${OUTPUTDIR//\//_}_${OUTPUTNAME}_${IFILE}
+        WORKDIR=/tmp/${USER}_condor_local_${OUTPUTDIR//\//_}_${OUTPUTNAME}_${IFILE}
         mkdir -p ${WORKDIR}
         ls
         cp package.tar.gz ${WORKDIR}
@@ -186,7 +186,7 @@ else
     whoami
     pwd
     echo "ls'ing hadoop"
-    ls -lh /hadoop/cms/store/user/phchang/
+    ls -lh /hadoop/cms/store/user/${USER}/
     if [[ ${OUTPUTDIR} == *"home/users/"* ]]; then
         mkdir -p ${OUTPUTDIR}
         INFILE=${OUTPUTROOTNAME}

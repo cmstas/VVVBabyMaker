@@ -5,8 +5,8 @@ if [ -z $1 ]; then
 fi
 
 VERSION=$1
-HADOOPDIR=/hadoop/cms/store/user/phchang/metis/wwwbaby/${VERSION}/*${VERSION}/merged/
-DIR=/nfs-7/userdata/phchang/WWW_babies/${VERSION}/skim/
+HADOOPDIR=/hadoop/cms/store/user/${USER}/metis/wwwbaby/${VERSION}/*${VERSION}/merged/
+DIR=/nfs-7/userdata/${USER}/WWW_babies/${VERSION}/skim/
 
 mkdir -p ${DIR}
 cp ${HADOOPDIR}/*.root ${DIR}
