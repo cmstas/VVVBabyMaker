@@ -834,6 +834,10 @@ if __name__ == "__main__":
     parser.add_argument('-t' , '--test'       , dest='test'       , help='To submit test jobs (5 jobs each sample)' , default=False         , action='store_true')
     parser.add_argument(       '--tag'        , dest='tag'        , help='job tag'                                                          , required=True      )
     parser.add_argument(       '--sample_sets', dest='sample_sets', help='comma separated sample sets (e.g. WWW2018, WWW2017, FR2017, ...)' , required=True      )
+    parser.add_argument(       '--single_sample_sample_name'     , dest='single_sample_sample_name'     , help='when SingleSample is included in --sample_sets option , then provide the name of the sample to be submitted here'       , required=False)
+    parser.add_argument(       '--single_sample_sample_nicename' , dest='single_sample_sample_nicename' , help='when SingleSample is included in --sample_sets option , then provide the "nicename" of the sample to be submitted here' , required=False)
+    parser.add_argument(       '--single_sample_sample_year'     , dest='single_sample_sample_year'     , help='when SingleSample is included in --sample_sets option , then provide the year to be submitted here'                     , required=False)
+    parser.add_argument(       '--single_sample_sample_babytype' , dest='single_sample_sample_babytype' , help='when SingleSample is included in --sample_sets option , then provide the baby type of the job to be submitted here'     , required=False)
 
     args = parser.parse_args()
 
@@ -892,6 +896,14 @@ if __name__ == "__main__":
         master_list["tnp_2016_94x"] = grand_master_list["tnp_2016_94x"]
     if "TnP2018" in args.sample_sets:
         master_list["tnp_2018_102x"] = grand_master_list["tnp_2018_102x"]
+
+    # If submitting a single sample
+    if "SingleSample" in args.sample_sets:
+        master_list["single_sample"] = {
+            "samples" : {args.single_sample_sample_name:args.single_sample_sample_nicename},
+            "year" : int(args.single_sample_sample_year),
+            "baby_type" : args.single_sample_sample_babytype
+            }
 
     submit(master_list, args.tag, dotestrun=args.test)
 
