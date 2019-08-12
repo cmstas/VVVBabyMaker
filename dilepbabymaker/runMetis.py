@@ -894,6 +894,8 @@ if __name__ == "__main__":
 
     if "TnP2016" in args.sample_sets:
         master_list["tnp_2016_94x"] = grand_master_list["tnp_2016_94x"]
+    if "TnP2017" in args.sample_sets:
+        master_list["tnp_2017_94x_v2"] = grand_master_list["tnp_2017_94x_v2"]
     if "TnP2018" in args.sample_sets:
         master_list["tnp_2018_102x"] = grand_master_list["tnp_2018_102x"]
 
