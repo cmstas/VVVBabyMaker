@@ -40,4 +40,8 @@ dilepbabymaker/testjobs
 dilepbabymaker/.*
 dilepbabymaker/CORE
 
+dilepbabymaker/files.txt
+dilepbabymaker/run.sh
+dilepbabymaker/testjobs.sh
+
 *.pyc
