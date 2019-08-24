@@ -333,6 +333,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<int>>("lep_charge");
     tx->createBranch<vector<float>>("lep_etaSC");
     tx->createBranch<vector<float>>("lep_MVA");
+    tx->createBranch<vector<int>>("lep_isLoosePOG");
     tx->createBranch<vector<int>>("lep_isMediumPOG");
     tx->createBranch<vector<int>>("lep_isTightPOG");
     tx->createBranch<vector<int>>("lep_isFromW");
@@ -2547,8 +2548,9 @@ void babyMaker_v2::FillElectrons()
         tx->pushbackToBranch<int>           ("lep_charge"                       , cms3.els_charge()[idx]);
         tx->pushbackToBranch<float>         ("lep_etaSC"                        , cms3.els_etaSC()[idx]);
         tx->pushbackToBranch<float>         ("lep_MVA"                          , gconf.cmssw_ver == 80 ? getMVAoutput(idx, true) : cms3.els_VIDFall17V2NoIsoMvaValue().at(idx));
-        tx->pushbackToBranch<int>           ("lep_isMediumPOG"                  , 1);
-        tx->pushbackToBranch<int>           ("lep_isTightPOG"                   , 1);
+        tx->pushbackToBranch<int>           ("lep_isLoosePOG"                   , isMVAwpLooseNoIsofall17V2(idx, true));
+        tx->pushbackToBranch<int>           ("lep_isMediumPOG"                  , isMVAwp90NoIsofall17V2(idx, true));
+        tx->pushbackToBranch<int>           ("lep_isTightPOG"                   , isMVAwp80NoIsofall17V2(idx, true));
         tx->pushbackToBranch<float>         ("lep_r9"                           , cms3.els_r9()[idx]);
         tx->pushbackToBranch<int>           ("lep_nlayers"                      , -1);
         if (!cms3.evt_isRealData())
@@ -2662,6 +2664,7 @@ void babyMaker_v2::FillMuons()
         tx->pushbackToBranch<int>           ("lep_charge"                       , cms3.mus_charge()[idx]);
         tx->pushbackToBranch<float>         ("lep_etaSC"                        , cms3.mus_p4()[idx].eta()); // Electron specific branch. Just take muon's regular eta.
         tx->pushbackToBranch<float>         ("lep_MVA"                          , -999);
+        tx->pushbackToBranch<int>           ("lep_isLoosePOG"                   , isLooseMuonPOG(idx));
         tx->pushbackToBranch<int>           ("lep_isMediumPOG"                  , isMediumMuonPOG(idx));
         tx->pushbackToBranch<int>           ("lep_isTightPOG"                   , isTightMuonPOG(idx));
         tx->pushbackToBranch<float>         ("lep_r9"                           , 0);
@@ -2771,6 +2774,7 @@ void babyMaker_v2::SortLeptonBranches()
             "lep_pdgId",
             "lep_tightCharge",
             "lep_charge",
+            "lep_isLoosePOG",
             "lep_isMediumPOG",
             "lep_isTightPOG",
             "lep_isFromW",
