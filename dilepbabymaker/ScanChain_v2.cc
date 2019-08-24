@@ -305,6 +305,14 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<int>>("lep_pass_VVV_cutbased_fo_noiso");
     tx->createBranch<vector<int>>("lep_pass_VVV_cutbased_tight_noiso");
     tx->createBranch<vector<int>>("lep_pass_VVV_cutbased_veto_noiso");
+    tx->createBranch<vector<int>>("lep_pass_VVV_3l_fo");
+    tx->createBranch<vector<int>>("lep_pass_VVV_3l_tight");
+    tx->createBranch<vector<int>>("lep_pass_VVV_fo");
+    tx->createBranch<vector<int>>("lep_pass_VVV_tight");
+    tx->createBranch<vector<int>>("lep_pass_VVV_veto");
+    tx->createBranch<vector<int>>("lep_pass_VVV_fo_noiso");
+    tx->createBranch<vector<int>>("lep_pass_VVV_tight_noiso");
+    tx->createBranch<vector<int>>("lep_pass_VVV_veto_noiso");
     tx->createBranch<vector<int>>("lep_pass_POG_veto");
     tx->createBranch<vector<int>>("lep_pass_POG_loose");
     tx->createBranch<vector<int>>("lep_pass_POG_medium");
@@ -2550,6 +2558,14 @@ void babyMaker_v2::FillElectrons()
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_fo_noiso"   , cms3.els_p4()[idx].pt() > 20. && passElectronSelection_VVV(idx, VVV_FO_NOISO));
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_tight_noiso", cms3.els_p4()[idx].pt() > 25. && passElectronSelection_VVV(idx, VVV_TIGHT_NOISO));
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_veto_noiso" , cms3.els_p4()[idx].pt() > 10. && passElectronSelection_VVV(idx, VVV_VETO_NOISO));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_3l_fo"               , passElectronSelection_VVV(idx, VVV_FO_3L));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_3l_tight"            , passElectronSelection_VVV(idx, VVV_TIGHT_3L));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_fo"                  , passElectronSelection_VVV(idx, VVV_FO_SS));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_tight"               , passElectronSelection_VVV(idx, VVV_TIGHT_SS));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_veto"                , passElectronSelection_VVV(idx, VVV_VETO));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_fo_noiso"            , passElectronSelection_VVV(idx, VVV_FO_NOISO));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_tight_noiso"         , passElectronSelection_VVV(idx, VVV_TIGHT_NOISO));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_veto_noiso"          , passElectronSelection_VVV(idx, VVV_VETO_NOISO));
         tx->pushbackToBranch<int>           ("lep_pass_POG_veto"                , cms3.els_p4()[idx].pt() > 10. && is2017POGVetoElectron(idx));
         tx->pushbackToBranch<int>           ("lep_pass_POG_loose"               , cms3.els_p4()[idx].pt() > 20. && is2017POGLooseElectron(idx));
         tx->pushbackToBranch<int>           ("lep_pass_POG_medium"              , cms3.els_p4()[idx].pt() > 20. && is2017POGMediumElectron(idx));
@@ -2657,6 +2673,14 @@ void babyMaker_v2::FillMuons()
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_fo_noiso"   , cms3.mus_p4()[idx].pt() > 20. && passMuonSelection_VVV(idx, VVV_FO_NOISO));
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_tight_noiso", cms3.mus_p4()[idx].pt() > 25. && passMuonSelection_VVV(idx, VVV_TIGHT_NOISO));
         tx->pushbackToBranch<int>           ("lep_pass_VVV_cutbased_veto_noiso" , cms3.mus_p4()[idx].pt() > 10. && passMuonSelection_VVV(idx, VVV_VETO_NOISO));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_3l_fo"               , passMuonSelection_VVV(idx, VVV_FO_3L));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_3l_tight"            , passMuonSelection_VVV(idx, VVV_TIGHT_3L));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_fo"                  , passMuonSelection_VVV(idx, VVV_FO_SS));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_tight"               , passMuonSelection_VVV(idx, VVV_TIGHT_SS));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_veto"                , passMuonSelection_VVV(idx, VVV_VETO));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_fo_noiso"            , passMuonSelection_VVV(idx, VVV_FO_NOISO));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_tight_noiso"         , passMuonSelection_VVV(idx, VVV_TIGHT_NOISO));
+        tx->pushbackToBranch<int>           ("lep_pass_VVV_veto_noiso"          , passMuonSelection_VVV(idx, VVV_VETO_NOISO));
         tx->pushbackToBranch<int>           ("lep_pass_POG_veto"                , cms3.mus_p4()[idx].pt() > 10. && is2017POGVetoMuon(idx));
         tx->pushbackToBranch<int>           ("lep_pass_POG_loose"               , cms3.mus_p4()[idx].pt() > 20. && is2017POGLooseMuon(idx));
         tx->pushbackToBranch<int>           ("lep_pass_POG_medium"              , cms3.mus_p4()[idx].pt() > 20. && is2017POGMediumMuon(idx));
@@ -2763,6 +2787,14 @@ void babyMaker_v2::SortLeptonBranches()
             "lep_pass_VVV_cutbased_fo_noiso",
             "lep_pass_VVV_cutbased_tight_noiso",
             "lep_pass_VVV_cutbased_veto_noiso",
+            "lep_pass_VVV_3l_fo",
+            "lep_pass_VVV_3l_tight",
+            "lep_pass_VVV_fo",
+            "lep_pass_VVV_tight",
+            "lep_pass_VVV_veto",
+            "lep_pass_VVV_fo_noiso",
+            "lep_pass_VVV_tight_noiso",
+            "lep_pass_VVV_veto_noiso",
             "lep_pass_POG_veto",
             "lep_pass_POG_loose",
             "lep_pass_POG_medium",
