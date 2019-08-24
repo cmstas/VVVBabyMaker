@@ -117,9 +117,8 @@ void babyMaker_v2::ScanChain_v2(bool verbose)
 void babyMaker_v2::Init()
 {
     // Set year via "GlobalConfig gconf"
-    
     gconf.GetConfigsFromDatasetName(looper.getCurrentFileName()); // get global configs
-    cout<<__LINE__<<gconf.year<<endl;
+
     SetYear();
 
     // Provide which file it is and whether it is fast sim or not to JEC to determine which file to load
@@ -1276,75 +1275,37 @@ void babyMaker_v2::SetWWWAnalysisLeptonID()
     gconf.wwwcfg["tightid"] = "lep_pass_VVV_cutbased_tight";
     gconf.wwwcfg["3llooseid"] = "lep_pass_VVV_cutbased_3l_fo";
     gconf.wwwcfg["3ltightid"] = "lep_pass_VVV_cutbased_3l_tight";
-    cout<<gconf.cmssw_ver<<endl;
-    if (gconf.cmssw_ver == 80)
-    {
+
+    if (gconf.year == 2016)
         gconf.ea_version = 2;
-        //_________________________________
-        // Isolation configuration
-        // Same-sign muons
-        gconf.mu_reliso_veto      = 0.4;
-        gconf.mu_reliso_fo        = 0.4;
-        gconf.mu_reliso_tight     = 0.03;
-        gconf.mu_addlep_veto      = true; // it was false when 2016 analysis was done
-        gconf.mu_addlep_fo        = true;
-        gconf.mu_addlep_tight     = true;
-        // Same-sign electrons
-        gconf.el_reliso_veto      = 0.4;
-        gconf.el_reliso_fo        = 0.4;
-        gconf.el_reliso_tight     = 0.03;
-        gconf.el_addlep_veto      = true; // it was false when 2016 analysis was done
-        gconf.el_addlep_fo        = true;
-        gconf.el_addlep_tight     = true;
-        // Three-lepton muons (Shares same veto as same-sign)
-        gconf.mu_reliso_3l_fo     = 0.4;
-        gconf.mu_reliso_3l_tight  = 0.07;
-        gconf.mu_addlep_3l_fo     = true;
-        gconf.mu_addlep_3l_tight  = true;
-        // Three-lepton electrons (Shares same veto as same-sign)
-        gconf.el_reliso_3l_fo     = 0.4;
-        gconf.el_reliso_3l_tight  = 0.05;
-        gconf.el_addlep_3l_fo     = true;
-        gconf.el_addlep_3l_tight  = true;
-    }
-    else if (gconf.cmssw_ver == 94 ||gconf.cmssw_ver == 102)
-    {
-        if (gconf.year == 2016)
-            gconf.ea_version = 2;
-        else
-            gconf.ea_version = 4;
-        //_________________________________
-        // Isolation configuration
-        // Same-sign muons
-        gconf.mu_reliso_veto      = 0.4;
-        gconf.mu_reliso_fo        = 0.4;
-        gconf.mu_reliso_tight     = 0.03;
-        gconf.mu_addlep_veto      = true;
-        gconf.mu_addlep_fo        = true;
-        gconf.mu_addlep_tight     = true;
-        // Same-sign electrons
-        gconf.el_reliso_veto      = 0.4;
-        gconf.el_reliso_fo        = 0.4;
-        gconf.el_reliso_tight     = 0.03;
-        gconf.el_addlep_veto      = true;
-        gconf.el_addlep_fo        = true;
-        gconf.el_addlep_tight     = true;
-        // Three-lepton muons (Shares same veto as same-sign)
-        gconf.mu_reliso_3l_fo     = 0.4;
-        gconf.mu_reliso_3l_tight  = 0.07;
-        gconf.mu_addlep_3l_fo     = true;
-        gconf.mu_addlep_3l_tight  = true;
-        // Three-lepton electrons (Shares same veto as same-sign)
-        gconf.el_reliso_3l_fo     = 0.4;
-        gconf.el_reliso_3l_tight  = 0.05;
-        gconf.el_addlep_3l_fo     = true;
-        gconf.el_addlep_3l_tight  = true;
-    }
-    else   {
-        
-        std::cout << "in function SetWWWAnalysisLeptonID: year not recognized! gconf.year = " << gconf.year << std::endl;
-        FATALERROR(__FUNCTION__);
-    }
+    else
+        gconf.ea_version = 4;
+    //_________________________________
+    // Isolation configuration
+    // Same-sign muons
+    gconf.mu_reliso_veto      = 0.4;
+    gconf.mu_reliso_fo        = 0.4;
+    gconf.mu_reliso_tight     = 0.03;
+    gconf.mu_addlep_veto      = true;
+    gconf.mu_addlep_fo        = true;
+    gconf.mu_addlep_tight     = true;
+    // Same-sign electrons
+    gconf.el_reliso_veto      = 0.4;
+    gconf.el_reliso_fo        = 0.4;
+    gconf.el_reliso_tight     = 0.03;
+    gconf.el_addlep_veto      = true;
+    gconf.el_addlep_fo        = true;
+    gconf.el_addlep_tight     = true;
+    // Three-lepton muons (Shares same veto as same-sign)
+    gconf.mu_reliso_3l_fo     = 0.4;
+    gconf.mu_reliso_3l_tight  = 0.07;
+    gconf.mu_addlep_3l_fo     = true;
+    gconf.mu_addlep_3l_tight  = true;
+    // Three-lepton electrons (Shares same veto as same-sign)
+    gconf.el_reliso_3l_fo     = 0.4;
+    gconf.el_reliso_3l_tight  = 0.05;
+    gconf.el_addlep_3l_fo     = true;
+    gconf.el_addlep_3l_tight  = true;
 }
 
 //##############################################################################################################
