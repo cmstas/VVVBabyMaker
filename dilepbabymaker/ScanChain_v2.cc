@@ -2075,55 +2075,32 @@ bool babyMaker_v2::PassFRPreselection()
 
     if (isData())
     {
-        if (coreSample.is2016(looper.getCurrentFileName()))
-        {
-            // If data then check the triggers
-            // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
-            // I don't wish to run coreTrigger.process() for all events
-            int HLT_SingleIsoEl8;
-            int HLT_SingleIsoEl17;
-            int HLT_SingleIsoEl23;
-            int HLT_SingleIsoMu8;
-            int HLT_SingleIsoMu17;
-            setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
-            setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl17 );
-            setHLTBranch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30_v",  true, HLT_SingleIsoEl23 );
-            setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
-            setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
-            if (HLT_SingleIsoEl17 > 0) return true;
-            if (HLT_SingleIsoEl23 > 0) return true;
-            if (HLT_SingleIsoEl8 > 0) return true;
-            if (HLT_SingleIsoMu17 > 0) return true;
-            if (HLT_SingleIsoMu8 > 0) return true;
-            // If it reaches this point, then it means that none of the trigger passed
-            return false;
-        }
-        else if (coreSample.is2017(looper.getCurrentFileName()) or coreSample.is2018(looper.getCurrentFileName()))
-        {
-            // If data then check the triggers
-            // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
-            // I don't wish to run coreTrigger.process() for all events
-            int HLT_SingleEl8;
-            int HLT_SingleEl17;
-            int HLT_SingleIsoEl8;
-            int HLT_SingleIsoEl23;
-            int HLT_SingleIsoMu8;
-            int HLT_SingleIsoMu17;
-            setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v"       ,  true, HLT_SingleEl8 );
-            setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v"      ,  true, HLT_SingleEl17 );
-            setHLTBranch("HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
-            setHLTBranch("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v",  true, HLT_SingleIsoEl23 );
-            setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
-            setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
-            if (HLT_SingleEl8 > 0) return true;
-            if (HLT_SingleEl17 > 0) return true;
-            if (HLT_SingleIsoEl23 > 0) return true;
-            if (HLT_SingleIsoEl8 > 0) return true;
-            if (HLT_SingleIsoMu17 > 0) return true;
-            if (HLT_SingleIsoMu8 > 0) return true;
-            // If it reaches this point, then it means that none of the trigger passed
-            return false;
-        }
+        // If data then check the triggers
+        // These triggers are checked in coreutil, but to optimize the code performance I hand check them if data
+        // I don't wish to run coreTrigger.process() for all events
+        int HLT_SingleEl8;
+        int HLT_SingleEl17;
+        int HLT_SingleIsoEl8;
+        int HLT_SingleIsoEl12;
+        int HLT_SingleIsoEl23;
+        int HLT_SingleIsoMu8;
+        int HLT_SingleIsoMu17;
+        setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v"       ,  true, HLT_SingleEl8 );
+        setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v"      ,  true, HLT_SingleEl17 );
+        setHLTBranch("HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v" ,  true, HLT_SingleIsoEl8 );
+        setHLTBranch("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30_v",  true, HLT_SingleIsoEl12 );
+        setHLTBranch("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v",  true, HLT_SingleIsoEl23 );
+        setHLTBranch("HLT_Mu8_TrkIsoVVL_v",  true, HLT_SingleIsoMu8 );
+        setHLTBranch("HLT_Mu17_TrkIsoVVL_v",  true, HLT_SingleIsoMu17 );
+        if (HLT_SingleEl8 > 0) return true;
+        if (HLT_SingleEl17 > 0) return true;
+        if (HLT_SingleIsoEl23 > 0) return true;
+        if (HLT_SingleIsoEl12 > 0) return true;
+        if (HLT_SingleIsoEl8 > 0) return true;
+        if (HLT_SingleIsoMu17 > 0) return true;
+        if (HLT_SingleIsoMu8 > 0) return true;
+        // If it reaches this point, then it means that none of the trigger passed
+        return false;
     }
     else // MC sample
     {
