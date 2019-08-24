@@ -3079,6 +3079,7 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("HLT_SingleEl8"                 , coreTrigger.HLT_SingleEl8_2017            );
             tx->setBranch<int>("HLT_SingleEl17"                , coreTrigger.HLT_SingleEl17_2017           );
             tx->setBranch<int>("HLT_SingleIsoEl8"              , coreTrigger.HLT_SingleIsoEl8              );
+            tx->setBranch<int>("HLT_SingleIsoEl12"             , coreTrigger.HLT_SingleIsoEl12             );
             tx->setBranch<int>("HLT_SingleIsoEl17"             , coreTrigger.HLT_SingleIsoEl17             );
             tx->setBranch<int>("HLT_SingleIsoEl23"             , coreTrigger.HLT_SingleIsoEl23             );
             tx->setBranch<int>("HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8              );
@@ -3097,6 +3098,7 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("HLT_SingleEl8"                 , coreTrigger.HLT_SingleEl8_2017            );
             tx->setBranch<int>("HLT_SingleEl17"                , coreTrigger.HLT_SingleEl17_2017           );
             tx->setBranch<int>("HLT_SingleIsoEl8"              , coreTrigger.HLT_SingleIsoEl8_2017         );
+            tx->setBranch<int>("HLT_SingleIsoEl12"             , coreTrigger.HLT_SingleIsoEl12_2017        );
             tx->setBranch<int>("HLT_SingleIsoEl17"             , coreTrigger.HLT_SingleIsoEl17             );
             tx->setBranch<int>("HLT_SingleIsoEl23"             , coreTrigger.HLT_SingleIsoEl23_2017        );
             tx->setBranch<int>("HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2017         );
@@ -3115,6 +3117,7 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("HLT_SingleEl8"                 , coreTrigger.HLT_SingleEl8_2018            );
             tx->setBranch<int>("HLT_SingleEl17"                , coreTrigger.HLT_SingleEl17_2018           );
             tx->setBranch<int>("HLT_SingleIsoEl8"              , coreTrigger.HLT_SingleIsoEl8_2018         );
+            tx->setBranch<int>("HLT_SingleIsoEl12"             , coreTrigger.HLT_SingleIsoEl12_2018        );
             tx->setBranch<int>("HLT_SingleIsoEl17"             , coreTrigger.HLT_SingleIsoEl17             );
             tx->setBranch<int>("HLT_SingleIsoEl23"             , coreTrigger.HLT_SingleIsoEl23_2018        );
             tx->setBranch<int>("HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2018         );
@@ -3132,6 +3135,7 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("HLT_MuEG", 1);
         tx->setBranch<int>("HLT_MuEG_2016", 1);
         tx->setBranch<int>("HLT_SingleIsoEl8", 1);
+        tx->setBranch<int>("HLT_SingleIsoEl12", 1);
         tx->setBranch<int>("HLT_SingleIsoEl17", 1);
         tx->setBranch<int>("HLT_SingleIsoEl23", 1);
         tx->setBranch<int>("HLT_SingleIsoMu8", 1);
@@ -3147,6 +3151,7 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("mc_HLT_MuEG", 1);
         tx->setBranch<int>("mc_HLT_MuEG_2016", 1);
         tx->setBranch<int>("mc_HLT_SingleIsoEl8", 1);
+        tx->setBranch<int>("mc_HLT_SingleIsoEl12", 1);
         tx->setBranch<int>("mc_HLT_SingleIsoEl17", 1);
         tx->setBranch<int>("mc_HLT_SingleIsoEl23", 1);
         tx->setBranch<int>("mc_HLT_SingleIsoMu8", 1);
@@ -3167,6 +3172,7 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("mc_HLT_SingleEl8"                 , coreTrigger.HLT_SingleEl8_2017            );
             tx->setBranch<int>("mc_HLT_SingleEl17"                , coreTrigger.HLT_SingleEl17_2017           );
             tx->setBranch<int>("mc_HLT_SingleIsoEl8"              , coreTrigger.HLT_SingleIsoEl8              );
+            tx->setBranch<int>("mc_HLT_SingleIsoEl12"             , coreTrigger.HLT_SingleIsoEl12             );
             tx->setBranch<int>("mc_HLT_SingleIsoEl17"             , coreTrigger.HLT_SingleIsoEl17             );
             tx->setBranch<int>("mc_HLT_SingleIsoEl23"             , coreTrigger.HLT_SingleIsoEl23             );
             tx->setBranch<int>("mc_HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8              );
@@ -3185,6 +3191,7 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("mc_HLT_SingleEl8"                 , coreTrigger.HLT_SingleEl8_2017            );
             tx->setBranch<int>("mc_HLT_SingleEl17"                , coreTrigger.HLT_SingleEl17_2017           );
             tx->setBranch<int>("mc_HLT_SingleIsoEl8"              , coreTrigger.HLT_SingleIsoEl8_2017         );
+            tx->setBranch<int>("mc_HLT_SingleIsoEl12"             , coreTrigger.HLT_SingleIsoEl12_2017        );
             tx->setBranch<int>("mc_HLT_SingleIsoEl17"             , coreTrigger.HLT_SingleIsoEl17             );
             tx->setBranch<int>("mc_HLT_SingleIsoEl23"             , coreTrigger.HLT_SingleIsoEl23_2017        );
             tx->setBranch<int>("mc_HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2017         );
@@ -3203,6 +3210,7 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("mc_HLT_SingleEl8"                 , coreTrigger.HLT_SingleEl8_2018            );
             tx->setBranch<int>("mc_HLT_SingleEl17"                , coreTrigger.HLT_SingleEl17_2018           );
             tx->setBranch<int>("mc_HLT_SingleIsoEl8"              , coreTrigger.HLT_SingleIsoEl8_2018         );
+            tx->setBranch<int>("mc_HLT_SingleIsoEl12"             , coreTrigger.HLT_SingleIsoEl12_2018        );
             tx->setBranch<int>("mc_HLT_SingleIsoEl17"             , coreTrigger.HLT_SingleIsoEl17             );
             tx->setBranch<int>("mc_HLT_SingleIsoEl23"             , coreTrigger.HLT_SingleIsoEl23_2018        );
             tx->setBranch<int>("mc_HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2018         );
