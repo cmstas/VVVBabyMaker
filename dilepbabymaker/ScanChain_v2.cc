@@ -249,6 +249,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("HLT_SingleEl8");
     tx->createBranch<int>("HLT_SingleEl17");
     tx->createBranch<int>("HLT_SingleIsoEl8");
+    tx->createBranch<int>("HLT_SingleIsoEl12");
     tx->createBranch<int>("HLT_SingleIsoEl17");
     tx->createBranch<int>("HLT_SingleIsoEl23");
     tx->createBranch<int>("HLT_SingleIsoMu8");
@@ -263,6 +264,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("mc_HLT_SingleEl8");
     tx->createBranch<int>("mc_HLT_SingleEl17");
     tx->createBranch<int>("mc_HLT_SingleIsoEl8");
+    tx->createBranch<int>("mc_HLT_SingleIsoEl12");
     tx->createBranch<int>("mc_HLT_SingleIsoEl17");
     tx->createBranch<int>("mc_HLT_SingleIsoEl23");
     tx->createBranch<int>("mc_HLT_SingleIsoMu8");
