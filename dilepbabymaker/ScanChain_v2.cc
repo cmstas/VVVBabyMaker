@@ -481,9 +481,10 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("nVlep");
     tx->createBranch<int>("nTlep");
     tx->createBranch<int>("nTlepSS");
+    tx->createBranch<int>("nLlepSS");
     tx->createBranch<int>("nLlep");
-    tx->createBranch<int>("nLlep3L");
     tx->createBranch<int>("nTlep3L");
+    tx->createBranch<int>("nLlep3L");
 
     tx->createBranch<int>("nSFOS");
     tx->createBranch<int>("nSFOSinZ");
@@ -4420,16 +4421,18 @@ void babyMaker_v2::FillLeptonVariables()
     int nTlep = nVlep == 2 ? passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["tightid"])) : passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3ltightid"]));
     int nLlep = nVlep == 2 ? passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["looseid"])) : passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3llooseid"]));
     int nTlepSS = passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["tightid"]));
-    int nLlep3L = passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3llooseid"]));
+    int nLlepSS = passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["looseid"]));
     int nTlep3L = passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3ltightid"]));
+    int nLlep3L = passCount(tx->getBranch<vector<int>>(gconf.wwwcfg["3llooseid"]));
 
     // Set the number of lepton counter
     tx->setBranch<int>("nVlep", nVlep);
     tx->setBranch<int>("nTlep", nTlep);
     tx->setBranch<int>("nTlepSS", nTlepSS);
+    tx->setBranch<int>("nLlepSS", nLlepSS);
     tx->setBranch<int>("nLlep", nLlep);
-    tx->setBranch<int>("nLlep3L", nLlep3L);
     tx->setBranch<int>("nTlep3L", nTlep3L);
+    tx->setBranch<int>("nLlep3L", nLlep3L);
 
     // nVlep == 2
     //  nLlep == 2 isSS
