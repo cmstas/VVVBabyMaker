@@ -33,21 +33,21 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
     hadoop_path          = "metis/wwwbaby/{}".format(job_tag) # The output goes to /hadoop/cms/store/user/$USER/"hadoop_path"
 
     # Extra arguments that will be passed on to ./processBaby to specific which baby to create from the babymaker binary executable
-    if job_tag == "WWW":
+    if baby_type == "WWW":
         args = "0" # WWWBaby
-    elif job_tag == "FR":
+    elif baby_type == "FR":
         args = "1" # FRBaby
-    elif job_tag == "OS":
+    elif baby_type == "OS":
         args = "2" # OSBaby
-    elif job_tag == "TnP":
+    elif baby_type == "TnP":
         args = "3" # TnPBaby
-    elif job_tag == "All":
+    elif baby_type == "All":
         args = "4" # AllBaby
-    elif job_tag == "POG":
+    elif baby_type == "POG":
         args = "5" # POGBaby
-    elif job_tag == "Loose":
+    elif baby_type == "Loose":
         args = "6" # LooseBaby
-    elif job_tag == "WWW3L":
+    elif baby_type == "WWW3L":
         args = "7" # WWW3LBaby
 
     # Change directory to metis
