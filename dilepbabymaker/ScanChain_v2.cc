@@ -1726,7 +1726,8 @@ bool babyMaker_v2::PassWWWPreselection()
 //##############################################################################################################
 bool babyMaker_v2::PassPresel()
 {
-    return PassPresel_v3();
+    // return PassPresel_v3();
+    return PassPresel_v4_3lepton();
 }
 
 //##############################################################################################################
@@ -2036,6 +2037,45 @@ bool babyMaker_v2::PassPresel_v3()
         FATALERROR(__FUNCTION__);
         return false;
     }
+}
+
+//##############################################################################################################
+bool babyMaker_v2::PassPresel_v4_3lepton()
+{
+
+    // Select 3 or more veto lepton events
+    vector<int> el_idx = coreElectron.index;
+    vector<int> mu_idx = coreMuon.index;
+
+    // If less than 3 veto lepton events return false
+    if (el_idx.size() + mu_idx.size() < 3)
+        return false;
+
+    int nloose = 0;
+    int chargesum = 0;
+    for (auto& iel : coreElectron.index)
+    {
+        if (cms3.els_p4()[iel].pt() > 20. && passElectronSelection_VVV(iel, VVV_FO_3L))
+        {
+            nloose++;
+            chargesum += cms3.els_charge()[iel];
+        }
+    }
+
+    for (auto& imu : coreMuon.index)
+    {
+        if (cms3.mus_p4()[imu].pt() > 20. && passMuonSelection_VVV(imu, VVV_FO_3L))
+        {
+            nloose++;
+            chargesum += cms3.mus_charge()[imu];
+        }
+    }
+
+    if (nloose == 3)
+        return abs(chargesum) == 1;
+    else
+        return false;
+
 }
 
 //##############################################################################################################

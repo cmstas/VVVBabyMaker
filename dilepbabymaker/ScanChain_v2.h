@@ -260,6 +260,7 @@ public:
     bool PassPresel_v1();
     bool PassPresel_v2();
     bool PassPresel_v3();
+    bool PassPresel_v4_3lepton();
 
     void ProcessLeptons();
     void ProcessNonLeptonObjects();
