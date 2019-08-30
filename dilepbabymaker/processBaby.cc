@@ -55,6 +55,7 @@ int main(int argc, char **argv)
         case 4: looper->SetBabyMode(babyMaker_v2::kAllBaby); break;
         case 5: looper->SetBabyMode(babyMaker_v2::kPOGBaby); break;
         case 6: looper->SetBabyMode(babyMaker_v2::kLooseBaby); break;
+        case 7: looper->SetBabyMode(babyMaker_v2::kWWWBaby); looper->Set3LepOnly(true); break;
 
     }
     looper->ProcessCMS4(infile, max_events, index, verbose);

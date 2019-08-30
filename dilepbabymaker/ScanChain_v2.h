@@ -187,6 +187,9 @@ private:
     // BabyMode
     BabyMode babymode;
 
+    // ss or 3lep only
+    bool do_3lep_only;
+
     // Job
     int job_index;
 
@@ -204,6 +207,8 @@ public:
     void ScanChain_v2(bool verbose = false);
 
     void SetBabyMode(BabyMode bm) { babymode = bm; }
+
+    void Set3LepOnly(bool threeleponly) { do_3lep_only = threeleponly; }
 
     void Init();
 

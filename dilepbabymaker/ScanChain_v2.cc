@@ -7,7 +7,7 @@
 using namespace std;
 
 //##############################################################################################################
-babyMaker_v2::babyMaker_v2() : coreBtagSFFastSim(true), babymode(kWWWBaby), eventlist("eventlist.txt"), eventlist_debug("eventlist_debug.txt")
+babyMaker_v2::babyMaker_v2() : coreBtagSFFastSim(true), babymode(kWWWBaby), do_3lep_only(false), eventlist("eventlist.txt"), eventlist_debug("eventlist_debug.txt")
 {
 }
 
@@ -1726,8 +1726,10 @@ bool babyMaker_v2::PassWWWPreselection()
 //##############################################################################################################
 bool babyMaker_v2::PassPresel()
 {
-    // return PassPresel_v3();
-    return PassPresel_v4_3lepton();
+    if (do_3lep_only)
+        return PassPresel_v4_3lepton();
+    else
+        return PassPresel_v3();
 }
 
 //##############################################################################################################
