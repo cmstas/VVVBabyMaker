@@ -249,6 +249,12 @@ def get_master_list():
             "baby_type" : "WWW"
             }
 
+    dinfos["www3l_2017_94x_v2"] = {
+            "samples" : sample_info,
+            "year" : 2017,
+            "baby_type" : "WWW3L"
+            }
+
     dinfos["loose_2017_94x_v2"] = {
             "samples" : sample_info,
             "year" : 2017,
@@ -491,6 +497,12 @@ def get_master_list():
             "baby_type" : "WWW"
             }
 
+    dinfos["www3l_2018_102x"] = {
+            "samples" : sample_info,
+            "year" : 2018,
+            "baby_type" : "WWW3L"
+            }
+
     dinfos["loose_2018_102x"] = {
             "samples" : sample_info,
             "year" : 2018,
@@ -720,6 +732,12 @@ def get_master_list():
             "baby_type" : "WWW"
             }
 
+    dinfos["www3l_2016_94x"] = {
+            "samples" : sample_info,
+            "year" : 2016,
+            "baby_type" : "WWW3L"
+            }
+
     sample_info = {
             "/QCD_Pt_15to20_bcToE_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                        : "qcd_pt15_bctoe",
             "/QCD_Pt_20to30_bcToE_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                        : "qcd_pt20_bctoe",
@@ -873,6 +891,13 @@ if __name__ == "__main__":
         master_list["www_2017_94x_v2"] = grand_master_list["www_2017_94x_v2"]
     if "WWW2018" in args.sample_sets:
         master_list["www_2018_102x"] = grand_master_list["www_2018_102x"]
+
+    if "WWW3L2016" in args.sample_sets:
+        master_list["www3l_2016_94x"] = grand_master_list["www3l_2016_94x"]
+    if "WWW3L2017" in args.sample_sets:
+        master_list["www3l_2017_94x_v2"] = grand_master_list["www3l_2017_94x_v2"]
+    if "WWW3L2018" in args.sample_sets:
+        master_list["www3l_2018_102x"] = grand_master_list["www3l_2018_102x"]
 
     if "Loose2016" in args.sample_sets:
         master_list["loose_2016_80x"] = grand_master_list["loose_2016_80x"]
