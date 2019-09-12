@@ -347,19 +347,19 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<float>>("lep_r9");
     tx->createBranch<vector<int>>("lep_nlayers");
 
-    // tx->createBranch<float>("el_pt");
-    // tx->createBranch<float>("el_eta");
-    // tx->createBranch<float>("el_phi");
-    // tx->createBranch<float>("el_relIso03EA");
-    // tx->createBranch<float>("el_relIso03EALep");
-    // tx->createBranch<float>("el_ip3d");
-    // tx->createBranch<float>("mu_pt");
-    // tx->createBranch<float>("mu_eta");
-    // tx->createBranch<float>("mu_phi");
-    // tx->createBranch<float>("mu_relIso04DB");
-    // tx->createBranch<float>("mu_relIso03EA");
-    // tx->createBranch<float>("mu_relIso03EALep");
-    // tx->createBranch<float>("mu_ip3d");
+    tx->createBranch<float>("el_pt");
+    tx->createBranch<float>("el_eta");
+    tx->createBranch<float>("el_phi");
+    tx->createBranch<float>("el_relIso03EA");
+    tx->createBranch<float>("el_relIso03EALep");
+    tx->createBranch<float>("el_ip3d");
+    tx->createBranch<float>("mu_pt");
+    tx->createBranch<float>("mu_eta");
+    tx->createBranch<float>("mu_phi");
+    tx->createBranch<float>("mu_relIso04DB");
+    tx->createBranch<float>("mu_relIso03EA");
+    tx->createBranch<float>("mu_relIso03EALep");
+    tx->createBranch<float>("mu_ip3d");
 
     // tx->createBranch<float>("lbnt_pt");
     // tx->createBranch<float>("lbnt_coneCorrPt");
@@ -1606,7 +1606,7 @@ void babyMaker_v2::FillWWWBaby_v1()
     SortJetBranches();
 
     // Fill baby ntuple branches for emu channel for easy lepton SF application
-    // FillEMuLeptons();
+    FillEMuLeptons();
 
     // Fill baby ntuple branches for MET
     FillMET();

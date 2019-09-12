@@ -267,9 +267,6 @@ def get_master_list():
             "baby_type" : "OS"
             }
 
-    sample_info = {
-            "/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"                                          : "www_amcatnlo",
-            }
     dinfos["vvv_2017_94x_v2"] = {
             "samples" : sample_info,
             "year" : 2017,
@@ -524,9 +521,6 @@ def get_master_list():
             "baby_type" : "OS"
             }
 
-    sample_info = {
-        "/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM"                               : "www_amcatnlo"               ,
-        }
     dinfos["vvv_2018_102x"] = {
             "samples" : sample_info,
             "year" : 2018,
@@ -756,9 +750,6 @@ def get_master_list():
             "baby_type" : "WWW3L"
             }
 
-    sample_info = {
-            "/WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM"                                                         : "www_incl_amcatnlo",
-            }
     dinfos["vvv_2016_94x"] = {
             "samples" : sample_info,
             "year" : 2016,
