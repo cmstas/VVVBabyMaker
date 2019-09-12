@@ -140,6 +140,7 @@ public:
         ,kAllBaby   = 4
         ,kPOGBaby   = 5
         ,kLooseBaby = 6
+        ,kWVZVeto   = 7
     };
 
 private:
@@ -257,6 +258,7 @@ public:
     bool PassTnPPreselection();
     bool PassPOGPreselection();
     bool PassLoosePreselection();
+    bool PassWVZVetoPreselection();
 
     bool isPassPostObjectSelection();
     bool PassFRPostObjectPreselection();
@@ -272,6 +274,8 @@ public:
 
     void FillBaby();
     void FillWWWBaby();
+    void FillWWWBaby_v1();
+    void FillWWWBaby_v2();
     void FillTnPBaby();
     void FillPOGBaby();
 
@@ -309,6 +313,8 @@ public:
     bool isLeptonOverlappingWithTrack(int ijet);
     static bool isLooseMuon(int);
     static bool isLooseElectron(int);
+    static bool isVetoMuonWVZVeto(int);
+    static bool isVetoElectronWVZVeto(int);
     static bool isVetoMuon(int);
     static bool isVetoElectron(int);
     static bool isProbeMuon(int);
@@ -339,6 +345,7 @@ public:
     void Fill3LLeptonVariables();
     void FillEventTags();
     void FillWeights();
+    void FillWeights_v1();
     void FillGenWeights();
     void FillGenWeightsNominal();
 
