@@ -345,6 +345,12 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<vector<int>>("lep_genPart_index");
     tx->createBranch<vector<float>>("lep_r9");
     tx->createBranch<vector<int>>("lep_nlayers");
+    tx->createBranch<vector<LorentzVector>>("svs_p4");
+    tx->createBranch<vector<int>>("svs_nTrks");
+    tx->createBranch<vector<float>>("svs_distXYval");
+    tx->createBranch<vector<float>>("svs_dist3Dsig");
+    tx->createBranch<vector<float>>("svs_anglePV");
+    
 
     tx->createBranch<float>("el_pt");
     tx->createBranch<float>("el_eta");
@@ -1607,7 +1613,8 @@ void babyMaker_v2::FillWWWBaby()
 
     // Fill vertex info
     FillVertexInfo();
-
+    // Fill secondary vertex branches for soft btagging
+    FillSecVertex();
     // Fill MET filter info
     FillMETFilter();
 
@@ -3369,7 +3376,26 @@ void babyMaker_v2::FillVertexInfo()
         if (isGoodVertex(ivtx)) nVert++;
     tx->setBranch<int>("nVert", nVert);
 }
+void babyMaker_v2::FillSecVertex()
+{
+    for (size_t i=0; i<cms3.svs_p4().size(); i++) {
+        bool failDR = false;
+// cleaning with uncorrected jets... is it ok?
+      for (size_t j=0; j<cms3.pfjets_p4().size(); j++) {
+        if (ROOT::Math::VectorUtil::DeltaR( cms3.svs_p4().at(i), cms3.pfjets_p4()[j] ) <= 0.4) {
+          failDR = true;
+          break;
+        }
+      } // end loop over ak4 jets
 
+      if (failDR) continue;
+      tx->pushbackToBranch<LorentzVector>("svs_p4", cms3.svs_p4().at(i));
+      tx->pushbackToBranch<int>("svs_nTrks", cms3.svs_nTrks().at(i));
+      tx->pushbackToBranch<float>("svs_distXYval",cms3.svs_distXYval().at(i));
+      tx->pushbackToBranch<float>("svs_dist3Dsig", cms3.svs_dist3Dsig().at(i));
+      tx->pushbackToBranch<float>("svs_anglePV", cms3.svs_anglePV().at(i));
+    }
+}
 //##############################################################################################################
 void babyMaker_v2::FillMETFilter()
 {
