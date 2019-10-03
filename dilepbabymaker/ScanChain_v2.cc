@@ -3500,14 +3500,15 @@ void babyMaker_v2::FillSecVertex()
 {
     for (size_t i=0; i<cms3.svs_p4().size(); i++) {
         bool failDR = false;
-// cleaning with uncorrected jets... is it ok?
-      for (size_t j=0; j<cms3.pfjets_p4().size(); j++) {
-        if (ROOT::Math::VectorUtil::DeltaR( cms3.svs_p4().at(i), cms3.pfjets_p4()[j] ) <= 0.4) {
+// changed the same collection of jets used for checking btagging
+    const vector<LV>& p4s    = tx->getBranch<vector<LV>>("jets_p4"   , false);
+    for (unsigned ijet = 0; ijet < p4s.size(); ++ijet) {
+        LorentzVector jet = p4s.at(ijet);
+        if (ROOT::Math::VectorUtil::DeltaR( cms3.svs_p4().at(i),jet) <= 0.4) {
           failDR = true;
           break;
         }
       } // end loop over ak4 jets
-
       if (failDR) continue;
       tx->pushbackToBranch<LorentzVector>("svs_p4", cms3.svs_p4().at(i));
       tx->pushbackToBranch<int>("svs_nTrks", cms3.svs_nTrks().at(i));
