@@ -1686,7 +1686,7 @@ void babyMaker_v2::ProcessElectrons()
 //##############################################################################################################
 void babyMaker_v2::ProcessNominalElectrons()
 {
-    if (babymode == kWVZVeto)
+    if (babymode == kWVZVeto or babymode == kFRBaby)
     {
         coreElectron.process(isVetoElectronWVZVeto);
     }
@@ -1723,7 +1723,7 @@ void babyMaker_v2::ProcessMuons()
 //##############################################################################################################
 void babyMaker_v2::ProcessNominalMuons()
 {
-    if (babymode == kWVZVeto)
+    if (babymode == kWVZVeto or babymode == kFRBaby)
     {
         coreMuon.process(isVetoMuonWVZVeto);
     }
@@ -2144,11 +2144,11 @@ bool babyMaker_v2::PassFRPreselection()
     // if (nloose < 1)
     //     return false;
 
-    // Following is to check whether this is the ttbar 1l sample that is used for closure test
-    if (looper.getCurrentFileName().Contains("SingleLept"))
-        // If it is ttbar 1l sample for closure test require nVlep >= 2
-        // This is the reduce ntuple size
-        return (el_idx.size() + mu_idx.size() >= 2);
+    // // Following is to check whether this is the ttbar 1l sample that is used for closure test
+    // if (looper.getCurrentFileName().Contains("SingleLept"))
+    //     // If it is ttbar 1l sample for closure test require nVlep >= 2
+    //     // This is the reduce ntuple size
+    //     return (el_idx.size() + mu_idx.size() >= 2);
 
     if (isData())
     {
