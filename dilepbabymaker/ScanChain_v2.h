@@ -294,6 +294,7 @@ public:
     void SortJetBranches();
     void FillTrigger();
     void FillVertexInfo();
+    void FillSecVertex();
     void FillMETFilter();
     void FillSummaryVariables();
     void FillMuonSmearWeight();
