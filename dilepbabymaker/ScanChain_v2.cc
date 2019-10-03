@@ -3498,10 +3498,10 @@ void babyMaker_v2::FillVertexInfo()
 }
 void babyMaker_v2::FillSecVertex()
 {
+    const vector<LV>& p4s    = tx->getBranch<vector<LV>>("jets_p4"   , false);
     for (size_t i=0; i<cms3.svs_p4().size(); i++) {
         bool failDR = false;
 // changed the same collection of jets used for checking btagging
-    const vector<LV>& p4s    = tx->getBranch<vector<LV>>("jets_p4"   , false);
     for (unsigned ijet = 0; ijet < p4s.size(); ++ijet) {
         LorentzVector jet = p4s.at(ijet);
         if (ROOT::Math::VectorUtil::DeltaR( cms3.svs_p4().at(i),jet) <= 0.4) {
