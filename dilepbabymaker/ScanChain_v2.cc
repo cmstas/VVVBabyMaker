@@ -1635,8 +1635,10 @@ void babyMaker_v2::FillWWWBaby_v1()
 
     // Fill vertex info
     FillVertexInfo();
+
     // Fill secondary vertex branches for soft btagging
     FillSecVertex();
+
     // Fill MET filter info
     FillMETFilter();
 
