@@ -877,6 +877,7 @@ void babyMaker_v2::AddTnPBabyOutput()
     tx->createBranch<float>("RelIso03EA");
     tx->createBranch<float>("RelIso03EAv2");
     tx->createBranch<float>("RelIso03EAv2wlep");
+    tx->createBranch<float>("RelIso03EAv4wlep");
     tx->createBranch<float>("miniiso");
     tx->createBranch<float>("miniisoDB");
 
@@ -3924,6 +3925,7 @@ void babyMaker_v2::FillMuonIDVariables(int idx, int tag_idx)
     tx->setBranch<float>("RelIso03EA", muRelIso03EA(idx));
     tx->setBranch<float>("RelIso03EAv2", muRelIso03EA(idx, 2));
     tx->setBranch<float>("RelIso03EAv2wlep", muRelIso03EA(idx, 2, true));
+    tx->setBranch<float>("RelIso03EAv4wlep", muRelIso03EA(idx, 4, true));
 
     tx->setBranch<float>("dxyPV", cms3.mus_dxyPV()[idx]);
     tx->setBranch<float>("dZ", cms3.mus_dzPV()[idx]);
@@ -4026,6 +4028,7 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
     tx->setBranch<float>("RelIso03EA", eleRelIso03EA(idx));
     tx->setBranch<float>("RelIso03EAv2", eleRelIso03EA(idx, 2));
     tx->setBranch<float>("RelIso03EAv2wlep", eleRelIso03EA(idx, 2, true));
+    tx->setBranch<float>("RelIso03EAv4wlep", eleRelIso03EA(idx, 4, true));
 
     tx->setBranch<float>("dxyPV", cms3.els_dxyPV()[idx]);
     tx->setBranch<float>("dZ", cms3.els_dzPV()[idx]);
