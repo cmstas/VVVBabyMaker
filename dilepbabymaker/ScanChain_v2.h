@@ -205,7 +205,7 @@ public:
 
     int ProcessCMS4(TString filepaths, int max_events = -1, int index = 1, bool verbose = false);
 
-    void ScanChain_v2(bool verbose = false);
+    void ScanChain_v2(TString filepaths, int max_events = -1, bool verbose = false);
 
     void SetBabyMode(BabyMode bm) { babymode = bm; }
 

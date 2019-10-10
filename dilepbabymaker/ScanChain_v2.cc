@@ -19,12 +19,6 @@ babyMaker_v2::~babyMaker_v2()
 //##############################################################################################################
 int babyMaker_v2::ProcessCMS4(TString filepaths, int max_events, int idx, bool verbose)
 {
-    // Create TChain to process
-    TChain* chain = RooUtil::FileUtil::createTChain("Events", filepaths);
-
-    // Initialize Looper
-    looper.init(chain, &cms3, max_events);
-
     // Initializer job index
     job_index = idx;
 
@@ -54,7 +48,10 @@ int babyMaker_v2::ProcessCMS4(TString filepaths, int max_events, int idx, bool v
     }
 
     // Run the loop
-    ScanChain_v2(verbose);
+    ScanChain_v2(filepaths, max_events, verbose);
+
+    // Save output
+    SaveOutput();
 
     // Exit
     return 0;
@@ -62,37 +59,48 @@ int babyMaker_v2::ProcessCMS4(TString filepaths, int max_events, int idx, bool v
 
 //##############################################################################################################
 std::once_flag flag_init; // a flag for std::call_once
-void babyMaker_v2::ScanChain_v2(bool verbose)
+void babyMaker_v2::ScanChain_v2(TString filepaths, int max_events, bool verbose)
 {
-    while (looper.nextEvent())
-    {
 
-        // If eventlist_debug.txt file exists
-        if (eventlist_debug.event_list.size() > 0)
-        {
-            // Check if the given event is in the list if not continue
-            if (not eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
-            {
-                continue;
-            }
-        }
+    for (auto& filepath : RooUtil::StringUtil::split(filepaths, ","))
+    {
+        // Create TChain to process
+        TChain* chain = RooUtil::FileUtil::createTChain("Events", filepaths);
 
         try
         {
-            if (verbose)
-                cout << "[verbose] Processed " << looper.getNEventsProcessed() << " out of " << looper.getTChain()->GetEntries() << endl;
 
-            // Some of the sample specific things need to be set prior to processing the very first event
-            // Those are called inside Init, they have explicit "call_once" feature
-            // The reason this is inside the loop is because it first need to access the file name before
-            std::call_once(flag_init, &babyMaker_v2::Init, this);
+            // Initialize Looper
+            looper.init(chain, &cms3, max_events);
 
-            // Now process the baby ntuples
-            Process();
+            while (looper.nextEvent())
+            {
 
-            // For Gen-level weights the total weights need to be saved so must be called without skipping events (i.e. before isPass() or making sure i fill everything)
-            FillGenWeights();
+                // If eventlist_debug.txt file exists
+                if (eventlist_debug.event_list.size() > 0)
+                {
+                    // Check if the given event is in the list if not continue
+                    if (not eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+                    {
+                        continue;
+                    }
+                }
 
+                if (verbose)
+                    cout << "[verbose] Processed " << looper.getNEventsProcessed() << " out of " << looper.getTChain()->GetEntries() << endl;
+
+                // Some of the sample specific things need to be set prior to processing the very first event
+                // Those are called inside Init, they have explicit "call_once" feature
+                // The reason this is inside the loop is because it first need to access the file name before
+                std::call_once(flag_init, &babyMaker_v2::Init, this);
+
+                // Now process the baby ntuples
+                Process();
+
+                // For Gen-level weights the total weights need to be saved so must be called without skipping events (i.e. before isPass() or making sure i fill everything)
+                FillGenWeights();
+
+            }
         }
         catch (const std::ios_base::failure& e)
         {
@@ -102,15 +110,17 @@ void babyMaker_v2::ScanChain_v2(bool verbose)
                 FATALERROR(__FUNCTION__);
                 exit(2);
             }
+
             tx->clear(); // clear the TTree of any residual stuff
-            if (!looper.handleBadEvent())
-                break;
+
+            std::cout << "Bad event found. Skip the file" << std::endl;
+
+            continue;
+
         }
     }
 
-    looper.printStatus();
-
-    SaveOutput();
+    // looper.printStatus();
 }
 
 //##############################################################################################################
