@@ -3506,27 +3506,37 @@ void babyMaker_v2::FillVertexInfo()
         if (isGoodVertex(ivtx)) nVert++;
     tx->setBranch<int>("nVert", nVert);
 }
+
+//##############################################################################################################
 void babyMaker_v2::FillSecVertex()
 {
-    const vector<LV>& p4s    = tx->getBranch<vector<LV>>("jets_p4"   , false);
-    for (size_t i=0; i<cms3.svs_p4().size(); i++) {
+    const vector<LV>& p4s    = tx->getBranch<vector<LV>>("jets_p4", false);
+    for (size_t i = 0; i < cms3.svs_p4().size(); i++)
+    {
         bool failDR = false;
-// changed the same collection of jets used for checking btagging
-    for (unsigned ijet = 0; ijet < p4s.size(); ++ijet) {
-        LorentzVector jet = p4s.at(ijet);
-        if (ROOT::Math::VectorUtil::DeltaR( cms3.svs_p4().at(i),jet) <= 0.4) {
-          failDR = true;
-          break;
-        }
-      } // end loop over ak4 jets
-      if (failDR) continue;
-      tx->pushbackToBranch<LorentzVector>("svs_p4", cms3.svs_p4().at(i));
-      tx->pushbackToBranch<int>("svs_nTrks", cms3.svs_nTrks().at(i));
-      tx->pushbackToBranch<float>("svs_distXYval",cms3.svs_distXYval().at(i));
-      tx->pushbackToBranch<float>("svs_dist3Dsig", cms3.svs_dist3Dsig().at(i));
-      tx->pushbackToBranch<float>("svs_anglePV", cms3.svs_anglePV().at(i));
+
+        // changed the same collection of jets used for checking btagging
+        for (unsigned ijet = 0; ijet < p4s.size(); ++ijet)
+        {
+            LorentzVector jet = p4s.at(ijet);
+            if (ROOT::Math::VectorUtil::DeltaR(cms3.svs_p4().at(i), jet) <= 0.4)
+            {
+                failDR = true;
+                break;
+            }
+        } // end loop over ak4 jets
+
+        if (failDR) continue;
+
+        tx->pushbackToBranch<LorentzVector>("svs_p4", cms3.svs_p4().at(i));
+        tx->pushbackToBranch<int>("svs_nTrks", cms3.svs_nTrks().at(i));
+        tx->pushbackToBranch<float>("svs_distXYval", cms3.svs_distXYval().at(i));
+        tx->pushbackToBranch<float>("svs_dist3Dsig", cms3.svs_dist3Dsig().at(i));
+        tx->pushbackToBranch<float>("svs_anglePV", cms3.svs_anglePV().at(i));
+
     }
 }
+
 //##############################################################################################################
 void babyMaker_v2::FillMETFilter()
 {
