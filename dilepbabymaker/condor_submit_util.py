@@ -130,7 +130,11 @@ def create_tar_ball():
     tar_gz_path = tar_path + ".gz"
     main_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(main_dir)
-    os.system("tar -chJf {} localsetup.sh processBaby *.so *.pcm coreutil/data coreutil/lib*.so *.txt btagsf MVAinput jetCorrections leptonSFs puWeight2016.root pileup_jul21_nominalUpDown.root ../CORE/Tools/ mergeHadoopFiles.C xsec_susy_13tev.root roccor.2017.v0/*.txt rooutil/hadd.py".format(tar_gz_path))
+    os.system("git rev-parse HEAD > gitversion.txt")
+    os.system("git status >> gitversion.txt")
+    os.system("git diff >> gitversion.txt")
+    os.system("git log >> gitversion.txt")
+    os.system("tar -chJf {} gitversion.txt localsetup.sh processBaby *.so *.pcm coreutil/data coreutil/lib*.so *.txt btagsf MVAinput jetCorrections leptonSFs puWeight2016.root pileup_jul21_nominalUpDown.root ../CORE/Tools/ mergeHadoopFiles.C rooutil/hadd.py".format(tar_gz_path))
 
 #______________________________________________________________________________________
 def submit(dinfos, version_tag, dotestrun=False):
