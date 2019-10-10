@@ -65,7 +65,7 @@ void babyMaker_v2::ScanChain_v2(TString filepaths, int max_events, bool verbose)
     for (auto& filepath : RooUtil::StringUtil::split(filepaths, ","))
     {
         // Create TChain to process
-        TChain* chain = RooUtil::FileUtil::createTChain("Events", filepaths);
+        TChain* chain = RooUtil::FileUtil::createTChain("Events", filepath);
 
         try
         {
@@ -6199,7 +6199,7 @@ bool babyMaker_v2::studyWWW()
         for (auto& idx: l_idx)
             std::cout <<  " idx: " << idx <<  std::endl;
         coreGenPart.printAllParticles();
-        FATALERROR(__FUNCTION__);
+        // FATALERROR(__FUNCTION__);
     }
 
     // Set w boson variables
