@@ -751,6 +751,12 @@ def get_master_list():
             "baby_type" : "WWW3L"
             }
 
+    dinfos["loose_2016_94x"] = {
+            "samples" : sample_info,
+            "year" : 2016,
+            "baby_type" : "Loose"
+            }
+
     dinfos["vvv_2016_94x"] = {
             "samples" : sample_info,
             "year" : 2016,
@@ -926,7 +932,7 @@ if __name__ == "__main__":
         master_list["vvv_2018_102x"] = grand_master_list["vvv_2018_102x"]
 
     if "Loose2016" in args.sample_sets:
-        master_list["loose_2016_80x"] = grand_master_list["loose_2016_80x"]
+        master_list["loose_2016_94x"] = grand_master_list["loose_2016_94x"]
     if "Loose2017" in args.sample_sets:
         master_list["loose_2017_94x_v2"] = grand_master_list["loose_2017_94x_v2"]
     if "Loose2018" in args.sample_sets:
