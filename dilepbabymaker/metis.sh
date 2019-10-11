@@ -75,6 +75,9 @@ else
 fi
 ###################################################################################################
 
+echo ">>> cat gitversion.txt"
+cat gitversion.txt
+
 echo ">>> source localsetup.sh"
 source localsetup.sh
 echo ">>> ls -l"
