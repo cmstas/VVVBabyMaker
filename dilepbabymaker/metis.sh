@@ -81,10 +81,11 @@ echo ">>> ls -l"
 ls -l
 echo ">>> export COREDIR=$PWD/CORE/"
 export COREDIR=$PWD/CORE/
-echo ">>> ./processBaby ${INPUTFILENAMES} -1 ${INDEX} ${BABYMODE}"
 
 # Output job index
 INDEX=1
+
+echo ">>> ./processBaby ${INPUTFILENAMES} -1 ${INDEX} ${BABYMODE}"
 
 # Check is data?
 ISDATA=false
