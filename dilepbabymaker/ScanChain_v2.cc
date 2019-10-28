@@ -104,14 +104,15 @@ void babyMaker_v2::ScanChain_v2(TString filepaths, int max_events, bool verbose)
         }
         catch (const std::ios_base::failure& e)
         {
-            if (isData())
+            if (isData(filepath))
             {
                 std::cout << "Found bad event in data" << std::endl;
                 FATALERROR(__FUNCTION__);
                 exit(2);
             }
 
-            tx->clear(); // clear the TTree of any residual stuff
+            if (tx)
+                tx->clear(); // clear the TTree of any residual stuff
 
             std::cout << "Bad event found. Skip the file" << std::endl;
 
@@ -811,6 +812,7 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("lep_idx1_SS");
 
     tx->createBranch<TString>("bkgtype");
+    tx->createBranch<TString>("bkgtypev2");
     tx->createBranch<int>("vetophoton");
 
     tx->createBranch<float>("purewgt");
@@ -4997,6 +4999,7 @@ void babyMaker_v2::Fill3LLeptonVariables()
 void babyMaker_v2::FillEventTags()
 {
     tx->setBranch<TString>("bkgtype", process());
+    tx->setBranch<TString>("bkgtypev2", processv2());
     tx->setBranch<int>("vetophoton", vetophotonprocess());
 }
 
@@ -5497,6 +5500,27 @@ tuple<bool, int, int> babyMaker_v2::isSSCR()
         FATALERROR(__FUNCTION__);
         return make_tuple(false, -1, -1);
     }
+}
+
+//##############################################################################################################
+TString babyMaker_v2::processv2()
+{
+    if (cms3.evt_isRealData())
+        return "Data";
+
+    if (splitVH())
+        return "WHtoWWW";
+
+    if (isSMWWW())
+        return "WWW";
+
+    if (isSMWWW() && (coreSample.is2017(looper.getCurrentFileName()) or coreSample.is2018(looper.getCurrentFileName())))
+        return "WWW";
+
+    if (isData())
+        return "Data";
+
+    return gentype_v4();
 }
 
 //##############################################################################################################
@@ -6833,6 +6857,125 @@ int babyMaker_v2::gentype_v2()
         if (ischargeflip) return 2;
         cout << "This event was not classified - 3 lepton event - v2" << endl;
         return 0;
+    }
+}
+
+//##############################################################################################################
+TString babyMaker_v2::gentype_v4()
+{
+
+    // Mainly used for 2017 analysis (maybe apply for 2016 for clealiness?)
+    // Goal: classify events by the following categories
+
+    // lep_motherIdSS convention (defined in CORE/SSSelections.cc)
+    //  2 = charge flip    good lepton
+    //  1 = charge correct good lepton (perfect)
+    //  0 = unmatched
+    // -1 = fake from bottom
+    // -2 = fake from charm
+    // -3 = fake from photon (I think?)
+    // -4 = fkae from light
+
+//    if (eventlist.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
+//    {
+//        coreGenPart.printParticleOfInterest();
+//        std::cout <<  " tx->getBranch<vector<LV>>('lep_p4')[0].pt(): " << tx->getBranch<vector<LV>>("lep_p4")[0].pt() <<  " tx->getBranch<vector<LV>>('lep_p4')[1].pt(): " << tx->getBranch<vector<LV>>("lep_p4")[1].pt() <<  std::endl;
+//        std::cout <<  " tx->getBranch<vector<LV>>('lep_p4')[0].phi(): " << tx->getBranch<vector<LV>>("lep_p4")[0].phi() <<  " tx->getBranch<vector<LV>>('lep_p4')[1].phi(): " << tx->getBranch<vector<LV>>("lep_p4")[1].phi() <<  std::endl;
+//        std::cout <<  " tx->getBranch<vector<int>>('lep_motherIdSS')[0]: " << tx->getBranch<vector<int>>("lep_motherIdSS")[0] <<  " tx->getBranch<vector<int>>('lep_motherIdSS')[1]: " << tx->getBranch<vector<int>>("lep_motherIdSS")[1] <<  std::endl;
+//        std::cout <<  " tx->getBranch<vector<int>>('lep_isFromW')[0]: " << tx->getBranch<vector<int>>("lep_isFromW")[0] <<  " tx->getBranch<vector<int>>('lep_isFromW')[1]: " << tx->getBranch<vector<int>>("lep_isFromW")[1] <<  std::endl;
+//        std::cout <<  " tx->getBranch<vector<int>>('lep_isFromZ')[0]: " << tx->getBranch<vector<int>>("lep_isFromZ")[0] <<  " tx->getBranch<vector<int>>('lep_isFromZ')[1]: " << tx->getBranch<vector<int>>("lep_isFromZ")[1] <<  std::endl;
+//        if (tx->getBranch<int>("nLlep") >= 3)
+//        {
+//            std::cout <<  " tx->getBranch<vector<LV>>('lep_p4')[2].pt(): " << tx->getBranch<vector<LV>>("lep_p4")[2].pt() <<  std::endl;
+//            std::cout <<  " tx->getBranch<vector<LV>>('lep_p4')[2].phi(): " << tx->getBranch<vector<LV>>("lep_p4")[2].phi() <<  std::endl;
+//            std::cout <<  " tx->getBranch<vector<int>>('lep_motherIdSS')[2]: " << tx->getBranch<vector<int>>("lep_motherIdSS")[2] <<  std::endl;
+//            std::cout <<  " tx->getBranch<vector<int>>('lep_isFromW')[2]: " << tx->getBranch<vector<int>>("lep_isFromW")[2] <<  std::endl;
+//            std::cout <<  " tx->getBranch<vector<int>>('lep_isFromZ')[2]: " << tx->getBranch<vector<int>>("lep_isFromZ")[2] <<  std::endl;
+//            std::cout <<  " (tx->getBranch<vector<LV>>('lep_p4')[0]+tx->getBranch<vector<LV>>('lep_p4')[1]).mass(): " << (tx->getBranch<vector<LV>>("lep_p4")[0]+tx->getBranch<vector<LV>>("lep_p4")[1]).mass() <<  std::endl;
+//        }
+//    }
+
+    if (tx->getBranch<vector<int>>("lep_motherIdSS").size() < 2)
+        return "lessThan2Leptons";
+
+    int lep1_mid = tx->getBranch<vector<int>>("lep_motherIdSS")[0];
+    int lep2_mid = tx->getBranch<vector<int>>("lep_motherIdSS")[1];
+
+    // For SS channel (i.e. nLlep == 2 nVlep == 2)
+    if (tx->getBranch<int>("nVlep") == 2)
+    {
+        // trueSS       = i.e. Irreducible
+        // chargeflips  = i.e. charge mis-id
+        // SSLL         = i.e. lost-lepton
+        // fakes        = i.e. non-prompt
+        // photonfakes  = i.e. gamma->ell
+        // others       = i.e. unmatched
+        if (lep1_mid == 1 && lep2_mid == 1)
+        {
+            if (sampleIsZX())
+                return "SSLL";
+            else
+                return "trueSS";
+        }
+        else if (lep1_mid <= 0 || lep2_mid <= 0)
+        {
+            return "fakes";
+        }
+        else if (lep1_mid ==-3 || lep2_mid ==-3)
+        {
+            return "photonfakes";
+        }
+        else if (lep1_mid == 2 || lep2_mid == 2)
+        {
+            return "chargeflips";
+        }
+        else
+        {
+            return "others";
+        }
+    }
+    // For 3L channel (i.e. nLlep == 3 nVlep == 3)
+    else if (tx->getBranch<int>("nVlep") == 3)
+    {
+        if (tx->getBranch<vector<int>>("lep_motherIdSS").size() < 3)
+            return "lessThan3Leptons";
+
+        // trueWWW      = i.e. Irreducible
+        // 3lLL         = e.g. ZZ-> lost lepton + 3 leptons (has at least one Z)
+        // chargeflips  = i.e. charge mis-id
+        // fakes        = i.e. non-prompt
+        // photonfakes  = i.e. gamma->ell
+        // others       = i.e. unmatched
+
+        int lep3_mid = tx->getBranch<vector<int>>("lep_motherIdSS")[2];
+
+        if (lep1_mid == 1 && lep2_mid == 1 && lep3_mid == 1)
+        {
+            if (sampleIsZX())
+                return "3lLL";
+            else
+                return "trueWWW";
+        }
+        else if (lep1_mid <= 0 || lep2_mid <= 0 || lep3_mid <= 0)
+        {
+            return "fakes";
+        }
+        else if (lep1_mid ==-3 || lep2_mid ==-3 || lep3_mid ==-3)
+        {
+            return "photonfakes";
+        }
+        else if (lep1_mid == 2 || lep2_mid == 2 || lep3_mid == 2)
+        {
+            return "chargeflips";
+        }
+        else
+        {
+            return "others";
+        }
+    }
+    else
+    {
+        return "NotSSor3L";
     }
 }
 

@@ -92,7 +92,7 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
         # Job 2 : Merging baby outputs
         #
 
-        if maker_task.complete() and not dotestrun:
+        if maker_task.complete() and not dotestrun and baby_type != "FR":
 
             merge_sample_name = "/MERGE_"+sample[1:]
 

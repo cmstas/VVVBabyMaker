@@ -364,9 +364,11 @@ public:
 
     // Event tagging
     TString process();
+    TString processv2();
     bool splitVH();
     int gentype_v2();
     TString gentype_v3();
+    TString gentype_v4();
     bool vetophotonprocess();
     tuple<bool, int, int> isSSCR();
     bool sampleIsZX();
@@ -390,7 +392,7 @@ public:
     void AddWWWSignalOutput();
     bool studyWWW();
     bool studyWHWWW();
-    bool isData() { return coreSample.is2017Data(looper.getCurrentFileName()) or coreSample.is2016Data(looper.getCurrentFileName()) or coreSample.is2018Data(looper.getCurrentFileName()); }
+    bool isData(TString filepath="") { TString strtochk = filepath.IsNull() ? looper.getCurrentFileName() : filepath; return coreSample.is2017Data(strtochk) or coreSample.is2016Data(strtochk) or coreSample.is2018Data(strtochk); }
 
     // Doubly Charged Higgs process related
     bool isDoublyChargedHiggs() { return SampleNiceName().BeginsWith("hpmpm_hww"); }
