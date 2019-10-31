@@ -1708,7 +1708,7 @@ void babyMaker_v2::ProcessElectrons()
 //##############################################################################################################
 void babyMaker_v2::ProcessNominalElectrons()
 {
-    if (babymode == kWVZVeto or babymode == kFRBaby)
+    if (babymode == kWVZVeto)
     {
         coreElectron.process(isVetoElectronWVZVeto);
     }
@@ -1745,7 +1745,7 @@ void babyMaker_v2::ProcessMuons()
 //##############################################################################################################
 void babyMaker_v2::ProcessNominalMuons()
 {
-    if (babymode == kWVZVeto or babymode == kFRBaby)
+    if (babymode == kWVZVeto)
     {
         coreMuon.process(isVetoMuonWVZVeto);
     }
