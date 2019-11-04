@@ -59,6 +59,7 @@ mkdir -p sigofficialvh
 mkdir -p sigofficialwww
 mkdir -p sigvh
 mkdir -p sigwww
+mkdir -p sigallwww
 mkdir -p sigallwwz
 mkdir -p sigallwzz
 mkdir -p sigallzzz
@@ -118,6 +119,12 @@ cd sigwww
 echo linking... sigwww
 rm -f *.root
 ln -sf $(ls ../../merged/*.root | grep /www | grep -v ${WWWTOSKIPPATTERN}) .
+cd ..
+cd sigallwww
+echo linking... sigallwww
+rm -f *.root
+ln -sf $(ls ../../merged/*.root | grep /www_ | grep -v ${WWWTOSKIPPATTERN}) .
+ln -sf $(ls ../../merged/*.root | grep wh_ww | grep -v ${WWWTOSKIPPATTERN}) .
 cd ..
 cd sigallwwz
 echo linking... sigallwwz
