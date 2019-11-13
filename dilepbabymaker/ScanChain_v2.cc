@@ -878,8 +878,10 @@ void babyMaker_v2::AddTnPBabyOutput()
     tx->createBranch<float>("TrkAn04");
     tx->createBranch<float>("RelIso03EA");
     tx->createBranch<float>("RelIso03EAv2");
+    tx->createBranch<float>("RelIso03EAv4");
     tx->createBranch<float>("RelIso03EAv2wlep");
     tx->createBranch<float>("RelIso03EAv4wlep");
+    tx->createBranch<float>("RelIso04DB");
     tx->createBranch<float>("miniiso");
     tx->createBranch<float>("miniisoDB");
 
@@ -909,6 +911,9 @@ void babyMaker_v2::AddTnPBabyOutput()
     tx->createBranch<bool>("passes_POG_MVA_wpLoose");
     tx->createBranch<bool>("passes_POG_MVA_wp80");
     tx->createBranch<bool>("passes_POG_MVA_wp90");
+    tx->createBranch<bool>("passes_POG_MVAiso_wpLoose");
+    tx->createBranch<bool>("passes_POG_MVAiso_wp80");
+    tx->createBranch<bool>("passes_POG_MVAiso_wp90");
 
     tx->createBranch<LV>("mc_motherp4");
     tx->createBranch<LV>("mc_p4");
@@ -3924,10 +3929,12 @@ void babyMaker_v2::FillMuonIDVariables(int idx, int tag_idx)
 
     tx->setBranch<int>("id", -13.0 * cms3.mus_charge()[idx]);
 
-    tx->setBranch<float>("RelIso03EA", muRelIso03EA(idx));
+    tx->setBranch<float>("RelIso03EA", muRelIso03EA(idx, gconf.ea_version, false));
     tx->setBranch<float>("RelIso03EAv2", muRelIso03EA(idx, 2));
+    tx->setBranch<float>("RelIso03EAv4", muRelIso03EA(idx, 4));
     tx->setBranch<float>("RelIso03EAv2wlep", muRelIso03EA(idx, 2, true));
     tx->setBranch<float>("RelIso03EAv4wlep", muRelIso03EA(idx, 4, true));
+    tx->setBranch<float>("RelIso04DB", muRelIso04DB(idx));
 
     tx->setBranch<float>("dxyPV", cms3.mus_dxyPV()[idx]);
     tx->setBranch<float>("dZ", cms3.mus_dzPV()[idx]);
@@ -4027,10 +4034,12 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
 
     tx->setBranch<int>("id", -11.0 * cms3.els_charge()[idx]);
 
-    tx->setBranch<float>("RelIso03EA", eleRelIso03EA(idx));
+    tx->setBranch<float>("RelIso03EA", eleRelIso03EA(idx, gconf.ea_version, false));
     tx->setBranch<float>("RelIso03EAv2", eleRelIso03EA(idx, 2));
+    tx->setBranch<float>("RelIso03EAv4", eleRelIso03EA(idx, 4));
     tx->setBranch<float>("RelIso03EAv2wlep", eleRelIso03EA(idx, 2, true));
     tx->setBranch<float>("RelIso03EAv4wlep", eleRelIso03EA(idx, 4, true));
+    tx->setBranch<float>("RelIso04DB", -999);
 
     tx->setBranch<float>("dxyPV", cms3.els_dxyPV()[idx]);
     tx->setBranch<float>("dZ", cms3.els_dzPV()[idx]);
@@ -4053,6 +4062,9 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
     tx->setBranch<bool>("passes_POG_MVA_wpLoose", isMVAwpLooseNoIsofall17V2(idx));
     tx->setBranch<bool>("passes_POG_MVA_wp80", isMVAwp80NoIsofall17V2(idx));
     tx->setBranch<bool>("passes_POG_MVA_wp90", isMVAwp90NoIsofall17V2(idx));
+    tx->setBranch<bool>("passes_POG_MVAiso_wpLoose", isMVAwpLooseIsofall17V2(idx));
+    tx->setBranch<bool>("passes_POG_MVAiso_wp80", isMVAwp80Isofall17V2(idx));
+    tx->setBranch<bool>("passes_POG_MVAiso_wp90", isMVAwp90Isofall17V2(idx));
 
     if (!cms3.evt_isRealData())
     {
