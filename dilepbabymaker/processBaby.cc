@@ -46,6 +46,7 @@ int main(int argc, char **argv)
     // Run
     //
     babyMaker_v2 *looper = new babyMaker_v2();
+	std::cout << "KARRI PROCESSBABY BABYMODE " << babymode << std::endl;
     switch (babymode)
     {
         case 0: looper->SetBabyMode(babyMaker_v2::kWWWBaby); break;
