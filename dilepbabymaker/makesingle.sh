@@ -8,7 +8,12 @@ if [ ! $didcompile == "0" ]; then
 	exit $didcompile
 fi
 
+
 cp ../json/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_snt.txt .
+
+nevents=10
+mode=9
+./processBaby /hadoop/cms/store/group/snt/run2_data2018/SingleMuon_Run2018A-17Sep2018-v2_MINIAOD_CMS4_V10-02-04/merged_ntuple_203.root $nevents 2018 $mode verbose 
 
 # ./processBaby test  /hadoop/cms/store/group/snt/run2_50ns/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v1/V07-04-03/merged_ntuple_1.root
 # ./processBaby test_mc /hadoop/cms/store/group/snt/run2_25ns/TTTo2L2Nu_13TeV-powheg_RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/V07-04-08///merged_ntuple_1.root
@@ -46,4 +51,4 @@ cp ../json/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_snt.txt .
 # ./processBaby test_76 /hadoop/cms/store/group/snt/run2_25ns_MiniAODv2/DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/V07-04-11/merged_ntuple_1.root 
 
 
-./processBaby merged_ntuple_161 /hadoop/cms/store/group/snt/run2_25ns_76MiniAODv2/V/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/v1/CMS3_V07-06-03/merged_ntuple_161.root
+#./processBaby merged_ntuple_161 /hadoop/cms/store/group/snt/run2_25ns_76MiniAODv2/V/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/v1/CMS3_V07-06-03/merged_ntuple_161.root

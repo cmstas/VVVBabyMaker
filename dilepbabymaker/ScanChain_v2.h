@@ -141,6 +141,7 @@ public:
         ,kPOGBaby   = 5
         ,kLooseBaby = 6
         ,kWVZVeto   = 7
+        ,kOneLBaby  = 8
     };
 
 private:
@@ -259,6 +260,7 @@ public:
     bool PassPOGPreselection();
     bool PassLoosePreselection();
     bool PassWVZVetoPreselection();
+    bool PassOneLPreselection();
 
     bool isPassPostObjectSelection();
     bool PassFRPostObjectPreselection();

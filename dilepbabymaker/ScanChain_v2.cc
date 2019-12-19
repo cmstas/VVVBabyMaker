@@ -66,12 +66,14 @@ void babyMaker_v2::ScanChain_v2(TString filepaths, int max_events, bool verbose)
     {
         // Create TChain to process
         TChain* chain = RooUtil::FileUtil::createTChain("Events", filepath);
+	cout << " chain initialized" << endl;
 
         try
         {
 
             // Initialize Looper
             looper.init(chain, &cms3, max_events);
+	    cout << " looper initialized" << endl;
 
             while (looper.nextEvent())
             {
@@ -79,6 +81,7 @@ void babyMaker_v2::ScanChain_v2(TString filepaths, int max_events, bool verbose)
                 // If eventlist_debug.txt file exists
                 if (eventlist_debug.event_list.size() > 0)
                 {
+		    cout << " checking debug list " << endl;
                     // Check if the given event is in the list if not continue
                     if (not eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
                     {
@@ -221,6 +224,7 @@ void babyMaker_v2::AddBabyOutput()
         case kPOGBaby:   AddWWWBabyOutput(); return; break;
         case kLooseBaby: AddWWWBabyOutput(); return; break;
         case kWVZVeto:   AddWWWBabyOutput(); return; break;
+        case kOneLBaby:  AddWWWBabyOutput(); return; break;
         default: return;
     }
 }
@@ -268,6 +272,13 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("HLT_SingleIsoMu17");
     tx->createBranch<int>("HLT_PFMET140_PFMHT140_IDTight");
 
+    tx->createBranch<int>("HLT_SingleMu2016");
+    tx->createBranch<int>("HLT_SingleMu2017");
+    tx->createBranch<int>("HLT_SingleMu2018");
+    tx->createBranch<int>("HLT_SingleEl2016");
+    tx->createBranch<int>("HLT_SingleEl2017");
+    tx->createBranch<int>("HLT_SingleEl2018");
+
     tx->createBranch<int>("mc_HLT_DoubleMu");
     tx->createBranch<int>("mc_HLT_DoubleEl");
     tx->createBranch<int>("mc_HLT_DoubleEl_DZ");
@@ -283,6 +294,13 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("mc_HLT_SingleIsoMu17");
     tx->createBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight");
 
+    tx->createBranch<int>("mc_HLT_SingleMu2016");
+    tx->createBranch<int>("mc_HLT_SingleMu2017");
+    tx->createBranch<int>("mc_HLT_SingleMu2018");
+    tx->createBranch<int>("mc_HLT_SingleEl2016");
+    tx->createBranch<int>("mc_HLT_SingleEl2017");
+    tx->createBranch<int>("mc_HLT_SingleEl2018");
+
     tx->createBranch<int>("pass_duplicate_ee_em_mm");
     tx->createBranch<int>("pass_duplicate_mm_em_ee");
 
@@ -297,6 +315,10 @@ void babyMaker_v2::AddWWWBabyOutput()
     tx->createBranch<int>("pass_duplicate_mm_em2016_ee");
 
     tx->createBranch<int>("passTrigger");
+
+    tx->createBranch<int>("pass_singleMuTrig" );
+    tx->createBranch<int>("pass_singleElTrig" );
+    tx->createBranch<int>("pass_singleLepTrig");
 
     tx->createBranch<vector<LorentzVector>>("lep_p4");
     tx->createBranch<vector<float>>("lep_pt");
@@ -1292,6 +1314,7 @@ void babyMaker_v2::SetLeptonID()
         case kPOGBaby:   SetPOGAnalysisLeptonID(); break;
         case kLooseBaby: SetWWWAnalysisLeptonID(); break;
         case kWVZVeto:   SetWWWAnalysisLeptonID(); break;
+        case kOneLBaby:  SetWWWAnalysisLeptonID(); break;
         default: return;
     }
 }
@@ -1408,6 +1431,7 @@ void babyMaker_v2::SaveOutput()
         case kPOGBaby:   SavePOGBaby(); break;
         case kLooseBaby: SaveWWWBaby(); break;
         case kWVZVeto:   SaveWWWBaby(); break;
+        case kOneLBaby:  SaveWWWBaby(); break;
         default: return;
     }
 
@@ -1523,6 +1547,7 @@ bool babyMaker_v2::isPass()
         case kPOGBaby:   if (!PassPOGPreselection    ()) return false; break;
         case kLooseBaby: if (!PassLoosePreselection  ()) return false; break;
         case kWVZVeto:   if (!PassWVZVetoPreselection()) return false; break;
+        case kOneLBaby:  if (!PassOneLPreselection   ()) return false; break;
         default: return false;
     }
 
@@ -1546,6 +1571,7 @@ bool babyMaker_v2::isPassPostObjectSelection()
         case kPOGBaby:   /* no cut is applied */ break;
         case kLooseBaby: /* no cut is applied */ break;
         case kWVZVeto:   /* no cut is applied */ break;
+        case kOneLBaby:  /* no cut is applied */ break;
         default: return false;
     }
 
@@ -1589,6 +1615,7 @@ void babyMaker_v2::FillBaby()
         case kPOGBaby:   FillPOGBaby(); break;
         case kLooseBaby: FillWWWBaby(); break;
         case kWVZVeto:   FillWWWBaby(); break;
+        case kOneLBaby:  FillWWWBaby(); break;
     }
 }
 
@@ -1706,6 +1733,7 @@ void babyMaker_v2::ProcessElectrons()
         case kPOGBaby:   ProcessPOGElectrons();     return; break;
         case kLooseBaby: ProcessNominalElectrons(); return; break;
         case kWVZVeto:   ProcessNominalElectrons(); return; break;
+        case kOneLBaby:  ProcessNominalElectrons(); return; break;
         default: return;
     }
 }
@@ -1743,6 +1771,7 @@ void babyMaker_v2::ProcessMuons()
         case kPOGBaby:   ProcessPOGMuons();     return; break;
         case kLooseBaby: ProcessNominalMuons(); return; break;
         case kWVZVeto:   ProcessNominalMuons(); return; break;
+        case kOneLBaby:    ProcessNominalMuons(); return; break;
         default: return;
     }
 }
@@ -2502,7 +2531,88 @@ bool babyMaker_v2::PassWVZVetoPreselection()
 
     return true;
 }
+//##############################################################################################################
+bool babyMaker_v2::PassOneLPreselection()
+{
+	// require events have at least one veto lepton 
+	vector<int> el_idx = coreElectron.index;
+	vector<int> mu_idx = coreMuon.index;
+	
+	if (el_idx.size() + mu_idx.size() < 1) return false;
 
+	// 2016 
+	int HLT_IsoMu24; 
+	int HLT_IsoTkMu24; 
+	int HLT_Mu50; 
+	int HLT_TkMu50; 
+	int HLT_Ele27_WPTight_Gsf; 
+	int HLT_Ele115_CaloIdVT_GsfTrkIdT;
+	int HLT_Photon175;
+
+	// 2017 - also needs
+	int HLT_IsoMu27; 
+	int HLT_OldMu100; 
+	int HLT_TkMu100; 
+	int HLT_Ele32_WPTight_Gsf;
+	int HLT_Ele35_WPTight_Gsf; 
+	int HLT_Ele32_WPTight_Gsf_L1DoubleEG; 
+	int HLT_Photon200;
+	
+	// 2018 - also needs
+	int HLT_Ele28_WPTight_Gsf; 
+	int HLT_Ele38_WPTight_Gsf;
+	int HLT_Ele40_WPTight_Gsf; 
+
+	// muons!
+	setHLTBranch("HLT_IsoMu24_v" 			  , true,  HLT_IsoMu24 ); 
+	setHLTBranch("HLT_IsoTkMu24_v" 			  , true,  HLT_IsoTkMu24 ); 
+	setHLTBranch("HLT_IsoMu27_v" 			  , true,  HLT_IsoMu27 ); 
+	setHLTBranch("HLT_Mu50_v" 			  , true,  HLT_Mu50 ); 
+	setHLTBranch("HLT_TkMu50_v" 			  , true,  HLT_TkMu50 ); 
+	setHLTBranch("HLT_OldMu100_v" 			  , true,  HLT_OldMu100 ); 
+	setHLTBranch("HLT_TkMu100_v" 			  , true,  HLT_TkMu100 ); 
+
+	// electrons!
+	setHLTBranch("HLT_Ele27_WPTight_Gsf_v" 		  , true,  HLT_Ele27_WPTight_Gsf ); 
+	setHLTBranch("HLT_Ele28_WPTight_Gsf_v" 		  , true,  HLT_Ele28_WPTight_Gsf ); 
+	setHLTBranch("HLT_Ele32_WPTight_Gsf_v" 		  , true,  HLT_Ele32_WPTight_Gsf );
+	setHLTBranch("HLT_Ele32_WPTight_Gsf_L1DoubleEG_v" , true,  HLT_Ele32_WPTight_Gsf_L1DoubleEG ); 
+	setHLTBranch("HLT_Ele35_WPTight_Gsf_v" 		  , true,  HLT_Ele35_WPTight_Gsf ); 
+	setHLTBranch("HLT_Ele38_WPTight_Gsf_v" 		  , true,  HLT_Ele38_WPTight_Gsf );
+	setHLTBranch("HLT_Ele40_WPTight_Gsf_v" 		  , true,  HLT_Ele40_WPTight_Gsf ); 
+	setHLTBranch("HLT_Ele115_CaloIdVT_GsfTrkIdT_v" 	  , true,  HLT_Ele115_CaloIdVT_GsfTrkIdT ); 
+	setHLTBranch("HLT_Photon175_v" 			  , true,  HLT_Photon175 );
+	setHLTBranch("HLT_Photon200_v" 			  , true,  HLT_Photon200 );
+
+	if (isData()) // make sure we pass single lepton trigger 
+	{
+		// if pass trigger return true
+		if (gconf.year==2016)
+		{
+			if ( HLT_IsoMu24 || HLT_IsoTkMu24 || HLT_Mu50 || HLT_TkMu50 ) return true;
+			if ( HLT_Ele27_WPTight_Gsf || HLT_Ele115_CaloIdVT_GsfTrkIdT 
+					|| HLT_Photon175 ) return true;
+		}
+		else if (gconf.year==2017)
+		{
+			if ( HLT_IsoMu27 || HLT_Mu50 || HLT_OldMu100 || HLT_TkMu100 ) return true;
+			if ( HLT_Ele32_WPTight_Gsf_L1DoubleEG || HLT_Ele35_WPTight_Gsf 
+					|| HLT_Ele115_CaloIdVT_GsfTrkIdT || HLT_Photon200 ) return true;
+		}
+		else if (gconf.year==2018)
+		{
+			if ( HLT_IsoMu24 || HLT_Mu50 || HLT_OldMu100 || HLT_TkMu100 ) return true;
+			if ( HLT_Ele32_WPTight_Gsf || HLT_Ele115_CaloIdVT_GsfTrkIdT || HLT_Photon200 ) return true;
+		}
+		else return false;
+	}
+	else // MC sample, just need trigger info saved
+	{
+	
+	    return true;
+	
+	}
+}
 //##############################################################################################################
 void babyMaker_v2::FillTruthLevelStudyVariables()
 {
@@ -2598,7 +2708,7 @@ void babyMaker_v2::FillElectrons()
         float conecorrptfactorraw = coreElectron.index.size() + coreMuon.index.size() > 2 ? eleRelIso03EA(idx, 2, true) - 0.03: eleRelIso03EA(idx, 2, true) - 0.05;
         float conecorrptfactor = max(0., (double) conecorrptfactorraw) + 1.; // To clip correcting once it passes tight isolation criteria
 
-        if (babymode == kFRBaby)
+        if (babymode == kFRBaby || babymode == kOneLBaby)
         {
         }
         else if (babymode == kWVZVeto)
@@ -2717,7 +2827,7 @@ void babyMaker_v2::FillMuons()
         float conecorrptfactorraw = coreElectron.index.size() + coreMuon.index.size() > 2 ? muRelIso03EA(idx, 2, true) - 0.03: muRelIso03EA(idx, 2, true) - 0.07;
         float conecorrptfactor = max(0., (double) conecorrptfactorraw) + 1.; // To clip correcting once it passes tight isolation criteria
 
-        if (babymode == kFRBaby)
+        if (babymode == kFRBaby || babymode == kOneLBaby)
         {
         }
         else if (babymode == kWVZVeto)
@@ -3209,6 +3319,11 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8              );
             tx->setBranch<int>("HLT_SingleIsoMu17"             , coreTrigger.HLT_SingleIsoMu17             );
             tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight" , coreTrigger.HLT_PFMET140_PFMHT140_IDTight );
+	    // For one lep
+            //tx->setBranch<int>("HLT_IsoMu24" 		       , coreTrigger.HLT_IsoMu24                   );
+	    // one lep
+	    tx->setBranch<int>("HLT_SingleMu2016",coreTrigger.HLT_SingleMu2016);
+	    tx->setBranch<int>("HLT_SingleEl2016",coreTrigger.HLT_SingleEl2016);
         }
 
         else if (gconf.year == 2017)
@@ -3228,6 +3343,9 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2017         );
             tx->setBranch<int>("HLT_SingleIsoMu17"             , coreTrigger.HLT_SingleIsoMu17_2017        );
             tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight" , coreTrigger.HLT_PFMET140_PFMHT140_IDTight );
+	    // one lep
+	    tx->setBranch<int>("HLT_SingleMu2017",coreTrigger.HLT_SingleMu2017);
+	    tx->setBranch<int>("HLT_SingleEl2017",coreTrigger.HLT_SingleEl2017);
         }
 
         else if (gconf.year == 2018)
@@ -3247,10 +3365,13 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2018         );
             tx->setBranch<int>("HLT_SingleIsoMu17"             , coreTrigger.HLT_SingleIsoMu17_2018        );
             tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight" , coreTrigger.HLT_PFMET140_PFMHT140_IDTight );
+	    // one lep
+	    tx->setBranch<int>("HLT_SingleMu2018",coreTrigger.HLT_SingleMu2018);
+	    tx->setBranch<int>("HLT_SingleEl2018",coreTrigger.HLT_SingleEl2018);
         }
 
     }
-    else
+    else // is MC
     {
         tx->setBranch<int>("HLT_DoubleMu", 1);
         tx->setBranch<int>("HLT_DoubleEl", 1);
@@ -3265,6 +3386,13 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("HLT_SingleIsoMu8", 1);
         tx->setBranch<int>("HLT_SingleIsoMu17", 1);
         tx->setBranch<int>("HLT_PFMET140_PFMHT140_IDTight", 1);
+	// one lep
+	tx->setBranch<int>("HLT_SingleMu2016", 1);
+	tx->setBranch<int>("HLT_SingleMu2017", 1);
+	tx->setBranch<int>("HLT_SingleMu2018", 1);
+	tx->setBranch<int>("HLT_SingleEl2016", 1);
+	tx->setBranch<int>("HLT_SingleEl2017", 1);
+	tx->setBranch<int>("HLT_SingleEl2018", 1);
     }
     if (isWHSUSY())
     {
@@ -3302,6 +3430,8 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("mc_HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8              );
             tx->setBranch<int>("mc_HLT_SingleIsoMu17"             , coreTrigger.HLT_SingleIsoMu17             );
             tx->setBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight" , coreTrigger.HLT_PFMET140_PFMHT140_IDTight );
+	    tx->setBranch<int>("mc_HLT_SingleMu2016",  coreTrigger.HLT_SingleMu2016);
+	    tx->setBranch<int>("mc_HLT_SingleEl2016",  coreTrigger.HLT_SingleEl2016);
         }
 
         else if (gconf.year == 2017)
@@ -3321,6 +3451,8 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("mc_HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2017         );
             tx->setBranch<int>("mc_HLT_SingleIsoMu17"             , coreTrigger.HLT_SingleIsoMu17_2017        );
             tx->setBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight" , coreTrigger.HLT_PFMET140_PFMHT140_IDTight );
+	    tx->setBranch<int>("mc_HLT_SingleMu2017",  coreTrigger.HLT_SingleMu2017);
+	    tx->setBranch<int>("mc_HLT_SingleEl2017",  coreTrigger.HLT_SingleEl2017);
         }
 
         else if (gconf.year == 2018)
@@ -3340,14 +3472,18 @@ void babyMaker_v2::FillTrigger()
             tx->setBranch<int>("mc_HLT_SingleIsoMu8"              , coreTrigger.HLT_SingleIsoMu8_2018         );
             tx->setBranch<int>("mc_HLT_SingleIsoMu17"             , coreTrigger.HLT_SingleIsoMu17_2018        );
             tx->setBranch<int>("mc_HLT_PFMET140_PFMHT140_IDTight" , coreTrigger.HLT_PFMET140_PFMHT140_IDTight );
+	    tx->setBranch<int>("mc_HLT_SingleMu2018",  coreTrigger.HLT_SingleMu2018);
+	    tx->setBranch<int>("mc_HLT_SingleEl2018",  coreTrigger.HLT_SingleEl2018);
         }
 
     }
     if (cms3.evt_isRealData())
     {
+
         bool trig_ee = true;
         bool trig_em = true;
         bool trig_mm = true;
+
 
         if (gconf.year == 2016)
         {
@@ -3431,6 +3567,30 @@ void babyMaker_v2::FillTrigger()
         tx->setBranch<int>("pass_duplicate_mm_em_ee", 1);
     }
     tx->setBranch<int>("passTrigger", passTrigger());
+
+    // one lep
+    bool trig_e = false;
+    bool trig_m = false;
+    if (gconf.year == 2016) 
+    {
+    	trig_m = coreTrigger.HLT_SingleMu2016;
+    	trig_e = coreTrigger.HLT_SingleEl2016;
+    }
+    else if (gconf.year == 2017)
+    {
+    	trig_m = coreTrigger.HLT_SingleMu2017;
+    	trig_e = coreTrigger.HLT_SingleEl2017;
+    }
+    else if (gconf.year == 2018)
+    {
+    	trig_m = coreTrigger.HLT_SingleMu2018;
+    	trig_e = coreTrigger.HLT_SingleEl2018;
+    }
+    bool trig_lep = (trig_e || trig_m );
+    
+    tx->setBranch<int>("pass_singleMuTrig" , trig_m);
+    tx->setBranch<int>("pass_singleElTrig" , trig_e);
+    tx->setBranch<int>("pass_singleLepTrig", trig_lep);
 }
 
 //##############################################################################################################
