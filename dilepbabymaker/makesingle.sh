@@ -11,9 +11,12 @@ fi
 
 cp ../json/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_snt.txt .
 
-nevents=10
+nevents=100
 mode=9
-./processBaby /hadoop/cms/store/group/snt/run2_data2018/SingleMuon_Run2018A-17Sep2018-v2_MINIAOD_CMS4_V10-02-04/merged_ntuple_203.root $nevents 2018 $mode verbose 
+#./processBaby /hadoop/cms/store/group/snt/run2_data2018/SingleMuon_Run2018A-17Sep2018-v2_MINIAOD_CMS4_V10-02-04/merged_ntuple_203.root $nevents 2018 $mode verbose 
+
+
+./processBaby /hadoop/cms/store/group/snt/run2_mc2016_94x//WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2_MINIAODSIM_CMS4_V10-02-05/merged_ntuple_19.root $nevents wjets $mode
 
 # ./processBaby test  /hadoop/cms/store/group/snt/run2_50ns/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v1/V07-04-03/merged_ntuple_1.root
 # ./processBaby test_mc /hadoop/cms/store/group/snt/run2_25ns/TTTo2L2Nu_13TeV-powheg_RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/V07-04-08///merged_ntuple_1.root

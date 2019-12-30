@@ -1509,19 +1509,16 @@ void babyMaker_v2::Process()
 
     // Process leptons via CoreUtil
     ProcessLeptons();
-	std::cout << " KARRI Process() isPass" << std::endl;
     if (!isPass())
         return;
 
     // Process other non-lepton objects via CoreUtil
-	std::cout << " KARRI Process() process nonlep" << std::endl;
     ProcessNonLeptonObjects();
 
     if (!isPassPostObjectSelection())
         return;
 
     // Fill the output ttree
-	std::cout << " KARRI Process() FillBaby()" << std::endl;
     FillBaby();
 
 }
@@ -1541,8 +1538,6 @@ void babyMaker_v2::ProcessLeptons()
 bool babyMaker_v2::isPass()
 {
     // Based on the baby mode now preselect and if it doesn't pass return
-    std::cout << "KARRI pass presl" << std::endl;
-    std::cout << "baby mode " << babymode << std::endl;
     switch (babymode)
     {
         case kWWWBaby:   if (!PassWWWPreselection    ()) return false; break;
@@ -1557,7 +1552,6 @@ bool babyMaker_v2::isPass()
         default: return false;
     }
 
-    std::cout << "KARRI passED presl" << std::endl;
     // If it passed then accept
     return true;
 }
@@ -1568,7 +1562,6 @@ bool babyMaker_v2::isPassPostObjectSelection()
     // This is event selection AFTER the all the object has been processed
     // See isPass() for comparison
     // Based on the baby mode now preselect and if it doesn't pass return
-    std::cout << "KARRI pass postsel" << std::endl;
     switch (babymode)
     {
         case kWWWBaby:   /* no cut is applied */ break;
@@ -1590,27 +1583,21 @@ bool babyMaker_v2::isPassPostObjectSelection()
 //##############################################################################################################
 void babyMaker_v2::ProcessNonLeptonObjects()
 {
-    std::cout << "KARRI proccess trig" << std::endl;
     // Triggers
     ProcessTriggers();
 
-    std::cout << "KARRI proccess gen" << std::endl;
     // Loop over gen particles
     ProcessGenParticles();
 
-    std::cout << "KARRI proccess jet" << std::endl;
     // Loop over Jets
     ProcessJets();
 
-    std::cout << "KARRI proccess fatjet" << std::endl;
     // Loop over fatJets
     ProcessFatJets();
 
-    std::cout << "KARRI proccess met" << std::endl;
     // Process MET (recalculate etc.)
     ProcessMET();
 
-    std::cout << "KARRI proccess tracks" << std::endl;
     // Loop over charged particle candidates
     ProcessTracks();
 }
@@ -1618,7 +1605,6 @@ void babyMaker_v2::ProcessNonLeptonObjects()
 //##############################################################################################################
 void babyMaker_v2::FillBaby()
 {
-    std::cout << "KARRI fill baby" << std::endl;
     // Now process the rest of the stuff
     switch (babymode)
     {
@@ -1646,29 +1632,23 @@ void babyMaker_v2::FillWWWBaby_v1()
     if (coreElectron.index.size() + coreMuon.index.size() < 1)
         return;
 
-    std::cout << "KARRI fill event info" << std::endl;
     // Fill baby ntuple branches with event information (evt, lumi etc.)
     // These are always created and filled
     FillEventInfo();
-	std::cout << "KARRI fill truth info" << std::endl;
 
     // Truth level variables studies for WWW
     FillTruthLevelStudyVariables();
 
     // Fill baby ntuple branches corresponding to lepton indices
-    std::cout << "KARRI els" << std::endl;
     FillElectrons();
 
     // Fill baby ntuple branches corresponding to lepton indices
-    std::cout << "KARRI mus" << std::endl;
     FillMuons();
 
     // Organize leptons by sorting by their pt
-    std::cout << "KARRI lepton branch" << std::endl;
     SortLeptonBranches();
 
     // Fill baby ntuple branches for jets
-    std::cout << "KARRI jets" << std::endl;
     FillJets();
 
     // Fill baby ntuple branches for fat-jets
@@ -1702,7 +1682,6 @@ void babyMaker_v2::FillWWWBaby_v1()
     FillSummaryVariables();
 
     // Fill trigger bits (This comes after summary variables and leptons
-    std::cout << "KARRI trig" << std::endl;
     FillTrigger();
 
     // Fill Weights
@@ -1715,7 +1694,6 @@ void babyMaker_v2::FillWWWBaby_v1()
     FillYearInfo();
 
     // Fill TTree (NOTE: also clears internal variables)
-    std::cout << "KARRI fill tree " << std::endl;
     FillTTree();
 }
 
@@ -2199,9 +2177,6 @@ bool babyMaker_v2::PassFRPreselection()
     // Select 2 SS lepton events or 3 or more lepton events
     vector<int> el_idx = coreElectron.index;
     vector<int> mu_idx = coreMuon.index;
-	std::cout << "KARRI PassFRPreselection() check for at least one lep" << std::endl;
-	std::cout << "el size " << el_idx.size() << std::endl;
-	std::cout << "mu size " << mu_idx.size() << std::endl;
 
     if (el_idx.size() + mu_idx.size() < 1)
         return false;
@@ -2564,9 +2539,7 @@ bool babyMaker_v2::PassOneLPreselection()
 	vector<int> el_idx = coreElectron.index;
 	vector<int> mu_idx = coreMuon.index;
 	
-	std::cout << "KARRI PassOneLPreselection() check for at least one lep" << std::endl;
 	if (el_idx.size() + mu_idx.size() < 1) return false;
-	std::cout << "has one lep" << std::endl;
 	//return true;
 
 	// 2016 
@@ -2593,7 +2566,6 @@ bool babyMaker_v2::PassOneLPreselection()
 	int HLT_Ele40_WPTight_Gsf; 
 
 	// muons!
-	std::cout << " KARRI muon trigs" <<std::endl;
 	setHLTBranch("HLT_IsoMu24_v" 			  , true,  HLT_IsoMu24 ); 
 	setHLTBranch("HLT_IsoTkMu24_v" 			  , true,  HLT_IsoTkMu24 ); 
 	setHLTBranch("HLT_IsoMu27_v" 			  , true,  HLT_IsoMu27 ); 
@@ -2603,7 +2575,6 @@ bool babyMaker_v2::PassOneLPreselection()
 	setHLTBranch("HLT_TkMu100_v" 			  , true,  HLT_TkMu100 ); 
 
 	// electrons!
-	std::cout << " KARRI el trigs" <<std::endl;
 	setHLTBranch("HLT_Ele27_WPTight_Gsf_v" 		  , true,  HLT_Ele27_WPTight_Gsf ); 
 	setHLTBranch("HLT_Ele28_WPTight_Gsf_v" 		  , true,  HLT_Ele28_WPTight_Gsf ); 
 	setHLTBranch("HLT_Ele32_WPTight_Gsf_v" 		  , true,  HLT_Ele32_WPTight_Gsf );
@@ -2615,27 +2586,23 @@ bool babyMaker_v2::PassOneLPreselection()
 	setHLTBranch("HLT_Photon175_v" 			  , true,  HLT_Photon175 );
 	setHLTBranch("HLT_Photon200_v" 			  , true,  HLT_Photon200 );
 
-	std::cout << " KARRI data trigs " << std::endl;
 	if (isData()) // make sure we pass single lepton trigger 
 	{
 		// if pass trigger return true
 		if (gconf.year==2016)
 		{
-	std::cout << " KARRI 2016 data trigs " << std::endl;
 			if ( HLT_IsoMu24 || HLT_IsoTkMu24 || HLT_Mu50 || HLT_TkMu50 ) return true;
 			if ( HLT_Ele27_WPTight_Gsf || HLT_Ele115_CaloIdVT_GsfTrkIdT 
 					|| HLT_Photon175 ) return true;
 		}
 		else if (gconf.year==2017)
 		{
-	std::cout << " KARRI 2017 data trigs " << std::endl;
 			if ( HLT_IsoMu27 || HLT_Mu50 || HLT_OldMu100 || HLT_TkMu100 ) return true;
 			if ( HLT_Ele32_WPTight_Gsf_L1DoubleEG || HLT_Ele35_WPTight_Gsf 
 					|| HLT_Ele115_CaloIdVT_GsfTrkIdT || HLT_Photon200 ) return true;
 		}
 		else if (gconf.year==2018)
 		{
-	std::cout << " KARRI 2018 data trigs " << std::endl;
 			if ( HLT_IsoMu24 || HLT_Mu50 || HLT_OldMu100 || HLT_TkMu100 ) return true;
 			if ( HLT_Ele32_WPTight_Gsf || HLT_Ele115_CaloIdVT_GsfTrkIdT || HLT_Photon200 ) return true;
 		}
