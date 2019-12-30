@@ -51,6 +51,8 @@ def get_tasks(samples_dictionary, year, baby_type, baby_version_tag, dotestrun=F
         args = "7" # WWW3LBaby
     elif baby_type == "VVV":
         args = "8" # VVVBaby
+    elif baby_type == "OneL": 
+	args = "9" # OneLNtuple
 
     # Change directory to metis
     os.chdir(metis_path)
