@@ -78,11 +78,9 @@ void babyMaker_v2::ScanChain_v2(TString filepaths, int max_events, bool verbose)
             while (looper.nextEvent())
             {
 
-		cout << " checking if debug list " << endl;
                 // If eventlist_debug.txt file exists
                 if (eventlist_debug.event_list.size() > 0)
                 {
-		    cout << " checking debug list " << endl;
                     // Check if the given event is in the list if not continue
                     if (not eventlist_debug.has(cms3.evt_run(), cms3.evt_lumiBlock(), cms3.evt_event()))
                     {
